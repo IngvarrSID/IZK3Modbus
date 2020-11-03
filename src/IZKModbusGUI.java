@@ -34,7 +34,7 @@ public class IZKModbusGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        IZKModbusGUI izkModbusGUI = new IZKModbusGUI();
+        IZKTerminal izkTerminal = new IZKTerminal();
     }
 
     class ListSelectionListener implements javax.swing.event.ListSelectionListener {

@@ -75,6 +75,9 @@ public class IZKTerminal extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Terminal terminal = new Terminal(comName,bound);
             new MasterModbus(terminal,Integer.parseInt(textField1.getText()));
+            dispose();
+            //setVisible(false);
+            IZKModbusGUI izkModbusGUI = new IZKModbusGUI();
 
         }
     }
