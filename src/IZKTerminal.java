@@ -74,10 +74,10 @@ public class IZKTerminal extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Terminal terminal = new Terminal(comName,bound);
-            new MasterModbus(terminal,Integer.parseInt(textField1.getText()));
+            MasterModbus masterModbus = new MasterModbus(terminal,Integer.parseInt(textField1.getText()));
             dispose();
             //setVisible(false);
-            IZKModbusGUI izkModbusGUI = new IZKModbusGUI();
+            IZKModbusGUI izkModbusGUI = new IZKModbusGUI(terminal,masterModbus);
 
         }
     }

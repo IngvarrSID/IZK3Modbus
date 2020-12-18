@@ -9,6 +9,7 @@ public class Terminal {
     private SerialParameters sp;
     private String comName;
     private String bound;
+    private boolean error;
 
 
     public Terminal(String comName, String bound) {
@@ -52,5 +53,17 @@ public class Terminal {
 
     public String getComName() {
         return comName;
+    }
+
+    public String getBound() {
+        return bound;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
     }
 }

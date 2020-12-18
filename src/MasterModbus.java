@@ -15,9 +15,12 @@ public class MasterModbus {
            modbusMaster = ModbusMasterFactory.createModbusMasterASCII(terminal.getSp());
            modbusMaster.connect();
        } catch (Exception e){
+           this.terminal.setError(true);
            e.printStackTrace();
        }
+
    }
+
 
     public ModbusMaster getModbusMaster() {
         return modbusMaster;
@@ -25,5 +28,13 @@ public class MasterModbus {
 
     public int getId() {
         return id;
+    }
+
+    public void disconnect(){
+       try {
+           modbusMaster.disconnect();
+       } catch (Exception e){
+           e.printStackTrace();
+       }
     }
 }
