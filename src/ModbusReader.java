@@ -19,7 +19,7 @@ public class ModbusReader {
         for (int i = 0; i < count; i++) {
             int[] registers = modbusMaster.readInputRegisters(slaveID,offset,quantity);
             for (int j = offset; j < offset+registers.length; j++) {
-                allRegisters[j] = registers[j-offset];
+                allRegisters[j-offset] = registers[j-offset];
             }
             offset = offset+quantity;
         }
