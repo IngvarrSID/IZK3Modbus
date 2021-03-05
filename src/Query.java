@@ -3,12 +3,65 @@ import jdk.nashorn.internal.ir.Terminal;
 public class Query{
 
     private ModbusReader modbusReader;
+    //main
     private int sensorAddress;
     private String time;
     private float humidity;
     private float temperature;
     private float density;
     private String status;
+    private float period;
+    private float cs1;
+    private float cs2;
+    private float error;
+    private String data;
+    private int mode1;
+    //info
+    private String versionFirm;
+    private String dataFirm;
+    private String statusActiv;
+    private String identificator;
+    private String dataActiv;
+
+    public String getVersionFirm() {
+        return versionFirm;
+    }
+
+    public String getDataFirm() {
+        return dataFirm;
+    }
+
+    public String getStatusActiv() {
+        return statusActiv;
+    }
+
+    public String getIdentificator() {
+        return identificator;
+    }
+
+    public String getDataActiv() {
+        return dataActiv;
+    }
+
+    public float getPeriod() {
+        return period;
+    }
+
+    public float getCs1() {
+        return cs1;
+    }
+
+    public float getCs2() {
+        return cs2;
+    }
+
+    public float getError() {
+        return error;
+    }
+
+    public String getData() {
+        return data;
+    }
 
     public int getSensorAddress() {
         return sensorAddress;
@@ -44,6 +97,7 @@ public class Query{
 
     }
 
+
      public void queryStatus (){
         try {
             int[] registerValues = modbusReader.readRegisters(22, 1, 1);
@@ -66,6 +120,12 @@ public class Query{
                 density = hexToFloat(registerValues[9],registerValues[10]);
                 String reversStatus = Integer.toBinaryString(registerValues[22]);
                 status = statusReader(reversStatus);
+                period = hexToFloat(registerValues[24],registerValues[25]);
+                cs1 = hexToFloat(registerValues[26],registerValues[27]);
+                cs2 = hexToFloat(registerValues[28],registerValues[29]);
+                error = hexToFloat(registerValues[30],registerValues[31]);
+                data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
+
 
 
                 System.out.println(registerValues[19]);
@@ -78,6 +138,58 @@ public class Query{
                 e.printStackTrace();
             }
 
+    }
+    public void queryInfo (){
+        try {
+            int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+            StringBuilder builderVersion = new StringBuilder();
+            for (int i = 0; i < 10; i++) {
+                String s = Integer.toHexString(registerValues[i]);
+
+                String a = s.substring(2,4);
+                String b = s.substring(0,2);
+                int c = Integer.valueOf(a, 16);
+                int d = Integer.valueOf(b, 16);
+                builderVersion.append((char)c);
+                builderVersion.append((char)d);
+
+            }
+            versionFirm = builderVersion.toString();
+
+            StringBuilder builderData = new StringBuilder();
+            for (int i = 10; i < 13; i++) {
+                String s = Integer.toHexString(registerValues[i]);
+
+                String a = s.substring(2,4);
+                String b = s.substring(0,2);
+                int c = Integer.valueOf(a, 16);
+                int d = Integer.valueOf(b, 16);
+                builderData.append((char)c);
+                builderData.append((char)d);
+                if (builderData.length()<6) builderData.append(".");
+
+            }
+            dataFirm = builderData.toString();
+
+            StringBuilder builderIdentif = new StringBuilder();
+            for (int i = 18; i < 21; i++) {
+                String s = Integer.toHexString(registerValues[i]);
+
+                String a = s.substring(2,4);
+                String b = s.substring(0,2);
+                int c = Integer.valueOf(a, 16);
+                int d = Integer.valueOf(b, 16);
+                builderIdentif.append((char)c);
+                builderIdentif.append((char)d);
+
+            }
+            identificator = builderIdentif.toString();
+
+
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static Float hexToFloat(int value1, int value2){
@@ -122,6 +234,11 @@ public class Query{
         return String.format("%s:%s:%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
                 String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2),
                 String.valueOf(value3).length() < 2 ? "0" + value3 : String.valueOf(value3));
+    }
+
+    private static String dateReader (int value1,int value2,int value3){
+        return String.format("%s.%s.%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
+                String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), value3);
     }
 
 

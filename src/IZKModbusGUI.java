@@ -1,8 +1,4 @@
-import jssc.SerialPortList;
-
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -21,6 +17,18 @@ public class IZKModbusGUI extends JFrame {
     private JTextField densityField;
     private JLabel nameStatLabel;
     private JLabel statLabel;
+    private JTextField dataField;
+    private JTextField periodField;
+    private JTextField cs1Field;
+    private JTextField cs2Field;
+    private JTabbedPane tabbedPane1;
+    private JTextField errorField;
+    private JButton refButton;
+    private JTextField versionFirmField;
+    private JTextField dataFirmField;
+    private JTextField statusActivField;
+    private JTextField identificatorField;
+    private JTextField dataActivField;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
@@ -31,6 +39,18 @@ public class IZKModbusGUI extends JFrame {
     private float temperature;
     private float density;
     private String status;
+    private float period;
+    private float cs1;
+    private float cs2;
+    private float error;
+    private String data;
+
+    //info
+    private String versionFirm;
+    private String dataFirm;
+    private String statusActiv;
+    private String identificator;
+    private String dataActiv;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus){
         this.terminal = terminal;
@@ -56,6 +76,23 @@ public class IZKModbusGUI extends JFrame {
         ModbusReader modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         Query query = new Query(modbusReader);
 
+        refButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (queryBox.isSelected()) queryBox.setSelected(false);
+                modbusReader.writeModeRegister(1,16);
+                query.queryInfo();
+                versionFirm = query.getVersionFirm();
+                versionFirmField.setText(versionFirm);
+                dataFirm = query.getDataFirm();
+                dataFirmField.setText(dataFirm);
+                identificator = query.getIdentificator();
+                identificatorField.setText(identificator);
+
+
+            }
+        });
+
         queryBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -74,7 +111,7 @@ public class IZKModbusGUI extends JFrame {
         timer1 = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                modbusReader.writeModeRegister(1,0);
                 query.queryStatus();
                 status = query.getStatus();
                 statLabel.setText(status);
@@ -85,20 +122,30 @@ public class IZKModbusGUI extends JFrame {
                 humidity = query.getHumidity();
                 temperature = query.getTemperature();
                 density = query.getDensity();
-                //status = query.getStatus();
+                period = query.getPeriod();
+                cs1 = query.getCs1();
+                cs2 = query.getCs2();
+                error = query.getError();
+                data = query.getData();
+
                 sensorAddressField.setText(String.format("Адрес платы: %d", sensorAddress));
                 timeField.setText(String.format("Текущее время: %s", time));
                 humidityField.setText(String.format("Влажность: %.1f %%", humidity));
                 temperatureField.setText(String.format("Температура: %.1f °C", temperature));
                 densityField.setText(String.format("Плотность: %.1f кг/м²", density));
                 nameStatLabel.setText("Состояние датчика:");
-               // statLabel.setText(status);
+
+                periodField.setText(String.format("Период: %.1f у.е.", period));
+                cs1Field.setText(String.format("CS1: %.1f Пф", cs1));
+                cs2Field.setText(String.format("CS2: %.1f Пф", cs2));
+                errorField.setText(String.format("Инструмент. погрешность: %.1f у.е.", error));
+                dataField.setText(String.format("Текущая дата: %s", data));
+
 
                 System.out.println("Таймер");
            } else System.out.println("ждем");
             }
         });
-
 
 
 

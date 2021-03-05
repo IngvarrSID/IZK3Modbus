@@ -31,13 +31,11 @@ public class ModbusReader {
 
     }
 
-    public boolean readStatusBit() throws ModbusNumberException, ModbusProtocolException, ModbusIOException{
-        String status = Integer.toBinaryString(modbusMaster.readInputRegisters(slaveID,52,1)[0]);
-        String statusRevers = "";
-        for (int j = 0; j < 16; j++) {
-            if (status.length() > j) statusRevers = status.charAt(j) + statusRevers;
-            else statusRevers = statusRevers + "0";
+   public void writeModeRegister (int offset, int register){
+        try {
+            modbusMaster.writeSingleRegister(slaveID,offset, register);
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        return statusRevers.charAt(0) == '1';
-    }
+   }
 }
