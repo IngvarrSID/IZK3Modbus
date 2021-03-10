@@ -4,8 +4,12 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Properties;
 
 public class IZKTerminal extends JFrame {
     private JComboBox<String> comboBoxCOM;
@@ -73,6 +77,16 @@ public class IZKTerminal extends JFrame {
     class ActionListenerButton implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            Properties properties = new Properties();
+            try {
+                FileOutputStream out = new FileOutputStream("settings.properties");
+                properties.setProperty("ComPort", comName);
+                properties.setProperty("BoundRate", bound);
+                properties.setProperty("Id", textField1.getText());
+                properties.store(out, "terminal settings");
+            } catch (IOException q){
+                q.printStackTrace();
+            }
             Terminal terminal = new Terminal(comName,bound);
             MasterModbus masterModbus = new MasterModbus(terminal,Integer.parseInt(textField1.getText()));
             dispose();

@@ -38,4 +38,15 @@ public class ModbusReader {
             e.printStackTrace();
         }
    }
+   public int[] readHoldingsRegisters (int offset, int quantity, int count) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        int[] allRegisters = new int[quantity*count];
+       for (int i = 0; i < count; i++) {
+           int[] registers = modbusMaster.readHoldingRegisters(slaveID,offset,quantity);
+           for (int j = offset; j < offset+registers.length; j++) {
+               allRegisters[j-offset] = registers[j-offset];
+           }
+           offset = offset+quantity;
+       }
+       return allRegisters;
+   }
 }

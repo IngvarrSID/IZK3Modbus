@@ -1,8 +1,14 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Properties;
 
 public class IZKModbusGUI extends JFrame {
 
@@ -29,6 +35,13 @@ public class IZKModbusGUI extends JFrame {
     private JTextField statusActivField;
     private JTextField identificatorField;
     private JTextField dataActivField;
+    private JButton reButton2;
+    private JFormattedTextField addressSensorFieldWrite;
+    private JTextField timeoutFieldWrite;
+    private JTextField periodFieldWrite;
+    private JTextField t01FieldWrite;
+    private JTextField ck1FieldWrite;
+    private JTextField cd1FieldWrite;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
@@ -52,6 +65,15 @@ public class IZKModbusGUI extends JFrame {
     private String identificator;
     private String dataActiv;
 
+    //sensor
+    //sensor
+    private int sensorAddressWrite;
+    private int timeoutWrite;
+    private int periodWrite;
+    private int t01Write;
+    private float ck1Write;
+    private float cd1Write;
+
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus){
         this.terminal = terminal;
         this.masterModbus = masterModbus;
@@ -60,6 +82,10 @@ public class IZKModbusGUI extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1440,900);
+
+        nameStatLabel.setText("Состояние датчика:");
+        statLabel.setText("Нет информации");
+
 
         if (!terminal.isError()) comLabel.setText(String.format("Подключено к %s на скорости %s",terminal.getComName(),terminal.getBound()));
         else comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
@@ -75,6 +101,52 @@ public class IZKModbusGUI extends JFrame {
         });
         ModbusReader modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         Query query = new Query(modbusReader);
+
+        tabbedPane1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int idx = ((JTabbedPane)e.getSource()).indexAtLocation(e.getX(), e.getY());
+                System.out.println("Выбрана вкладка " + idx);
+                if (queryBox.isSelected()) queryBox.setSelected(false);
+                switch (idx){
+                    case 0:
+                        break;
+                    case 2:
+                        modbusReader.writeModeRegister(0,5);
+                        modbusReader.writeModeRegister(1,0);
+                        query.querySensor();
+                        sensorAddressWrite = query.getSensorAddressWrite();
+                        addressSensorFieldWrite.setText(String.valueOf(sensorAddressWrite));
+                        timeoutWrite = query.getTimeoutWrite();
+                        timeoutFieldWrite.setText(String.valueOf(timeoutWrite));
+                        periodWrite = query.getPeriodWrite();
+                        periodFieldWrite.setText(String.valueOf(periodWrite));
+                        t01Write = query.getT01Write();
+                        t01FieldWrite.setText(String.valueOf(t01Write));
+                        ck1Write = query.getCk1Write();
+                        ck1FieldWrite.setText(String.format("%.1f",ck1Write));
+                        cd1Write = query.getCd1Write();
+                        cd1FieldWrite.setText(String.format("%.1f",cd1Write));
+                        break;
+
+                }
+            }
+        });
+
+        //sensor
+        NumberFormat number = new DecimalFormat("#0");
+        NumberFormatter nF = new NumberFormatter(number);
+        DefaultFormatterFactory dFF = new DefaultFormatterFactory(nF);
+        addressSensorFieldWrite.setFormatterFactory(dFF);
+        addressSensorFieldWrite.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                modbusReader.writeModeRegister(2,Integer.parseInt(addressSensorFieldWrite.getText()));
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Запись завершена");
+            }
+        });
+
 
         refButton.addActionListener(new ActionListener() {
             @Override
@@ -133,7 +205,7 @@ public class IZKModbusGUI extends JFrame {
                 humidityField.setText(String.format("Влажность: %.1f %%", humidity));
                 temperatureField.setText(String.format("Температура: %.1f °C", temperature));
                 densityField.setText(String.format("Плотность: %.1f кг/м²", density));
-                nameStatLabel.setText("Состояние датчика:");
+
 
                 periodField.setText(String.format("Период: %.1f у.е.", period));
                 cs1Field.setText(String.format("CS1: %.1f Пф", cs1));
@@ -161,7 +233,24 @@ public class IZKModbusGUI extends JFrame {
 
 
     public static void main(String[] args) {
-        IZKTerminal izkTerminal = new IZKTerminal();
+        Properties properties = new Properties();
+        try {
+            FileInputStream in = new FileInputStream("settings.properties");
+            properties.load(in);
+            Terminal terminal = new Terminal(properties.getProperty("ComPort"),properties.getProperty("BoundRate"));
+            MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(properties.getProperty("Id")));
+            IZKModbusGUI izkModbusGUI = new IZKModbusGUI(terminal,masterModbus);
+
+
+
+        } catch (FileNotFoundException e) {
+            IZKTerminal izkTerminal = new IZKTerminal();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
 }

@@ -23,6 +23,43 @@ public class Query{
     private String identificator;
     private String dataActiv;
 
+
+    //sensor
+    private int sensorAddressWrite;
+    private int timeoutWrite;
+    private int periodWrite;
+    private int t01Write;
+    private float ck1Write;
+    private float cd1Write;
+
+    public int getMode1() {
+        return mode1;
+    }
+
+    public int getSensorAddressWrite() {
+        return sensorAddressWrite;
+    }
+
+    public int getTimeoutWrite() {
+        return timeoutWrite;
+    }
+
+    public int getPeriodWrite() {
+        return periodWrite;
+    }
+
+    public int getT01Write() {
+        return t01Write;
+    }
+
+    public float getCk1Write() {
+        return ck1Write;
+    }
+
+    public float getCd1Write() {
+        return cd1Write;
+    }
+
     public String getVersionFirm() {
         return versionFirm;
     }
@@ -138,6 +175,21 @@ public class Query{
                 e.printStackTrace();
             }
 
+    }
+
+    public void querySensor(){
+        try {
+            int[] registerValues = modbusReader.readHoldingsRegisters(2,32,1);
+            sensorAddressWrite = registerValues[0];
+            timeoutWrite = registerValues[1];
+            periodWrite = registerValues[3];
+            t01Write = registerValues[4];
+            ck1Write = hexToFloat(registerValues[5],registerValues[6]);
+            cd1Write = hexToFloat(registerValues[7],registerValues[8]);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
     public void queryInfo (){
         try {
