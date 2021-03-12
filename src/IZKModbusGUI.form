@@ -321,14 +321,29 @@
                   <editable value="false"/>
                 </properties>
               </component>
-              <hspacer id="ca0f0">
+              <component id="4e7e8" class="javax.swing.JButton" binding="activButton">
                 <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="30"/>
+                    <maximum-size width="150" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <text value="Активировать"/>
+                </properties>
+              </component>
+              <component id="cd11f" class="javax.swing.JPasswordField" binding="введитеКодАктивацииPasswordField" default-binding="true">
+                <constraints>
+                  <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="300" height="-1"/>
                     <maximum-size width="300" height="-1"/>
                   </grid>
                 </constraints>
-              </hspacer>
+                <properties>
+                  <text value=""/>
+                  <toolTipText value="Введите код активации"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="c789" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

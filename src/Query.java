@@ -237,6 +237,27 @@ public class Query{
             }
             identificator = builderIdentif.toString();
 
+            dataActiv = dateReader(registerValues[14],registerValues[15],registerValues[16]);
+
+            switch (registerValues[30]){
+                case 0:
+                    statusActiv = "Активация не требуется";
+                    break;
+                case 1:
+                    statusActiv = "Блок активирован";
+                    break;
+                case 2:
+                    statusActiv = "Идет пробный период. Требуется активация";
+                    break;
+                case 3:
+                    statusActiv = "Пробный период закончился. Требуется активация";
+                    break;
+                case 4:
+                    statusActiv = "Ошибка календаря";
+                    break;
+
+            }
+
 
 
         } catch (Exception e){
@@ -290,7 +311,7 @@ public class Query{
 
     private static String dateReader (int value1,int value2,int value3){
         return String.format("%s.%s.%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
-                String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), value3);
+                String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), String.valueOf(value3).length()<3 ? "20" +value3 : value3);
     }
 
 

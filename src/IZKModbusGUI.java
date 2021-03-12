@@ -42,6 +42,8 @@ public class IZKModbusGUI extends JFrame {
     private JTextField t01FieldWrite;
     private JTextField ck1FieldWrite;
     private JTextField cd1FieldWrite;
+    private JButton activButton;
+    private JPasswordField введитеКодАктивацииPasswordField;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
@@ -65,7 +67,6 @@ public class IZKModbusGUI extends JFrame {
     private String identificator;
     private String dataActiv;
 
-    //sensor
     //sensor
     private int sensorAddressWrite;
     private int timeoutWrite;
@@ -110,6 +111,7 @@ public class IZKModbusGUI extends JFrame {
                 if (queryBox.isSelected()) queryBox.setSelected(false);
                 switch (idx){
                     case 0:
+
                         break;
                     case 2:
                         modbusReader.writeModeRegister(0,5);
@@ -147,12 +149,13 @@ public class IZKModbusGUI extends JFrame {
             }
         });
 
-
+//info
         refButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (queryBox.isSelected()) queryBox.setSelected(false);
                 modbusReader.writeModeRegister(1,16);
+                modbusReader.writeModeRegister(0,25);
                 query.queryInfo();
                 versionFirm = query.getVersionFirm();
                 versionFirmField.setText(versionFirm);
@@ -160,8 +163,10 @@ public class IZKModbusGUI extends JFrame {
                 dataFirmField.setText(dataFirm);
                 identificator = query.getIdentificator();
                 identificatorField.setText(identificator);
-
-
+                dataActiv = query.getDataActiv();
+                dataActivField.setText(dataActiv);
+                statusActiv = query.getStatusActiv();
+                statusActivField.setText(statusActiv);
             }
         });
 
@@ -242,10 +247,8 @@ public class IZKModbusGUI extends JFrame {
             IZKModbusGUI izkModbusGUI = new IZKModbusGUI(terminal,masterModbus);
 
 
-
-        } catch (FileNotFoundException e) {
-            IZKTerminal izkTerminal = new IZKTerminal();
         } catch (IOException e) {
+            IZKTerminal izkTerminal = new IZKTerminal();
             e.printStackTrace();
         }
 
