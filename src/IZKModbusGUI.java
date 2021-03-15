@@ -1,3 +1,5 @@
+import com.sun.corba.se.spi.orbutil.fsm.Action;
+
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -43,7 +45,7 @@ public class IZKModbusGUI extends JFrame {
     private JTextField ck1FieldWrite;
     private JTextField cd1FieldWrite;
     private JButton activButton;
-    private JPasswordField введитеКодАктивацииPasswordField;
+    private JTextField passwordField;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
@@ -167,8 +169,41 @@ public class IZKModbusGUI extends JFrame {
                 dataActivField.setText(dataActiv);
                 statusActiv = query.getStatusActiv();
                 statusActivField.setText(statusActiv);
+                if (statusActiv.equals("Идет пробный период. Требуется активация") || statusActiv.equals("Пробный период закончился. Требуется активация")){
+                    activButton.setEnabled(true);
+                    passwordField.setEditable(true);
+                    passwordField.setText("Введите код активации");
+                }
+                else {
+                    activButton.setEnabled(false);
+                    passwordField.setEditable(false);
+                    passwordField.setText("");
+                }
+
             }
         });
+        activButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (passwordField.getText().length() == 8){
+                    char [] chars = passwordField.getText().toCharArray();
+                    int [] registers = new int[4];
+                    int j = 0;
+                    for (int i = 0; i < chars.length; i = i+2) {
+                        String hex = String.format("%02x", (int) chars[i+1]) + String.format("%02x", (int) chars[i]);
+                        registers[j] = Integer.valueOf(hex, 16);
+                        j++;
+                    }
+                    modbusReader.writeASCII(2,registers);
+                    refButton.doClick();
+                }
+                else {
+                    passwordField.setText("Не верный код активации!");
+                }
+
+            }
+        });
+
 
         queryBox.addItemListener(new ItemListener() {
             @Override

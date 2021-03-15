@@ -38,6 +38,14 @@ public class ModbusReader {
             e.printStackTrace();
         }
    }
+
+   public void writeASCII(int offset, int[] registers){
+        try {
+            modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
+        } catch (Exception e) {
+
+        }
+   }
    public int[] readHoldingsRegisters (int offset, int quantity, int count) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         int[] allRegisters = new int[quantity*count];
        for (int i = 0; i < count; i++) {
