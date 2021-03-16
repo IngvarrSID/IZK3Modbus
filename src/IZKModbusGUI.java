@@ -1,12 +1,9 @@
-import com.sun.corba.se.spi.orbutil.fsm.Action;
-
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import javax.swing.text.PlainDocument;
 import java.awt.event.*;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -38,7 +35,7 @@ public class IZKModbusGUI extends JFrame {
     private JTextField identificatorField;
     private JTextField dataActivField;
     private JButton reButton2;
-    private JFormattedTextField addressSensorFieldWrite;
+    private JTextField addressSensorFieldWrite;
     private JTextField timeoutFieldWrite;
     private JTextField periodFieldWrite;
     private JTextField t01FieldWrite;
@@ -46,9 +43,12 @@ public class IZKModbusGUI extends JFrame {
     private JTextField cd1FieldWrite;
     private JButton activButton;
     private JTextField passwordField;
+    private JTextField checkPeriodFieldWrite;
+    private JTextField errorFieldWrite;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
+    private ModbusReader modbusReader;
 
     private int sensorAddress;
     private String time;
@@ -102,9 +102,10 @@ public class IZKModbusGUI extends JFrame {
                 dispose();
             }
         });
-        ModbusReader modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
+        modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         Query query = new Query(modbusReader);
 
+        //menu
         tabbedPane1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -113,7 +114,7 @@ public class IZKModbusGUI extends JFrame {
                 if (queryBox.isSelected()) queryBox.setSelected(false);
                 switch (idx){
                     case 0:
-
+                        refButton.doClick();
                         break;
                     case 2:
                         modbusReader.writeModeRegister(0,5);
@@ -138,18 +139,20 @@ public class IZKModbusGUI extends JFrame {
         });
 
         //sensor
-        NumberFormat number = new DecimalFormat("#0");
-        NumberFormatter nF = new NumberFormatter(number);
-        DefaultFormatterFactory dFF = new DefaultFormatterFactory(nF);
-        addressSensorFieldWrite.setFormatterFactory(dFF);
-        addressSensorFieldWrite.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modbusReader.writeModeRegister(2,Integer.parseInt(addressSensorFieldWrite.getText()));
-                JOptionPane.showMessageDialog(IZKModbusGUI.this,
-                        "Запись завершена");
-            }
-        });
+        digitFilter(addressSensorFieldWrite,2);
+        addressSensorFieldWrite.addActionListener(new OneRegisterWriteActionListener(2));
+        digitFilter(timeoutFieldWrite,5);
+        timeoutFieldWrite.addActionListener(new OneRegisterWriteActionListener(3));
+        digitFilter(periodFieldWrite,3);
+        periodFieldWrite.addActionListener(new OneRegisterWriteActionListener(5));
+        digitFilter(t01FieldWrite,5);
+        t01FieldWrite.addActionListener(new OneRegisterWriteActionListener(6));
+        floatFilter(ck1FieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
+        ck1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(7));
+        floatFilter(cd1FieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
+        cd1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(9));
+
+
 
 //info
         refButton.addActionListener(new ActionListener() {
@@ -194,7 +197,7 @@ public class IZKModbusGUI extends JFrame {
                         registers[j] = Integer.valueOf(hex, 16);
                         j++;
                     }
-                    modbusReader.writeASCII(2,registers);
+                    modbusReader.writeRegister(2,registers);
                     refButton.doClick();
                 }
                 else {
@@ -260,11 +263,64 @@ public class IZKModbusGUI extends JFrame {
         });
 
 
+    }
 
+    public static void digitFilter(JTextField textField,int count){
+        PlainDocument doc = (PlainDocument) textField.getDocument();
+        doc.setDocumentFilter(new DigitFilter(count));
+    }
 
+    public static void floatFilter(JTextField textField,String pattern){
+        PlainDocument doc = (PlainDocument) textField.getDocument();
+        doc.setDocumentFilter(new FloatDigitalFilter(pattern));
+    }
 
+    public class OneRegisterWriteActionListener implements ActionListener{
+        int offset;
+        String field;
+        public OneRegisterWriteActionListener(int offset){
+            this.offset = offset;
+           // this.field = field;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            field = ((JTextField)e.getSource()).getText();
+            modbusReader.writeModeRegister(offset,Integer.parseInt(field));
+            JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                    "Запись завершена");
+        }
+    }
 
+    public class TwoRegisterWriteActionListener implements ActionListener{
+        int offset;
+        String field;
+        public TwoRegisterWriteActionListener(int offset){
+            this.offset = offset;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            field = ((JTextField)e.getSource()).getText();
+            String s;
+            if (field.contains(",")) s = field.replace(",",".");
+            else s = field;
+            float f = Float.parseFloat(s);
+            String sF = hex(f);
 
+            sF = sF.replace("0x","");
+            int [] registers = {Integer.valueOf(sF.substring(4,8),16), Integer.valueOf(sF.substring(0,4),16)};
+            for (int i: registers) {
+                System.out.println(i);
+            }
+            modbusReader.writeRegister(offset,registers);
+
+        }
+
+        public String hex(int n){
+            return String.format("0x%8s", Integer.toHexString(n)).replace(' ','0');
+        }
+        public String hex(float f){
+            return hex(Float.floatToIntBits(f));
+        }
     }
 
 

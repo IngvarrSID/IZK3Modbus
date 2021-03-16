@@ -39,7 +39,7 @@ public class ModbusReader {
         }
    }
 
-   public void writeASCII(int offset, int[] registers){
+   public void writeRegister(int offset, int[] registers){
         try {
             modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
         } catch (Exception e) {

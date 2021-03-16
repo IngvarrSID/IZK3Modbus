@@ -46,11 +46,9 @@ public class IZKTerminal extends JFrame {
         comboBoxBound.setSelectedIndex(3);
         ActionListener aL2 = new ActionListenerBound();
         comboBoxBound.addActionListener(aL2);
-        NumberFormat number = new DecimalFormat("##0");
-        NumberFormatter nF = new NumberFormatter(number);
-        DefaultFormatterFactory dFF = new DefaultFormatterFactory(nF);
-        textField1.setFormatterFactory(dFF);
         textField1.setText("80");
+        PlainDocument doc = (PlainDocument) textField1.getDocument();
+        doc.setDocumentFilter(new DigitFilter(2));
 
 
         ActionListener aL3 = new ActionListenerButton();
