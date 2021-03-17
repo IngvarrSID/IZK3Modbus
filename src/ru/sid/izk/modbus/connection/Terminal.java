@@ -1,14 +1,15 @@
+package ru.sid.izk.modbus.connection;
+
 import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryJSSC;
 import com.intelligt.modbus.jlibmodbus.serial.SerialUtils;
-import jssc.SerialPortList;
 
 public class Terminal {
 
-    private SerialParameters sp;
-    private String comName;
-    private String bound;
+    private final SerialParameters sp;
+    private final String comName;
+    private final String bound;
     private boolean error;
 
 
