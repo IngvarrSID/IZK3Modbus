@@ -1,8 +1,10 @@
-import jdk.nashorn.internal.ir.Terminal;
+package ru.sid.izk.modbus.entity;
+
+import ru.sid.izk.modbus.connection.ModbusReader;
 
 public class Query{
 
-    private ModbusReader modbusReader;
+    private final ModbusReader modbusReader;
     //main
     private int sensorAddress;
     private String time;
@@ -15,7 +17,6 @@ public class Query{
     private float cs2;
     private float error;
     private String data;
-    private int mode1;
     //info
     private String versionFirm;
     private String dataFirm;
@@ -50,10 +51,6 @@ public class Query{
     private int max;
     private int emerMax;
     private int noDensity;
-
-    public int getMode1() {
-        return mode1;
-    }
 
     public int getCheckPeriod() {
         return checkPeriod;
@@ -143,14 +140,6 @@ public class Query{
         return periodWrite;
     }
 
-    public int getT01Write() {
-        return t01Write;
-    }
-
-    public float getCk1Write() {
-        return ck1Write;
-    }
-
     public float getCd1Write() {
         return cd1Write;
     }
@@ -163,7 +152,7 @@ public class Query{
         return dataFirm;
     }
 
-    public String getStatusActiv() {
+    public String getStatusActive() {
         return statusActiv;
     }
 
@@ -217,6 +206,14 @@ public class Query{
 
     public String getStatus() {
         return status;
+    }
+
+    public int getT01Write() {
+        return t01Write;
+    }
+
+    public float getCk1Write() {
+        return ck1Write;
     }
 
     public Query(ModbusReader modbusReader){
@@ -386,28 +383,23 @@ public class Query{
             else s = Integer.toHexString(value2) + Integer.toHexString(value1);
         }
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
-        //else if () s = Integer.toHexString(value2) + "0" + Integer.toHexString(value1);
         else s = Integer.toHexString(value1);
-        Long l = Long.parseLong(s, 16);
-        return Float.intBitsToFloat(l.intValue());
+        int value1AsInt = Integer.parseInt(s, 16);
+        return Float.intBitsToFloat(value1AsInt);
     }
 
     private static String statusReader (String reversStatus){
-        String status = "";
+        StringBuilder status = new StringBuilder();
         for (int j = 0; j < 16; j++) {
-            if (reversStatus.length() > j) status = reversStatus.charAt(j) + status;
-            else status = status + "0";
+            if (reversStatus.length() > j) status.insert(0, reversStatus.charAt(j));
+            else status.append("0");
         }
         boolean dataExist = status.charAt(0) == '1';
         boolean measuring = status.charAt(1) == '1';
         boolean noData = status.charAt(2) == '1';
         boolean nullPeriod = status.charAt(3) == '1';
-        boolean gradError = status.charAt(4) == '1';
         boolean nullAddress = status.charAt(5) == '1';
         boolean disChannel = status.charAt(6) == '1';
-        int sensType = Integer.parseInt(status.substring(7, 9), 2);
-        int sensWare = Integer.parseInt(status.substring(9, 13), 2);
-        int activStatus = Integer.parseInt(status.substring(13), 2);
         if (dataExist && !nullPeriod)  return  "Данные получены";
         else if (measuring) return  "Идут измерения";
         else if (noData) return "Нет связи с датчиком";
@@ -427,8 +419,5 @@ public class Query{
         return String.format("%s.%s.%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
                 String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), String.valueOf(value3).length()<3 ? "20" +value3 : value3);
     }
-
-
-
 
 }
