@@ -31,27 +31,24 @@ public class ModbusReader {
 
     }
 
-   public void writeModeRegister (int offset, int register){
-        try {
+   public void writeModeRegister (int offset, int register) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+
             modbusMaster.writeSingleRegister(slaveID,offset, register);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+
    }
 
-   public void writeRegister(int offset, int[] registers){
-        try {
-            modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
-        } catch (Exception e) {
+   public void writeRegister(int offset, int[] registers) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-        }
+            modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
+
    }
    public int[] readHoldingsRegisters (int offset, int quantity, int count) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         int[] allRegisters = new int[quantity*count];
+       int indent = count;
        for (int i = 0; i < count; i++) {
            int[] registers = modbusMaster.readHoldingRegisters(slaveID,offset,quantity);
            for (int j = offset; j < offset+registers.length; j++) {
-               allRegisters[j-offset] = registers[j-offset];
+               allRegisters[j-indent] = registers[j-offset];
            }
            offset = offset+quantity;
        }

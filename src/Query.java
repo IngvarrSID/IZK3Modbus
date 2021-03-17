@@ -31,9 +31,104 @@ public class Query{
     private int t01Write;
     private float ck1Write;
     private float cd1Write;
+    private int checkPeriod;
+    private float errorWrite;
+    private float cs100;
+    private float cm;
+    private float k;
+    private float cs0;
+    private float tc;
+    private float csMin;
+    private float hMin;
+    private float tsd1;
+    private float tsd2;
+    private float autoMin;
+    private float autoMax;
+    private float d20;
+    private float kd;
+    private int min;
+    private int max;
+    private int emerMax;
+    private int noDensity;
 
     public int getMode1() {
         return mode1;
+    }
+
+    public int getCheckPeriod() {
+        return checkPeriod;
+    }
+
+    public float getErrorWrite() {
+        return errorWrite;
+    }
+
+    public float getCs100() {
+        return cs100;
+    }
+
+    public float getCm() {
+        return cm;
+    }
+
+    public float getK() {
+        return k;
+    }
+
+    public float getCs0() {
+        return cs0;
+    }
+
+    public float getTc() {
+        return tc;
+    }
+
+    public float getCsMin() {
+        return csMin;
+    }
+
+    public float gethMin() {
+        return hMin;
+    }
+
+    public float getTsd1() {
+        return tsd1;
+    }
+
+    public float getTsd2() {
+        return tsd2;
+    }
+
+    public float getAutoMin() {
+        return autoMin;
+    }
+
+    public float getAutoMax() {
+        return autoMax;
+    }
+
+    public float getD20() {
+        return d20;
+    }
+
+    public float getKd() {
+        return kd;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public int getEmerMax() {
+        return emerMax;
+    }
+
+    public int getNoDensity() {
+        return noDensity;
     }
 
     public int getSensorAddressWrite() {
@@ -179,13 +274,32 @@ public class Query{
 
     public void querySensor(){
         try {
-            int[] registerValues = modbusReader.readHoldingsRegisters(2,32,1);
+            int[] registerValues = modbusReader.readHoldingsRegisters(2,32,2);
             sensorAddressWrite = registerValues[0];
             timeoutWrite = registerValues[1];
             periodWrite = registerValues[3];
             t01Write = registerValues[4];
             ck1Write = hexToFloat(registerValues[5],registerValues[6]);
             cd1Write = hexToFloat(registerValues[7],registerValues[8]);
+            checkPeriod = registerValues[42];
+            errorWrite = hexToFloat(registerValues[40],registerValues[41]);
+            cs100 = hexToFloat(registerValues[9],registerValues[10]);
+            cm = hexToFloat(registerValues[11],registerValues[12]);
+            k = hexToFloat(registerValues[13],registerValues[14]);
+            cs0 = hexToFloat(registerValues[15],registerValues[16]);
+            tc = hexToFloat(registerValues[29],registerValues[30]);
+            csMin = hexToFloat(registerValues[17],registerValues[18]);
+            hMin = hexToFloat(registerValues[19],registerValues[20]);
+            tsd1 = hexToFloat(registerValues[25], registerValues[26]);
+            tsd2 = hexToFloat(registerValues[27],registerValues[28]);
+            autoMin = hexToFloat(registerValues[36],registerValues[37]);
+            autoMax = hexToFloat(registerValues[38],registerValues[39]);
+            d20 = hexToFloat(registerValues[21],registerValues[22]);
+            kd = hexToFloat(registerValues[23],registerValues[24]);
+            min = registerValues[31];
+            max = registerValues[32];
+            emerMax = registerValues[33];
+            noDensity = registerValues[35];
 
         } catch (Exception e){
             e.printStackTrace();

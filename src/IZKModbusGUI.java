@@ -45,6 +45,25 @@ public class IZKModbusGUI extends JFrame {
     private JTextField passwordField;
     private JTextField checkPeriodFieldWrite;
     private JTextField errorFieldWrite;
+    private JTextField cs100FieldWrite;
+    private JTextField cmFieldWrite;
+    private JTextField kFieldWrite;
+    private JTextField cs0FieldWrite;
+    private JTextField tcFieldWrite;
+    private JTextField csMinFieldWrite;
+    private JTextField hMinFieldWrite;
+    private JTextField tsd1FieldWrite;
+    private JTextField tsd2FieldWrite;
+    private JTextField autoMinFieldWrite;
+    private JTextField autoMaxFieldWrite;
+    private JTextField d20FieldWrite;
+    private JTextField kdFieldWrite;
+    private JTextField minFieldWrite;
+    private JTextField maxFieldWrite;
+    private JTextField emerMaxFieldWrite;
+    private JTextField noDensityFieldWrite;
+    private JButton minButton;
+    private JButton maxButton;
     private Terminal terminal;
     private MasterModbus masterModbus;
     private Timer timer1;
@@ -76,6 +95,25 @@ public class IZKModbusGUI extends JFrame {
     private int t01Write;
     private float ck1Write;
     private float cd1Write;
+    private int checkPeriod;
+    private float errorWrite;
+    private float cs100;
+    private float cm;
+    private float k;
+    private float cs0;
+    private float tc;
+    private float csMin;
+    private float hMin;
+    private float tsd1;
+    private float tsd2;
+    private float autoMin;
+    private float autoMax;
+    private float d20;
+    private float kd;
+    private int min;
+    private int max;
+    private int emerMax;
+    private int noDensity;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus){
         this.terminal = terminal;
@@ -111,14 +149,21 @@ public class IZKModbusGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int idx = ((JTabbedPane)e.getSource()).indexAtLocation(e.getX(), e.getY());
                 System.out.println("Выбрана вкладка " + idx);
-                if (queryBox.isSelected()) queryBox.setSelected(false);
+                if (queryBox.isSelected() && idx !=-1) queryBox.setSelected(false);
                 switch (idx){
-                    case 0:
+                    case 0: //info
                         refButton.doClick();
                         break;
-                    case 2:
+                    case 2: //sensor
+                        try {
                         modbusReader.writeModeRegister(0,5);
                         modbusReader.writeModeRegister(1,0);
+                } catch (Exception e1){
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Ошибка инициализации","Ошибка",0);
+
+                }
                         query.querySensor();
                         sensorAddressWrite = query.getSensorAddressWrite();
                         addressSensorFieldWrite.setText(String.valueOf(sensorAddressWrite));
@@ -132,6 +177,45 @@ public class IZKModbusGUI extends JFrame {
                         ck1FieldWrite.setText(String.format("%.1f",ck1Write));
                         cd1Write = query.getCd1Write();
                         cd1FieldWrite.setText(String.format("%.1f",cd1Write));
+                        checkPeriod = query.getCheckPeriod();
+                        checkPeriodFieldWrite.setText(String.valueOf(checkPeriod));
+                        errorWrite = query.getErrorWrite();
+                        errorFieldWrite.setText(String.format("%.2f",errorWrite));
+                        cs100 = query.getCs100();
+                        cs100FieldWrite.setText(String.format("%.1f",cs100));
+                        cm = query.getCm();
+                        cmFieldWrite.setText(String.format("%.1f",cm));
+                        k = query.getK();
+                        kFieldWrite.setText(String.format("%.3f",k));
+                        cs0 = query.getCs0();
+                        cs0FieldWrite.setText(String.format("%.1f",cs0));
+                        tc = query.getTc();
+                        tcFieldWrite.setText(String.format("%.3f",tc));
+                        csMin = query.getCsMin();
+                        csMinFieldWrite.setText(String.format("%.1f",csMin));
+                        hMin = query.gethMin();
+                        hMinFieldWrite.setText(String.format("%.1f",hMin));
+                        tsd1 = query.getTsd1();
+                        tsd1FieldWrite.setText(String.format("%.3f",tsd1));
+                        tsd2 = query.getTsd2();
+                        tsd2FieldWrite.setText(String.format("%.3f",tsd2));
+                        autoMin = query.getAutoMin();
+                        autoMinFieldWrite.setText(String.format("%.1f",autoMin));
+                        autoMax = query.getAutoMax();
+                        autoMaxFieldWrite.setText(String.format("%.1f",autoMax));
+                        d20 = query.getD20();
+                        d20FieldWrite.setText(String.format("%.1f",d20));
+                        kd = query.getKd();
+                        kdFieldWrite.setText(String.format("%.3f",kd));
+                        min = query.getMin();
+                        minFieldWrite.setText(String.valueOf(min));
+                        max = query.getMax();
+                        maxFieldWrite.setText(String.valueOf(max));
+                        emerMax = query.getEmerMax();
+                        emerMaxFieldWrite.setText(String.valueOf(emerMax));
+                        noDensity = query.getNoDensity();
+                        noDensityFieldWrite.setText(String.valueOf(noDensity));
+
                         break;
 
                 }
@@ -151,7 +235,108 @@ public class IZKModbusGUI extends JFrame {
         ck1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(7));
         floatFilter(cd1FieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
         cd1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(9));
+        digitFilter(checkPeriodFieldWrite,3);
+        checkPeriodFieldWrite.addActionListener(new OneRegisterWriteActionListener(44));
+        floatFilter(errorFieldWrite,"^[0-9]{0,2}+[,]?[0-9]{0,2}$");
+        errorFieldWrite.addActionListener(new TwoRegisterWriteActionListener(42));
+        floatFilter(cs100FieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        cs100FieldWrite.addActionListener(new TwoRegisterWriteActionListener(11));
+        floatFilter(cmFieldWrite,"^-?[0-9]{0,3}+[,]?[0-9]?$");
+        cmFieldWrite.addActionListener(new TwoRegisterWriteActionListener(13));
+        floatFilter(kFieldWrite,"^[0-9]?+[,]?[0-9]{0,3}$");
+        kFieldWrite.addActionListener(new TwoRegisterWriteActionListener(15));
+        floatFilter(cs0FieldWrite,"^-?[0-9]{0,3}+[,]?[0-9]?$");
+        cs0FieldWrite.addActionListener(new TwoRegisterWriteActionListener(17));
+        floatFilter(csMinFieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
+        csMinFieldWrite.addActionListener(new TwoRegisterWriteActionListener(19));
+        floatFilter(hMinFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        hMinFieldWrite.addActionListener(new TwoRegisterWriteActionListener(21));
+        floatFilter(tsd1FieldWrite,"^[0-9]?+[,]?[0-9]{0,3}$");
+        tsd1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(27));
+        floatFilter(tsd2FieldWrite,"^[0-9]?+[,]?[0-9]{0,3}$");
+        tsd2FieldWrite.addActionListener(new TwoRegisterWriteActionListener(29));
+        floatFilter(tcFieldWrite,"^[0-9]?+[,]?[0-9]{0,3}$");
+        tcFieldWrite.addActionListener(new TwoRegisterWriteActionListener(31));
+        floatFilter(d20FieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        d20FieldWrite.addActionListener(new TwoRegisterWriteActionListener(23));
+        floatFilter(kdFieldWrite, "^[0-9]?+[,]?[0-9]{0,3}$");
+        kdFieldWrite.addActionListener(new TwoRegisterWriteActionListener(25));
+        digitFilter(minFieldWrite,5);
+        minFieldWrite.addActionListener(new OneRegisterWriteActionListener(33));
+        digitFilter(maxFieldWrite,5);
+        maxFieldWrite.addActionListener(new OneRegisterWriteActionListener(34));
+        digitFilter(emerMaxFieldWrite,5);
+        emerMaxFieldWrite.addActionListener(new OneRegisterWriteActionListener(35));
+        digitFilter(noDensityFieldWrite,3);
+        noDensityFieldWrite.addActionListener(new OneRegisterWriteActionListener(37));
+        floatFilter(autoMinFieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
+        minButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String field = autoMinFieldWrite.getText();
+                String s;
+                if (field.contains(",")) s = field.replace(",",".");
+                else s = field;
+                float f = Float.parseFloat(s);
+                String sF = hex(f);
 
+                sF = sF.replace("0x","");
+                int [] registers = {Integer.valueOf(sF.substring(4,8),16), Integer.valueOf(sF.substring(0,4),16)};
+                for (int i: registers) {
+                    System.out.println(i);
+                }
+                try {
+                    modbusReader.writeRegister(38, registers);
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Запись завершена! Изменения появятся\nпосле получения новых данных.", "Подтверждение",1);
+                } catch (Exception q){
+                    q.printStackTrace();
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Ошибка записи!","Ошибка",0);
+                }
+
+            }
+            public String hex(int n){
+                return String.format("0x%8s", Integer.toHexString(n)).replace(' ','0');
+            }
+            public String hex(float f){
+                return hex(Float.floatToIntBits(f));
+            }
+        });
+        floatFilter(autoMaxFieldWrite,"^[0-9]{0,3}+[,]?[0-9]?$");
+        maxButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String field = autoMaxFieldWrite.getText();
+                String s;
+                if (field.contains(",")) s = field.replace(",",".");
+                else s = field;
+                float f = Float.parseFloat(s);
+                String sF = hex(f);
+
+                sF = sF.replace("0x","");
+                int [] registers = {Integer.valueOf(sF.substring(4,8),16), Integer.valueOf(sF.substring(0,4),16)};
+                for (int i: registers) {
+                    System.out.println(i);
+                }
+                try {
+                    modbusReader.writeRegister(40, registers);
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Запись завершена", "Подтверждение",1);
+                } catch (Exception q){
+                    q.printStackTrace();
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Ошибка записи!","Ошибка",0);
+                }
+
+            }
+            public String hex(int n){
+                return String.format("0x%8s", Integer.toHexString(n)).replace(' ','0');
+            }
+            public String hex(float f){
+                return hex(Float.floatToIntBits(f));
+            }
+        });
 
 
 //info
@@ -159,8 +344,15 @@ public class IZKModbusGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (queryBox.isSelected()) queryBox.setSelected(false);
-                modbusReader.writeModeRegister(1,16);
-                modbusReader.writeModeRegister(0,25);
+                try {
+                    modbusReader.writeModeRegister(1, 16);
+                    modbusReader.writeModeRegister(0, 25);
+                } catch (Exception e3){
+                    e3.printStackTrace();
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Ошибка инициализации","Ошибка",0);
+
+                }
                 query.queryInfo();
                 versionFirm = query.getVersionFirm();
                 versionFirmField.setText(versionFirm);
@@ -197,8 +389,18 @@ public class IZKModbusGUI extends JFrame {
                         registers[j] = Integer.valueOf(hex, 16);
                         j++;
                     }
-                    modbusReader.writeRegister(2,registers);
-                    refButton.doClick();
+                    try {
+                        modbusReader.writeRegister(2, registers);
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Запись завершена", "",1);
+                        refButton.doClick();
+                    } catch (Exception e1){
+                        e1.printStackTrace();
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Ошибка записи!","",0);
+                        passwordField.setText("Ошибка записи");
+
+                    }
                 }
                 else {
                     passwordField.setText("Не верный код активации!");
@@ -212,7 +414,15 @@ public class IZKModbusGUI extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (queryBox.isSelected()) {
+                 try{
+                    modbusReader.writeModeRegister(1,0);
                     timer1.start();
+                } catch (Exception e1){
+                    e1.printStackTrace();
+                     timer1.stop();
+                    JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                            "Ошибка инициализации","Ошибка",0);
+                }
 
                 }
                 else {
@@ -226,7 +436,7 @@ public class IZKModbusGUI extends JFrame {
         timer1 = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                modbusReader.writeModeRegister(1,0);
+
                 query.queryStatus();
                 status = query.getStatus();
                 statLabel.setText(status);
@@ -285,9 +495,16 @@ public class IZKModbusGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             field = ((JTextField)e.getSource()).getText();
-            modbusReader.writeModeRegister(offset,Integer.parseInt(field));
-            JOptionPane.showMessageDialog(IZKModbusGUI.this,
-                    "Запись завершена");
+            try {
+                modbusReader.writeModeRegister(offset, Integer.parseInt(field));
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Запись завершена", "Подтверждение",1);
+            } catch (Exception e2){
+                e2.printStackTrace();
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Ошибка записи!","Ошибка",0);
+
+            }
         }
     }
 
@@ -311,8 +528,15 @@ public class IZKModbusGUI extends JFrame {
             for (int i: registers) {
                 System.out.println(i);
             }
-            modbusReader.writeRegister(offset,registers);
-
+            try {
+                modbusReader.writeRegister(offset, registers);
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Запись завершена", "Подтверждение",1);
+            } catch (Exception q){
+                q.printStackTrace();
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Ошибка записи!","Ошибка",0);
+            }
         }
 
         public String hex(int n){
