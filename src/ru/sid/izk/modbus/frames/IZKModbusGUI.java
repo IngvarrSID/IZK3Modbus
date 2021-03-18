@@ -65,6 +65,9 @@ public class IZKModbusGUI extends JFrame {
     private JTextField noDensityFieldWrite;
     private JButton minButton;
     private JButton maxButton;
+    private JButton refreshSensorButton;
+    private JComboBox<String> channelsBox;
+    private JLabel channelLabel;
     private Timer timer1;
     private final ModbusReader modbusReader;
 
@@ -103,47 +106,106 @@ public class IZKModbusGUI extends JFrame {
                         refButton.doClick();
                         break;
                     case 2: //sensor
-                        try {
+                        try{
                             modbusReader.writeModeRegister(0, 5);
                             modbusReader.writeModeRegister(1, 0);
-                        } catch (Exception e1) {
+                            channelsBox.setSelectedIndex(0);
+                        }catch (Exception e1){
                             e1.printStackTrace();
                             JOptionPane.showMessageDialog(IZKModbusGUI.this,
-                                    "Ошибка инициализации: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-
+                                    "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                         }
-                        query.querySensor();
-                        addressSensorFieldWrite.setText(String.valueOf(query.getSensorAddressWrite()));
-                        timeoutFieldWrite.setText(String.valueOf(query.getTimeoutWrite()));
-                        periodFieldWrite.setText(String.valueOf(query.getPeriodWrite()));
-                        t01FieldWrite.setText(String.valueOf(query.getT01Write()));
-                        ck1FieldWrite.setText(String.format("%.1f",query.getCk1Write()));
-                        cd1FieldWrite.setText(String.format("%.1f", query.getCd1Write()));
-                        checkPeriodFieldWrite.setText(String.valueOf(query.getCheckPeriod()));
-                        errorFieldWrite.setText(String.format("%.2f", query.getErrorWrite()));
-                        cs100FieldWrite.setText(String.format("%.1f", query.getCs100()));
-                        cmFieldWrite.setText(String.format("%.1f", query.getCm()));
-                        kFieldWrite.setText(String.format("%.3f", query.getK()));
-                        cs0FieldWrite.setText(String.format("%.1f", query.getCs0()));
-                        tcFieldWrite.setText(String.format("%.3f", query.getTc()));
-                        csMinFieldWrite.setText(String.format("%.1f", query.getCsMin()));
-                        hMinFieldWrite.setText(String.format("%.1f", query.gethMin()));
-                        tsd1FieldWrite.setText(String.format("%.3f", query.getTsd1()));
-                        tsd2FieldWrite.setText(String.format("%.3f", query.getTsd2()));
-                        autoMinFieldWrite.setText(String.format("%.1f", query.getAutoMin()));
-                        autoMaxFieldWrite.setText(String.format("%.1f", query.getAutoMax()));
-                        d20FieldWrite.setText(String.format("%.1f", query.getD20()));
-                        kdFieldWrite.setText(String.format("%.3f", query.getKd()));
-                        minFieldWrite.setText(String.valueOf(query.getMin()));
-                        maxFieldWrite.setText(String.valueOf(query.getMax()));
-                        emerMaxFieldWrite.setText(String.valueOf(query.getEmerMax()));
-                        noDensityFieldWrite.setText(String.valueOf(query.getNoDensity()));
+                        channelLabel.setText("Настройка 1 измерительного канала");
+                        refreshSensorButton.doClick();
                         break;
                 }
             }
         });
 
+        //channels
+        String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4"};
+        for (String s: channels) {
+            channelsBox.addItem(s);
+        }
+        channelsBox.setSelectedIndex(0);
+        channelsBox.addActionListener(e -> {
+            try{
+                int index = (((JComboBox<?>) e.getSource()).getSelectedIndex());
+                System.out.println(index);
+                switch (index) {
+                    case 0:
+                        modbusReader.writeModeRegister(0, 5);
+                        modbusReader.writeModeRegister(1, 0);
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                        channelLabel.setText("Настройка 1 измерительного канала");
+                        refreshSensorButton.doClick();
+                        break;
+                    case 1:
+                        modbusReader.writeModeRegister(0, 6);
+                        modbusReader.writeModeRegister(1, 1);
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                        channelLabel.setText("Настройка 2 измерительного канала");
+                        refreshSensorButton.doClick();
+                        break;
+                    case 2:
+                        modbusReader.writeModeRegister(0, 7);
+                        modbusReader.writeModeRegister(1, 2);
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                        channelLabel.setText("Настройка 3 измерительного канала");
+                        refreshSensorButton.doClick();
+                        break;
+                    case 3:
+                        modbusReader.writeModeRegister(0, 8);
+                        modbusReader.writeModeRegister(1, 3);
+                        JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                                "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                        channelLabel.setText("Настройка 4 измерительного канала");
+                        refreshSensorButton.doClick();
+                        break;
+                }
+            }catch (Exception e1){
+                e1.printStackTrace();
+                JOptionPane.showMessageDialog(IZKModbusGUI.this,
+                        "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
         //sensor
+        refreshSensorButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                query.querySensor();
+                addressSensorFieldWrite.setText(String.valueOf(query.getSensorAddressWrite()));
+                timeoutFieldWrite.setText(String.valueOf(query.getTimeoutWrite()));
+                periodFieldWrite.setText(String.valueOf(query.getPeriodWrite()));
+                t01FieldWrite.setText(String.valueOf(query.getT01Write()));
+                ck1FieldWrite.setText(String.format("%.1f",query.getCk1Write()));
+                cd1FieldWrite.setText(String.format("%.1f", query.getCd1Write()));
+                checkPeriodFieldWrite.setText(String.valueOf(query.getCheckPeriod()));
+                errorFieldWrite.setText(String.format("%.2f", query.getErrorWrite()));
+                cs100FieldWrite.setText(String.format("%.1f", query.getCs100()));
+                cmFieldWrite.setText(String.format("%.1f", query.getCm()));
+                kFieldWrite.setText(String.format("%.3f", query.getK()));
+                cs0FieldWrite.setText(String.format("%.1f", query.getCs0()));
+                tcFieldWrite.setText(String.format("%.3f", query.getTc()));
+                csMinFieldWrite.setText(String.format("%.1f", query.getCsMin()));
+                hMinFieldWrite.setText(String.format("%.1f", query.gethMin()));
+                tsd1FieldWrite.setText(String.format("%.3f", query.getTsd1()));
+                tsd2FieldWrite.setText(String.format("%.3f", query.getTsd2()));
+                autoMinFieldWrite.setText(String.format("%.1f", query.getAutoMin()));
+                autoMaxFieldWrite.setText(String.format("%.1f", query.getAutoMax()));
+                d20FieldWrite.setText(String.format("%.1f", query.getD20()));
+                kdFieldWrite.setText(String.format("%.3f", query.getKd()));
+                minFieldWrite.setText(String.valueOf(query.getMin()));
+                maxFieldWrite.setText(String.valueOf(query.getMax()));
+                emerMaxFieldWrite.setText(String.valueOf(query.getEmerMax()));
+                noDensityFieldWrite.setText(String.valueOf(query.getNoDensity()));
+            }
+        });
         digitFilter(addressSensorFieldWrite, 2);
         addressSensorFieldWrite.addActionListener(new OneRegisterWriteActionListener(2));
         digitFilter(timeoutFieldWrite, 5);
@@ -152,7 +214,7 @@ public class IZKModbusGUI extends JFrame {
         periodFieldWrite.addActionListener(new OneRegisterWriteActionListener(5));
         digitFilter(t01FieldWrite, 5);
         t01FieldWrite.addActionListener(new OneRegisterWriteActionListener(6));
-        floatFilter(ck1FieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        floatFilter(ck1FieldWrite, "^[0-9]{1,3}+[,]?[0-9]?$");
         ck1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(7));
         floatFilter(cd1FieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         cd1FieldWrite.addActionListener(new TwoRegisterWriteActionListener(9));
@@ -324,7 +386,7 @@ public class IZKModbusGUI extends JFrame {
         queryBox.addItemListener(e -> {
             if (queryBox.isSelected()) {
                 try {
-                    modbusReader.writeModeRegister(1, 0);
+                    modbusReader.writeModeRegister(1, channelsBox.getSelectedIndex());
                     timer1.start();
                 } catch (Exception e1) {
                     e1.printStackTrace();

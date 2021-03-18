@@ -384,8 +384,8 @@ public class Query{
         }
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
         else s = Integer.toHexString(value1);
-        int value1AsInt = Integer.parseInt(s, 16);
-        return Float.intBitsToFloat(value1AsInt);
+        Long value1AsLong = Long.parseLong(s, 16);
+        return Float.intBitsToFloat(value1AsLong.intValue());
     }
 
     private static String statusReader (String reversStatus){
