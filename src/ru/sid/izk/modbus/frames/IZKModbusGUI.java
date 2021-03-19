@@ -69,13 +69,50 @@ public class IZKModbusGUI extends JFrame {
     private JButton refreshSensorButton;
     private JComboBox<String> channelsBox;
     private JLabel channelLabel;
-    private final Timer timer1;
+    private JButton refreshSettingsButton;
+    private JTextField textField1;
+    private JButton oneChannelButton;
+    private JButton threeChannelButton;
+    private JButton fourChannelButton;
+    private JButton twoChannelButton;
+    private JComboBox<String> numberRelayBox1;
+    private JComboBox<String> settingRelayBox1;
+    private JComboBox<String> modeRelayBox1;
+    private JComboBox<String> numberRelayBox2;
+    private JComboBox<String> numberRelayBox3;
+    private JComboBox<String> numberRelayBox4;
+    private JComboBox<String> numberRelayBox5;
+    private JComboBox<String> numberRelayBox6;
+    private JComboBox<String> numberRelayBox7;
+    private JComboBox<String> numberRelayBox8;
+    private JComboBox<String> numberRelayBox9;
+    private JComboBox<String> numberRelayBox10;
+    private JComboBox<String> settingRelayBox2;
+    private JComboBox<String> settingRelayBox3;
+    private JComboBox<String> settingRelayBox4;
+    private JComboBox<String> settingRelayBox5;
+    private JComboBox<String> settingRelayBox6;
+    private JComboBox<String> settingRelayBox7;
+    private JComboBox<String> settingRelayBox8;
+    private JComboBox<String> settingRelayBox9;
+    private JComboBox<String> settingRelayBox10;
+    private JComboBox<String> modeRelayBox2;
+    private JComboBox<String> modeRelayBox3;
+    private JComboBox<String> modeRelayBox4;
+    private JComboBox<String> modeRelayBox5;
+    private JComboBox<String> modeRelayBox6;
+    private JComboBox<String> modeRelayBox7;
+    private JComboBox<String> modeRelayBox8;
+    private JComboBox<String> modeRelayBox9;
+    private JComboBox<String> modeRelayBox10;
+    private final Timer connectionTimeoutTimer;
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
 
         initWindow();
+        initIZKSettings();
         nameStatLabel.setText("Состояние датчика:");
         statLabel.setText("Нет информации");
         if (!terminal.isError())
@@ -103,7 +140,7 @@ public class IZKModbusGUI extends JFrame {
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        timer1 = new Timer(500, new TimerActionListener(query, this));
+        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this));
     }
 
     private void initWindow() {
@@ -114,6 +151,51 @@ public class IZKModbusGUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1440, 900);
         setLocationRelativeTo(null);
+    }
+
+    private void initIZKSettings(){
+        final String[] numbersRelays = {"1","2","3","4","5","6","7","8","9","10"};
+        final String[] settingsRelays = {"Не используется","Минимимум по любому каналу","Максимум по любому каналу","Аварийный максимум по любому каналу","Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
+                "Минимум по второму каналу", "Минимум по третьему каналу","Минимум по четвертому каналу","Максимум по первому каналу", "Максимум по второму каналу", "Максимум по третьему каналу", "Максимум по четвертому каналу","Аварийный максимум по первому каналу",
+                "Аварийный максимум по второму каналу", "Аварийный максимум по третьему каналу", "Аварийный максимум по четвертому каналу","Предельное давление по первому каналу", "Предельное давление по второму каналу","Предельное давление по третьему каналу",
+                "Предельное давление по четветому каналу","Нет потока по первому каналу", "Нет потока по второму каналу", "Нет потока по третьему канаду", "Нет потока по четвертому каналу"};
+        final String[] modesRelays = {"Не используется","Нормально открыт","Нормально закрыт","Мигание"};
+        for (String s: numbersRelays) {
+            numberRelayBox1.addItem(s);
+            numberRelayBox2.addItem(s);
+            numberRelayBox3.addItem(s);
+            numberRelayBox4.addItem(s);
+            numberRelayBox5.addItem(s);
+            numberRelayBox6.addItem(s);
+            numberRelayBox7.addItem(s);
+            numberRelayBox8.addItem(s);
+            numberRelayBox9.addItem(s);
+            numberRelayBox10.addItem(s);
+        }
+        for (String s: settingsRelays) {
+            settingRelayBox1.addItem(s);
+            settingRelayBox2.addItem(s);
+            settingRelayBox3.addItem(s);
+            settingRelayBox4.addItem(s);
+            settingRelayBox5.addItem(s);
+            settingRelayBox6.addItem(s);
+            settingRelayBox7.addItem(s);
+            settingRelayBox8.addItem(s);
+            settingRelayBox9.addItem(s);
+            settingRelayBox10.addItem(s);
+        }
+        for (String s:modesRelays) {
+            modeRelayBox1.addItem(s);
+            modeRelayBox2.addItem(s);
+            modeRelayBox3.addItem(s);
+            modeRelayBox4.addItem(s);
+            modeRelayBox5.addItem(s);
+            modeRelayBox6.addItem(s);
+            modeRelayBox7.addItem(s);
+            modeRelayBox8.addItem(s);
+            modeRelayBox9.addItem(s);
+            modeRelayBox10.addItem(s);
+        }
     }
 
     private void filterAndAddRegisterActionListeners(ModbusReader modbusReader) {
@@ -168,8 +250,8 @@ public class IZKModbusGUI extends JFrame {
         floatFilter(autoMaxFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
     }
 
-    public Timer getTimer1() {
-        return timer1;
+    public Timer getConnectionTimeoutTimer() {
+        return connectionTimeoutTimer;
     }
 
     public JCheckBox getQueryBox() {

@@ -21,7 +21,7 @@ public class QueryBoxItemListener implements ItemListener {
     @Override
     public void itemStateChanged(ItemEvent e) {
 
-        final Timer timer1 = izkModbusGUI.getTimer1();
+        final Timer timer1 = izkModbusGUI.getConnectionTimeoutTimer();
         if (izkModbusGUI.getQueryBox().isSelected()) {
             try {
                 modbusReader.writeModeRegister(1, izkModbusGUI.getChannelsBox().getSelectedIndex());
