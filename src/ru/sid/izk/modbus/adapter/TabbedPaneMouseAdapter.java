@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 public class TabbedPaneMouseAdapter extends MouseAdapter {
 
     private static final int INFO = 0;
-    public static final int IZK_SETTINGS = 1;
+    private static final int IZK_SETTINGS = 1;
     private static final int SENSOR = 2;
     private final IZKModbusGUI izkModbusGUI;
     private final ModbusReader modbusReader;

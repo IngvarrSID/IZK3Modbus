@@ -112,6 +112,7 @@ public class IZKModbusGUI extends JFrame {
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
 
         initWindow();
+        initIZKSettings();
         nameStatLabel.setText("Состояние датчика:");
         statLabel.setText("Нет информации");
         if (!terminal.isError())
@@ -123,12 +124,41 @@ public class IZKModbusGUI extends JFrame {
         final Query query = new Query(modbusReader);
         //menu
         tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this, modbusReader));
-        //IZK settings
+        //channels
+        final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4"};
+        for (String s : channels) {
+            channelsBox.addItem(s);
+        }
+        channelsBox.setSelectedIndex(0);
+        channelsBox.addActionListener(new ChannelsBoxActionListener(this, modbusReader));
+        //sensor
+        refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
+        filterAndAddRegisterActionListeners(modbusReader);
+        minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
+        maxButton.addActionListener(new MaxButtonActionListener(this, modbusReader));
+        //info
+        refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
+        activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
+        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
+        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this));
+    }
+
+    private void initWindow() {
+
+        setContentPane(mainPanel);
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(1440, 900);
+        setLocationRelativeTo(null);
+    }
+
+    private void initIZKSettings(){
         final String[] numbersRelays = {"1","2","3","4","5","6","7","8","9","10"};
         final String[] settingsRelays = {"Не используется","Минимимум по любому каналу","Максимум по любому каналу","Аварийный максимум по любому каналу","Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
-        "Минимум по второму каналу", "Минимум по третьему каналу","Минимум по четвертому каналу","Максимум по первому каналу", "Максимум по второму каналу", "Максимум по третьему каналу", "Максимум по четвертому каналу","Аварийный максимум по первому каналу",
-        "Аварийный максимум по второму каналу", "Аварийный максимум по третьему каналу", "Аварийный максимум по четвертому каналу","Предельное давление по первому каналу", "Предельное давление по второму каналу","Предельное давление по третьему каналу",
-        "Предельное давление по четветому каналу","Нет потока по первому каналу", "Нет потока по второму каналу", "Нет потока по третьему канаду", "Нет потока по четвертому каналу"};
+                "Минимум по второму каналу", "Минимум по третьему каналу","Минимум по четвертому каналу","Максимум по первому каналу", "Максимум по второму каналу", "Максимум по третьему каналу", "Максимум по четвертому каналу","Аварийный максимум по первому каналу",
+                "Аварийный максимум по второму каналу", "Аварийный максимум по третьему каналу", "Аварийный максимум по четвертому каналу","Предельное давление по первому каналу", "Предельное давление по второму каналу","Предельное давление по третьему каналу",
+                "Предельное давление по четветому каналу","Нет потока по первому каналу", "Нет потока по второму каналу", "Нет потока по третьему канаду", "Нет потока по четвертому каналу"};
         final String[] modesRelays = {"Не используется","Нормально открыт","Нормально закрыт","Мигание"};
         for (String s: numbersRelays) {
             numberRelayBox1.addItem(s);
@@ -166,33 +196,6 @@ public class IZKModbusGUI extends JFrame {
             modeRelayBox9.addItem(s);
             modeRelayBox10.addItem(s);
         }
-        //channels
-        final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4"};
-        for (String s : channels) {
-            channelsBox.addItem(s);
-        }
-        channelsBox.setSelectedIndex(0);
-        channelsBox.addActionListener(new ChannelsBoxActionListener(this, modbusReader));
-        //sensor
-        refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
-        filterAndAddRegisterActionListeners(modbusReader);
-        minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
-        maxButton.addActionListener(new MaxButtonActionListener(this, modbusReader));
-        //info
-        refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
-        activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
-        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this));
-    }
-
-    private void initWindow() {
-
-        setContentPane(mainPanel);
-        setLocationRelativeTo(null);
-        setVisible(true);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1440, 900);
-        setLocationRelativeTo(null);
     }
 
     private void filterAndAddRegisterActionListeners(ModbusReader modbusReader) {
