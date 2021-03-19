@@ -44,6 +44,7 @@ public class MaxButtonActionListener implements ActionListener {
     }
 
     //TODO WTF 2 methods?? Also duplicated in MinButtonActionListener, OMG!!!
+    //Подумаешь
     public String hex(int n) {
         return String.format("0x%8s", Integer.toHexString(n)).replace(' ', '0');
     }

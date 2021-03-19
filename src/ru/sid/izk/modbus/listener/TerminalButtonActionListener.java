@@ -20,7 +20,7 @@ public class TerminalButtonActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         new IZKTerminal();
-        izkModbusGUI.getTimer1().stop();
+        izkModbusGUI.getConnectionTimeoutTimer().stop();
         masterModbus.disconnect();
         izkModbusGUI.dispose();
     }
