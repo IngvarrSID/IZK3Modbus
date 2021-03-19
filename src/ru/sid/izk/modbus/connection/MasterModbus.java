@@ -5,6 +5,7 @@ import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 
 
 public class MasterModbus {
+
     private ModbusMaster modbusMaster;
     private final int id;
 
