@@ -70,7 +70,7 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> channelsBox;
     private JLabel channelLabel;
     private JButton refreshSettingsButton;
-    private JTextField textField1;
+    private JTextField addressIZK;
     private JButton oneChannelButton;
     private JButton threeChannelButton;
     private JButton fourChannelButton;
@@ -106,13 +106,16 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
     private final Timer connectionTimeoutTimer;
+    private final String[] numbersRelays;
+    private final String[] settingsRelays;
+    private final String[] modesRelays;
+
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
 
         initWindow();
-        initIZKSettings();
         nameStatLabel.setText("Состояние датчика:");
         statLabel.setText("Нет информации");
         if (!terminal.isError())
@@ -123,7 +126,7 @@ public class IZKModbusGUI extends JFrame {
         modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         final Query query = new Query(modbusReader);
         //menu
-        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this, modbusReader));
+        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this));
         //channels
         final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4"};
         for (String s : channels) {
@@ -141,6 +144,15 @@ public class IZKModbusGUI extends JFrame {
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
         connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this));
+        //settings
+        numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
+                "Минимум по второму каналу", "Минимум по третьему каналу", "Минимум по четвертому каналу", "Максимум по первому каналу", "Максимум по второму каналу", "Максимум по третьему каналу", "Максимум по четвертому каналу", "Аварийный максимум по первому каналу",
+                "Аварийный максимум по второму каналу", "Аварийный максимум по третьему каналу", "Аварийный максимум по четвертому каналу", "Предельное давление по первому каналу", "Предельное давление по второму каналу", "Предельное давление по третьему каналу",
+                "Предельное давление по четветому каналу", "Нет потока по первому каналу", "Нет потока по второму каналу", "Нет потока по третьему канаду", "Нет потока по четвертому каналу"};
+        modesRelays = new String[]{"Не используется", "Нормально открыт", "Нормально закрыт", "Мигание"};
+        initIZKSettings();
+        refreshSettingsButton.addActionListener(new RefreshSettingsButtonActionListener(query,modbusReader,this));
     }
 
     private void initWindow() {
@@ -151,15 +163,10 @@ public class IZKModbusGUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1440, 900);
         setLocationRelativeTo(null);
+        setTitle("Конфигуратор СУ-5Д. Влагомер");
     }
 
     private void initIZKSettings(){
-        final String[] numbersRelays = {"1","2","3","4","5","6","7","8","9","10"};
-        final String[] settingsRelays = {"Не используется","Минимимум по любому каналу","Максимум по любому каналу","Аварийный максимум по любому каналу","Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
-                "Минимум по второму каналу", "Минимум по третьему каналу","Минимум по четвертому каналу","Максимум по первому каналу", "Максимум по второму каналу", "Максимум по третьему каналу", "Максимум по четвертому каналу","Аварийный максимум по первому каналу",
-                "Аварийный максимум по второму каналу", "Аварийный максимум по третьему каналу", "Аварийный максимум по четвертому каналу","Предельное давление по первому каналу", "Предельное давление по второму каналу","Предельное давление по третьему каналу",
-                "Предельное давление по четветому каналу","Нет потока по первому каналу", "Нет потока по второму каналу", "Нет потока по третьему канаду", "Нет потока по четвертому каналу"};
-        final String[] modesRelays = {"Не используется","Нормально открыт","Нормально закрыт","Мигание"};
         for (String s: numbersRelays) {
             numberRelayBox1.addItem(s);
             numberRelayBox2.addItem(s);
@@ -199,7 +206,7 @@ public class IZKModbusGUI extends JFrame {
     }
 
     private void filterAndAddRegisterActionListeners(ModbusReader modbusReader) {
-
+        //sensor
         digitFilter(addressSensorFieldWrite, 2);
         addressSensorFieldWrite.addActionListener(new OneRegisterWriteActionListener(2, this, modbusReader));
         digitFilter(timeoutFieldWrite, 5);
@@ -248,6 +255,10 @@ public class IZKModbusGUI extends JFrame {
         noDensityFieldWrite.addActionListener(new OneRegisterWriteActionListener(37, this, modbusReader));
         floatFilter(autoMinFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         floatFilter(autoMaxFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        //settings
+        digitFilter(addressIZK,2);
+        addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
+
     }
 
     public Timer getConnectionTimeoutTimer() {
@@ -448,5 +459,161 @@ public class IZKModbusGUI extends JFrame {
 
     public ModbusReader getModbusReader() {
         return modbusReader;
+    }
+
+    public JButton getRefreshSettingsButton() {
+        return refreshSettingsButton;
+    }
+
+    public JTextField getAddressIZK() {
+        return addressIZK;
+    }
+
+    public JButton getOneChannelButton() {
+        return oneChannelButton;
+    }
+
+    public JButton getThreeChannelButton() {
+        return threeChannelButton;
+    }
+
+    public JButton getFourChannelButton() {
+        return fourChannelButton;
+    }
+
+    public JButton getTwoChannelButton() {
+        return twoChannelButton;
+    }
+
+    public JComboBox<String> getNumberRelayBox1() {
+        return numberRelayBox1;
+    }
+
+    public JComboBox<String> getSettingRelayBox1() {
+        return settingRelayBox1;
+    }
+
+    public JComboBox<String> getModeRelayBox1() {
+        return modeRelayBox1;
+    }
+
+    public JComboBox<String> getNumberRelayBox2() {
+        return numberRelayBox2;
+    }
+
+    public JComboBox<String> getNumberRelayBox3() {
+        return numberRelayBox3;
+    }
+
+    public JComboBox<String> getNumberRelayBox4() {
+        return numberRelayBox4;
+    }
+
+    public JComboBox<String> getNumberRelayBox5() {
+        return numberRelayBox5;
+    }
+
+    public JComboBox<String> getNumberRelayBox6() {
+        return numberRelayBox6;
+    }
+
+    public JComboBox<String> getNumberRelayBox7() {
+        return numberRelayBox7;
+    }
+
+    public JComboBox<String> getNumberRelayBox8() {
+        return numberRelayBox8;
+    }
+
+    public JComboBox<String> getNumberRelayBox9() {
+        return numberRelayBox9;
+    }
+
+    public JComboBox<String> getNumberRelayBox10() {
+        return numberRelayBox10;
+    }
+
+    public JComboBox<String> getSettingRelayBox2() {
+        return settingRelayBox2;
+    }
+
+    public JComboBox<String> getSettingRelayBox3() {
+        return settingRelayBox3;
+    }
+
+    public JComboBox<String> getSettingRelayBox4() {
+        return settingRelayBox4;
+    }
+
+    public JComboBox<String> getSettingRelayBox5() {
+        return settingRelayBox5;
+    }
+
+    public JComboBox<String> getSettingRelayBox6() {
+        return settingRelayBox6;
+    }
+
+    public JComboBox<String> getSettingRelayBox7() {
+        return settingRelayBox7;
+    }
+
+    public JComboBox<String> getSettingRelayBox8() {
+        return settingRelayBox8;
+    }
+
+    public JComboBox<String> getSettingRelayBox9() {
+        return settingRelayBox9;
+    }
+
+    public JComboBox<String> getSettingRelayBox10() {
+        return settingRelayBox10;
+    }
+
+    public JComboBox<String> getModeRelayBox2() {
+        return modeRelayBox2;
+    }
+
+    public JComboBox<String> getModeRelayBox3() {
+        return modeRelayBox3;
+    }
+
+    public JComboBox<String> getModeRelayBox4() {
+        return modeRelayBox4;
+    }
+
+    public JComboBox<String> getModeRelayBox5() {
+        return modeRelayBox5;
+    }
+
+    public JComboBox<String> getModeRelayBox6() {
+        return modeRelayBox6;
+    }
+
+    public JComboBox<String> getModeRelayBox7() {
+        return modeRelayBox7;
+    }
+
+    public JComboBox<String> getModeRelayBox8() {
+        return modeRelayBox8;
+    }
+
+    public JComboBox<String> getModeRelayBox9() {
+        return modeRelayBox9;
+    }
+
+    public JComboBox<String> getModeRelayBox10() {
+        return modeRelayBox10;
+    }
+
+    public String[] getNumbersRelays() {
+        return numbersRelays;
+    }
+
+    public String[] getSettingsRelays() {
+        return settingsRelays;
+    }
+
+    public String[] getModesRelays() {
+        return modesRelays;
     }
 }

@@ -22,37 +22,33 @@ public class ChannelsBoxActionListener implements ActionListener {
         try {
             int index = (((JComboBox<?>) e.getSource()).getSelectedIndex());
             System.out.println(index);
-            // TODO: WTF code duplication, make 1 function 'writeModeRegister' that will take register values as arguments.
+            String text;
             switch (index) {
                 case 0:
-                    modbusReader.writeModeRegister(0, 5);
-                    modbusReader.writeModeRegister(1, 0);
+                    text = modbusReader.changeChannel(1);
                     JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                            text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 1 измерительного канала");
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 1:
-                    modbusReader.writeModeRegister(0, 6);
-                    modbusReader.writeModeRegister(1, 1);
+                    text = modbusReader.changeChannel(2);
                     JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                            text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 2 измерительного канала");
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 2:
-                    modbusReader.writeModeRegister(0, 7);
-                    modbusReader.writeModeRegister(1, 2);
+                    text = modbusReader.changeChannel(3);
                     JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                            text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 3 измерительного канала");
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 3:
-                    modbusReader.writeModeRegister(0, 8);
-                    modbusReader.writeModeRegister(1, 3);
+                    text = modbusReader.changeChannel(4);
                     JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Канал изменен", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                            text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 4 измерительного канала");
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;

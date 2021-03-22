@@ -32,6 +32,7 @@ public class IZKTerminal extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(350, 200);
+        setTitle("Терминал");
         portNames = SerialPortList.getPortNames();
         for (String s : portNames) {
             comboBoxCOM.addItem(s);
