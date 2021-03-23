@@ -7,7 +7,11 @@ import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.listener.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import java.io.File;
+import java.io.IOException;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -110,6 +114,8 @@ public class IZKModbusGUI extends JFrame {
     private final String[] settingsRelays;
     private final String[] modesRelays;
 
+    private boolean readyToWriteRelay;
+
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
 
@@ -136,7 +142,6 @@ public class IZKModbusGUI extends JFrame {
         channelsBox.addActionListener(new ChannelsBoxActionListener(this, modbusReader));
         //sensor
         refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
-        filterAndAddRegisterActionListeners(modbusReader);
         minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
         maxButton.addActionListener(new MaxButtonActionListener(this, modbusReader));
         //info
@@ -153,6 +158,11 @@ public class IZKModbusGUI extends JFrame {
         modesRelays = new String[]{"Не используется", "Нормально открыт", "Нормально закрыт", "Мигание"};
         initIZKSettings();
         refreshSettingsButton.addActionListener(new RefreshSettingsButtonActionListener(query,modbusReader,this));
+        oneChannelButton.addActionListener(new ChannelsButtonActionListener(this,1,query,modbusReader));
+        twoChannelButton.addActionListener(new ChannelsButtonActionListener(this,2,query,modbusReader));
+        threeChannelButton.addActionListener(new ChannelsButtonActionListener(this,3,query,modbusReader));
+        fourChannelButton.addActionListener(new ChannelsButtonActionListener(this,4,query,modbusReader));
+        filterAndAddRegisterActionListeners(modbusReader);
     }
 
     private void initWindow() {
@@ -164,6 +174,12 @@ public class IZKModbusGUI extends JFrame {
         setSize(1440, 900);
         setLocationRelativeTo(null);
         setTitle("Конфигуратор СУ-5Д. Влагомер");
+        File file = new File("icon.png");
+        try {
+            setIconImage(ImageIO.read(file));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void initIZKSettings(){
@@ -259,6 +275,39 @@ public class IZKModbusGUI extends JFrame {
         digitFilter(addressIZK,2);
         addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
 
+    }
+
+    public void relayActionListeners(ModbusReader modbusReader){
+        settingRelayBox1.addActionListener(new ComboBoxActionListener(this,modbusReader,5,false));
+        numberRelayBox1.addActionListener(new ComboBoxActionListener(this,modbusReader,6,true));
+        modeRelayBox1.addActionListener(new ComboBoxActionListener(this,modbusReader,7,false));
+        settingRelayBox2.addActionListener(new ComboBoxActionListener(this,modbusReader,8,false));
+        numberRelayBox2.addActionListener(new ComboBoxActionListener(this,modbusReader,9,true));
+        modeRelayBox2.addActionListener(new ComboBoxActionListener(this,modbusReader,10,false));
+        settingRelayBox3.addActionListener(new ComboBoxActionListener(this,modbusReader,11,false));
+        numberRelayBox3.addActionListener(new ComboBoxActionListener(this,modbusReader,12,true));
+        modeRelayBox3.addActionListener(new ComboBoxActionListener(this,modbusReader,13,false));
+        settingRelayBox4.addActionListener(new ComboBoxActionListener(this,modbusReader,14,false));
+        numberRelayBox4.addActionListener(new ComboBoxActionListener(this,modbusReader,15,true));
+        modeRelayBox4.addActionListener(new ComboBoxActionListener(this,modbusReader,16,false));
+        settingRelayBox5.addActionListener(new ComboBoxActionListener(this,modbusReader,17,false));
+        numberRelayBox5.addActionListener(new ComboBoxActionListener(this,modbusReader,18,true));
+        modeRelayBox5.addActionListener(new ComboBoxActionListener(this,modbusReader,19,false));
+        settingRelayBox6.addActionListener(new ComboBoxActionListener(this,modbusReader,20,false));
+        numberRelayBox6.addActionListener(new ComboBoxActionListener(this,modbusReader,21,true));
+        modeRelayBox6.addActionListener(new ComboBoxActionListener(this,modbusReader,22,false));
+        settingRelayBox7.addActionListener(new ComboBoxActionListener(this,modbusReader,23,false));
+        numberRelayBox7.addActionListener(new ComboBoxActionListener(this,modbusReader,24,true));
+        modeRelayBox7.addActionListener(new ComboBoxActionListener(this,modbusReader,25,false));
+        settingRelayBox8.addActionListener(new ComboBoxActionListener(this,modbusReader,26,false));
+        numberRelayBox8.addActionListener(new ComboBoxActionListener(this,modbusReader,27,true));
+        modeRelayBox8.addActionListener(new ComboBoxActionListener(this,modbusReader,28,false));
+        settingRelayBox9.addActionListener(new ComboBoxActionListener(this,modbusReader,29,false));
+        numberRelayBox9.addActionListener(new ComboBoxActionListener(this,modbusReader,30,true));
+        modeRelayBox9.addActionListener(new ComboBoxActionListener(this,modbusReader,31,false));
+        settingRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,32,false));
+        numberRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,33,true));
+        modeRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,34,false));
     }
 
     public Timer getConnectionTimeoutTimer() {
@@ -615,5 +664,13 @@ public class IZKModbusGUI extends JFrame {
 
     public String[] getModesRelays() {
         return modesRelays;
+    }
+
+    public boolean isReadyToWriteRelay() {
+        return readyToWriteRelay;
+    }
+
+    public void setReadyToWriteRelay(boolean readyToWriteRelay) {
+        this.readyToWriteRelay = readyToWriteRelay;
     }
 }

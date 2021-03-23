@@ -5,6 +5,8 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
 
+import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
+
 public class Query{
 
     private final ModbusReader modbusReader;
@@ -616,14 +618,6 @@ public class Query{
         else return "Не определен";
     }
 
-    private static String bitsReader(String reversBits){
-        StringBuilder bits = new StringBuilder();
-        for (int i = 0; i < 16; i++) {
-            if(reversBits.length() >i) bits.insert(0,reversBits.charAt(i));
-            else  bits.append("0");
-        }
-        return bits.toString();
-    }
 
     private static String timeReader (int value1,int value2,int value3){
         return String.format("%s:%s:%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),

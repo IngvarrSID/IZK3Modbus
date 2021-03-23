@@ -5,10 +5,12 @@ import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.utils.DigitFilter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.PlainDocument;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -33,6 +35,12 @@ public class IZKTerminal extends JFrame {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(350, 200);
         setTitle("Терминал");
+        File file = new File("icon.png");
+        try {
+            setIconImage(ImageIO.read(file));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
         portNames = SerialPortList.getPortNames();
         for (String s : portNames) {
             comboBoxCOM.addItem(s);

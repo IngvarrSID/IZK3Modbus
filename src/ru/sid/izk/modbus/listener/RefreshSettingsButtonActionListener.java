@@ -25,6 +25,7 @@ public class RefreshSettingsButtonActionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         final JCheckBox queryBox = izkModbusGUI.getQueryBox();
         if (queryBox.isSelected()) queryBox.setSelected(false);
+        if (izkModbusGUI.isReadyToWriteRelay()) izkModbusGUI.setReadyToWriteRelay(false);
         try {
             modbusReader.writeModeRegister(0, 1);
 
@@ -68,12 +69,14 @@ public class RefreshSettingsButtonActionListener implements ActionListener {
             if (query.getModeRelay10()<izkModbusGUI.getModesRelays().length)izkModbusGUI.getModeRelayBox10().setSelectedIndex(query.getModeRelay10());
             if (query.getChannels()[0]) izkModbusGUI.getOneChannelButton().setText("<html><center>Опрос канала 1<br>разрешен</html></center>");
             else izkModbusGUI.getOneChannelButton().setText("нет опроса канала 1");
-            if (query.getChannels()[1]) izkModbusGUI.getTwoChannelButton().setText("Опрос канала 2 разрешен");
+            if (query.getChannels()[1]) izkModbusGUI.getTwoChannelButton().setText("<html><center>Опрос канала 2<br>разрешен</html></center>");
             else izkModbusGUI.getTwoChannelButton().setText("нет опроса канала 2");
-            if (query.getChannels()[2]) izkModbusGUI.getThreeChannelButton().setText("Опрос канала 3 разрешен");
+            if (query.getChannels()[2]) izkModbusGUI.getThreeChannelButton().setText("<html><center>Опрос канала 3<br>разрешен</html></center>");
             else izkModbusGUI.getThreeChannelButton().setText("нет опроса канала 3");
-            if (query.getChannels()[3]) izkModbusGUI.getFourChannelButton().setText("Опрос канала 4 разрешен");
+            if (query.getChannels()[3]) izkModbusGUI.getFourChannelButton().setText("<html><center>Опрос канала 4<br>разрешен</html></center>");
             else izkModbusGUI.getFourChannelButton().setText("нет опроса канала 4");
+
+            if (!izkModbusGUI.isReadyToWriteRelay()) izkModbusGUI.setReadyToWriteRelay(true);
 
         } catch (Exception ex){
             ex.printStackTrace();

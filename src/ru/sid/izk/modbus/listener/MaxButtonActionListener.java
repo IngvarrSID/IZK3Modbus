@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static ru.sid.izk.modbus.utils.FromHexUtils.stringFromHex;
+
 public class MaxButtonActionListener implements ActionListener {
 
     private final IZKModbusGUI izkModbusGUI;
@@ -26,7 +28,7 @@ public class MaxButtonActionListener implements ActionListener {
         if (field.contains(",")) s = field.replace(",", ".");
         else s = field;
         float f = Float.parseFloat(s);
-        String sF = hex(f);
+        String sF = stringFromHex(f);
         sF = sF.replace("0x", "");
         int[] registers = {Integer.valueOf(sF.substring(4, 8), 16), Integer.valueOf(sF.substring(0, 4), 16)};
         for (int i : registers) {
@@ -43,13 +45,4 @@ public class MaxButtonActionListener implements ActionListener {
         }
     }
 
-    //TODO WTF 2 methods?? Also duplicated in MinButtonActionListener, OMG!!!
-    //Подумаешь
-    public String hex(int n) {
-        return String.format("0x%8s", Integer.toHexString(n)).replace(' ', '0');
-    }
-
-    public String hex(float f) {
-        return hex(Float.floatToIntBits(f));
-    }
 }

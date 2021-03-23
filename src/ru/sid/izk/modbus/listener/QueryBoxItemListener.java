@@ -35,6 +35,7 @@ public class QueryBoxItemListener implements ItemListener {
         } else {
             timer1.stop();
             System.out.println("Опрос завершен");
+            izkModbusGUI.getStatLabel().setText("Нет информации");
         }
     }
 }

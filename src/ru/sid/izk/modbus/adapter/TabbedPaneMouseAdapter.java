@@ -31,6 +31,8 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 break;
             case IZK_SETTINGS:
                 izkModbusGUI.getRefreshSettingsButton().doClick();
+                izkModbusGUI.setReadyToWriteRelay(true);
+                izkModbusGUI.relayActionListeners(izkModbusGUI.getModbusReader());
                 break;
             case SENSOR:
                 try {
