@@ -23,6 +23,7 @@ public class ComboBoxActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //TODO добавил буллман чтоб бы при инициализации не срабатывали линтенеры, хз насколько это правильно
         if (izkModbusGUI.isReadyToWriteRelay()) {
             try {
                 if(isNumber){
