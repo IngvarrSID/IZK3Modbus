@@ -1,5 +1,6 @@
 package ru.sid.izk.modbus;
 
+import ru.sid.izk.modbus.archive.CSVAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;

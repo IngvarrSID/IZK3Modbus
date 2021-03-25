@@ -13,11 +13,9 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
     private static final int IZK_SETTINGS = 1;
     private static final int SENSOR = 2;
     private final IZKModbusGUI izkModbusGUI;
-    private final ModbusReader modbusReader;
 
-    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI, ModbusReader modbusReader) {
+    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI) {
         this.izkModbusGUI = izkModbusGUI;
-        this.modbusReader = modbusReader;
     }
 
     @Override
@@ -32,19 +30,18 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 izkModbusGUI.getRefButton().doClick();
                 break;
             case IZK_SETTINGS:
+                izkModbusGUI.getRefreshSettingsButton().doClick();
+                izkModbusGUI.setReadyToWriteRelay(true);
+                izkModbusGUI.relayActionListeners(izkModbusGUI.getModbusReader());
                 break;
             case SENSOR:
                 try {
-                    modbusReader.writeModeRegister(0, 5);
-                    modbusReader.writeModeRegister(1, 0);
                     izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
-                izkModbusGUI.getChannelLabel().setText("Настройка 1 измерительного канала");
-                izkModbusGUI.getRefreshSensorButton().doClick();
                 break;
             default:
                 System.out.println("No action for idx value " + idx);

@@ -1,6 +1,11 @@
 package ru.sid.izk.modbus.entity;
 
+import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
+
+import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
 public class Query{
 
@@ -51,6 +56,168 @@ public class Query{
     private int max;
     private int emerMax;
     private int noDensity;
+
+    //IZKSettings
+    private int addressIZK;
+    private boolean[] channels;
+    private int settingRelay1;
+    private int settingRelay2;
+    private int settingRelay3;
+    private int settingRelay4;
+    private int settingRelay5;
+    private int settingRelay6;
+    private int settingRelay7;
+    private int settingRelay8;
+    private int settingRelay9;
+    private int settingRelay10;
+    private int numberRelay1;
+    private int numberRelay2;
+    private int numberRelay3;
+    private int numberRelay4;
+    private int numberRelay5;
+    private int numberRelay6;
+    private int numberRelay7;
+    private int numberRelay8;
+    private int numberRelay9;
+    private int numberRelay10;
+    private int modeRelay1;
+    private int modeRelay2;
+    private int modeRelay3;
+    private int modeRelay4;
+    private int modeRelay5;
+    private int modeRelay6;
+    private int modeRelay7;
+    private int modeRelay8;
+    private int modeRelay9;
+    private int modeRelay10;
+
+    public int getAddressIZK() {
+        return addressIZK;
+    }
+
+    public boolean[] getChannels() {
+        return channels;
+    }
+
+    public int getSettingRelay1() {
+        return settingRelay1;
+    }
+
+    public int getSettingRelay2() {
+        return settingRelay2;
+    }
+
+    public int getSettingRelay3() {
+        return settingRelay3;
+    }
+
+    public int getSettingRelay4() {
+        return settingRelay4;
+    }
+
+    public int getSettingRelay5() {
+        return settingRelay5;
+    }
+
+    public int getSettingRelay6() {
+        return settingRelay6;
+    }
+
+    public int getSettingRelay7() {
+        return settingRelay7;
+    }
+
+    public int getSettingRelay8() {
+        return settingRelay8;
+    }
+
+    public int getSettingRelay9() {
+        return settingRelay9;
+    }
+
+    public int getSettingRelay10() {
+        return settingRelay10;
+    }
+
+    public int getNumberRelay1() {
+        return numberRelay1;
+    }
+
+    public int getNumberRelay2() {
+        return numberRelay2;
+    }
+
+    public int getNumberRelay3() {
+        return numberRelay3;
+    }
+
+    public int getNumberRelay4() {
+        return numberRelay4;
+    }
+
+    public int getNumberRelay5() {
+        return numberRelay5;
+    }
+
+    public int getNumberRelay6() {
+        return numberRelay6;
+    }
+
+    public int getNumberRelay7() {
+        return numberRelay7;
+    }
+
+    public int getNumberRelay8() {
+        return numberRelay8;
+    }
+
+    public int getNumberRelay9() {
+        return numberRelay9;
+    }
+
+    public int getNumberRelay10() {
+        return numberRelay10;
+    }
+
+    public int getModeRelay1() {
+        return modeRelay1;
+    }
+
+    public int getModeRelay2() {
+        return modeRelay2;
+    }
+
+    public int getModeRelay3() {
+        return modeRelay3;
+    }
+
+    public int getModeRelay4() {
+        return modeRelay4;
+    }
+
+    public int getModeRelay5() {
+        return modeRelay5;
+    }
+
+    public int getModeRelay6() {
+        return modeRelay6;
+    }
+
+    public int getModeRelay7() {
+        return modeRelay7;
+    }
+
+    public int getModeRelay8() {
+        return modeRelay8;
+    }
+
+    public int getModeRelay9() {
+        return modeRelay9;
+    }
+
+    public int getModeRelay10() {
+        return modeRelay10;
+    }
 
     public int getCheckPeriod() {
         return checkPeriod;
@@ -269,6 +436,48 @@ public class Query{
 
     }
 
+    public void querySettings() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        channels = new boolean[4];
+        int[] registerValues = modbusReader.readHoldingsRegisters(2,32,2);
+        addressIZK = registerValues[0];
+        String reversBits = Integer.toBinaryString(registerValues[1]);
+        char[] chars = bitsReader(reversBits).toCharArray();
+        for (int i = 0; i < channels.length; i++) {
+            if(chars[i] == '1') channels[i] = true;
+        }
+        settingRelay1 = registerValues[3];
+        numberRelay1 = registerValues[4];
+        modeRelay1 = registerValues[5];
+        settingRelay2 = registerValues[6];
+        numberRelay2 = registerValues[7];
+        modeRelay2 = registerValues[8];
+        settingRelay3 = registerValues[9];
+        numberRelay3 = registerValues[10];
+        modeRelay3 = registerValues[11];
+        settingRelay4 = registerValues[12];
+        numberRelay4 = registerValues[13];
+        modeRelay4 = registerValues[14];
+        settingRelay5 = registerValues[15];
+        numberRelay5 = registerValues[16];
+        modeRelay5 = registerValues[17];
+        settingRelay6 = registerValues[18];
+        numberRelay6 = registerValues[19];
+        modeRelay6 = registerValues[20];
+        settingRelay7 = registerValues[21];
+        numberRelay7 = registerValues[22];
+        modeRelay7 = registerValues[23];
+        settingRelay8 = registerValues[24];
+        numberRelay8 = registerValues[25];
+        modeRelay8 = registerValues[26];
+        settingRelay9 = registerValues[27];
+        numberRelay9 = registerValues[28];
+        modeRelay9 = registerValues[29];
+        settingRelay10 = registerValues[30];
+        numberRelay10 = registerValues[31];
+        modeRelay10 = registerValues[32];
+
+    }
+
     public void querySensor(){
         try {
             int[] registerValues = modbusReader.readHoldingsRegisters(2,32,2);
@@ -408,6 +617,7 @@ public class Query{
         else if (disChannel) return "Канал отключен";
         else return "Не определен";
     }
+
 
     private static String timeReader (int value1,int value2,int value3){
         return String.format("%s:%s:%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
