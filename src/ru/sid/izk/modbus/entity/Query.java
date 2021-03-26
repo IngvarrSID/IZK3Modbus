@@ -5,6 +5,8 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
 
+import java.awt.geom.QuadCurve2D;
+
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
 public class Query{
@@ -594,7 +596,8 @@ public class Query{
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
         else s = Integer.toHexString(value1);
         Long value1AsLong = Long.parseLong(s, 16);
-        return Float.intBitsToFloat(value1AsLong.intValue());
+        float f = Float.intBitsToFloat(value1AsLong.intValue());
+        return f;
     }
 
     private static String statusReader (String reversStatus){

@@ -19,7 +19,7 @@ public class IZKTerminal extends JFrame {
 
     private JComboBox<String> comboBoxCOM;
     private JComboBox<String> comboBoxBound;
-    private JFormattedTextField textField1;
+    private JFormattedTextField IZKCOMAddressField;
     private JButton oKButton;
     private JPanel terminalPanel;
     private final String[] portNames;
@@ -56,9 +56,9 @@ public class IZKTerminal extends JFrame {
         comboBoxBound.setSelectedIndex(3);
         ActionListener aL2 = new ActionListenerBound();
         comboBoxBound.addActionListener(aL2);
-        textField1.setText("80");
-        PlainDocument doc = (PlainDocument) textField1.getDocument();
-        doc.setDocumentFilter(new DigitFilter(2));
+        IZKCOMAddressField.setText("80");
+        PlainDocument doc = (PlainDocument) IZKCOMAddressField.getDocument();
+        doc.setDocumentFilter(new DigitFilter(3));
 
 
         ActionListener aL3 = new ActionListenerButton();
@@ -90,13 +90,13 @@ public class IZKTerminal extends JFrame {
                 FileOutputStream out = new FileOutputStream("settings.properties");
                 properties.setProperty("ComPort", comName);
                 properties.setProperty("BoundRate", bound);
-                properties.setProperty("Id", textField1.getText());
+                properties.setProperty("Id", IZKCOMAddressField.getText());
                 properties.store(out, "terminal settings");
             } catch (IOException q) {
                 q.printStackTrace();
             }
             Terminal terminal = new Terminal(comName, bound);
-            MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(textField1.getText()));
+            MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(IZKCOMAddressField.getText()));
             dispose();
             new IZKModbusGUI(terminal, masterModbus);
         }

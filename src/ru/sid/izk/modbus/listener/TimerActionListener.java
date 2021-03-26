@@ -1,5 +1,7 @@
 package ru.sid.izk.modbus.listener;
 
+import ru.sid.izk.modbus.archive.CSVAdapter;
+import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
@@ -10,11 +12,13 @@ public class TimerActionListener implements ActionListener {
 
     private final Query query;
     private final IZKModbusGUI izkModbusGUI;
+    private final MasterModbus masterModbus;
 
-    public TimerActionListener(Query query, IZKModbusGUI izkModbusGUI) {
+    public TimerActionListener(Query query, IZKModbusGUI izkModbusGUI, MasterModbus masterModbus) {
 
         this.query = query;
         this.izkModbusGUI = izkModbusGUI;
+        this.masterModbus = masterModbus;
     }
 
     @Override
@@ -35,6 +39,7 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getErrorField().setText(String.format("Инстр. погрешность: %.1f у.е.", query.getError()));
             izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", query.getData()));
             System.out.println("Таймер");
+            new CSVAdapter(izkModbusGUI,masterModbus,query);
         } else
             System.out.println("ждем");
     }

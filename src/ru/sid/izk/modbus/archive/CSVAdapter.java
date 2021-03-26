@@ -1,6 +1,8 @@
 package ru.sid.izk.modbus.archive;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import ru.sid.izk.modbus.connection.MasterModbus;
+import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import java.io.File;
@@ -13,16 +15,21 @@ public class CSVAdapter {
     private String month;
     private String day;
     private String time;
-    private IZKModbusGUI izkModbusGUI;
+    private final IZKModbusGUI izkModbusGUI;
     private String currentChannel;
     private String path;
+    private String fullPath;
+    private final MasterModbus masterModbus;
+    private final Query query;
 
-    public CSVAdapter(IZKModbusGUI izkModbusGUI){
+
+    public CSVAdapter(IZKModbusGUI izkModbusGUI, MasterModbus masterModbus, Query query){
         this.izkModbusGUI = izkModbusGUI;
+        this.masterModbus =  masterModbus;
+        this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       fileCheck();
-
+       fileWrite();
     }
 
 
@@ -32,7 +39,8 @@ public class CSVAdapter {
     year = date[0];
     month = date[1];
     day = date[2];
-    time = allDate[1];
+    String[] fullTime = allDate[1].split("\\.");
+    time = fullTime[0];
     }
 
     private void whatsTheChannel(){
@@ -54,14 +62,36 @@ public class CSVAdapter {
         }
     }
 
-    private void fileCheck(){
-        path = String.format("archive/%s/%s/%s/%s.csv",year,month,day,currentChannel);
+    private void fileWrite(){
+        String dgsAddress = String.valueOf(query.getSensorAddress());
+        String humidity = String.format("%.2f",query.getHumidity());
+        String density = String.format("%.1f",query.getDensity());
+        String temperature = String.format("%.1f",query.getTemperature());
+        String cs1 = String.format("%.1f",query.getCs1());
+        String cs2 = String.format("%.1f",query.getCs2());
+        String period = String.format("%.1f",query.getPeriod());
+        String error = String.format("%.1f",query.getError());
+        path = String.format("%s/Documents/Technosensor/archive/%s/%s/%s/IZK%d",System.getProperty("user.home"),year,month,day,masterModbus.getId());
+        fullPath = String.format("%s/%s.csv",path,currentChannel);
         try {
-            File file = new File(path);
+            File file = new File(fullPath);
             if (file.exists()){
-                //do something
+                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),'\t',' ');
+                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
+                writer.writeNext(data);
+                writer.close();
+
             }else {
-                CSVWriter writer = new CSVWriter(new FileWriter(path));
+                File pathFile = new File(path);
+                pathFile.mkdirs();
+                File csvFile = new File(pathFile,String.format("%s.csv",currentChannel));
+                csvFile.createNewFile();
+                CSVWriter writer = new CSVWriter(new FileWriter(fullPath),'\t',' ');
+                String[] head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ,погрешность".split("\\.");
+                writer.writeNext(head);
+                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
+                writer.writeNext(data);
+                writer.close();
             }
         } catch (Exception e){
             e.printStackTrace();
