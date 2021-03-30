@@ -109,6 +109,7 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox8;
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
+    private JTable table1;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;

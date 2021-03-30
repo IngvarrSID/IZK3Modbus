@@ -5,8 +5,9 @@ import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 public class CSVAdapter {
@@ -76,25 +77,26 @@ public class CSVAdapter {
         try {
             File file = new File(fullPath);
             if (file.exists()){
-                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),'\t',' ');
+                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),';','"');
                 String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
                 writer.writeNext(data);
                 writer.close();
 
             }else {
-                File pathFile = new File(path);
-                pathFile.mkdirs();
-                File csvFile = new File(pathFile,String.format("%s.csv",currentChannel));
-                csvFile.createNewFile();
-                CSVWriter writer = new CSVWriter(new FileWriter(fullPath),'\t',' ');
-                String[] head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ,погрешность".split("\\.");
+                FileOutputStream fos = new FileOutputStream(fullPath);
+                Writer preWriter = new OutputStreamWriter(fos,Charset.forName("Windows-1251"));
+                CSVWriter writer = new CSVWriter(preWriter,';','"');
+                String head1 = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность";
+                String[] head = head1.split("\\.");
                 writer.writeNext(head);
                 String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
                 writer.writeNext(data);
                 writer.close();
+                fos.close();
             }
         } catch (Exception e){
             e.printStackTrace();
         }
     }
+
 }
