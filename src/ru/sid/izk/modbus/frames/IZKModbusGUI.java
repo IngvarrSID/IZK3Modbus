@@ -1,6 +1,7 @@
 package ru.sid.izk.modbus.frames;
 
 import ru.sid.izk.modbus.adapter.TabbedPaneMouseAdapter;
+import ru.sid.izk.modbus.archive.CSVAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
@@ -9,9 +10,12 @@ import ru.sid.izk.modbus.listener.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -109,7 +113,7 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox8;
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
-    private JTable table1;
+    private JTable archiveTable;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -164,6 +168,8 @@ public class IZKModbusGUI extends JFrame {
         threeChannelButton.addActionListener(new ChannelsButtonActionListener(this,3,query,modbusReader));
         fourChannelButton.addActionListener(new ChannelsButtonActionListener(this,4,query,modbusReader));
         filterAndAddRegisterActionListeners(modbusReader);
+        initTable(masterModbus,query);
+
     }
 
     private void initWindow() {
@@ -172,7 +178,7 @@ public class IZKModbusGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1440, 900);
+        setSize(1350, 900);
         setLocationRelativeTo(null);
         setTitle("Конфигуратор СУ-5Д. Влагомер");
         File file = new File("icon.png");
@@ -181,6 +187,36 @@ public class IZKModbusGUI extends JFrame {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    private void initTable(MasterModbus masterModbus, Query query){
+        CSVAdapter csvAdapter = new CSVAdapter(this,masterModbus,query);
+        List<String[]> allRows = csvAdapter.fileRead();
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
+        for (String s:allRows.get(0)) {
+            model.addColumn(s);
+        }
+        if (allRows.size()>1) {
+            for (int i = 1; i < allRows.size(); i++) {
+                model.addRow(allRows.get(i));
+            }
+        }
+        archiveTable.setFillsViewportHeight(true);
+    }
+
+    public void refreshTable(CSVAdapter csvAdapter){
+        List<String[]> allRows = csvAdapter.fileRead();
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
+        int rowCount = model.getRowCount();
+        for (int i = rowCount-1; i >= 0 ; i--) {
+            model.removeRow(i);
+        }
+        if (allRows.size()>1) {
+            for (int i = 1; i < allRows.size(); i++) {
+                model.addRow(allRows.get(i));
+            }
+        }
+        archiveTable.setFillsViewportHeight(true);
     }
 
     private void initIZKSettings(){

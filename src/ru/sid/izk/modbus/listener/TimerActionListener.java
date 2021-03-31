@@ -39,7 +39,9 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getErrorField().setText(String.format("Инстр. погрешность: %.1f у.е.", query.getError()));
             izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", query.getData()));
             System.out.println("Таймер");
-            new CSVAdapter(izkModbusGUI,masterModbus,query);
+            CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI,masterModbus,query);
+            csvAdapter.fileWrite();
+            izkModbusGUI.refreshTable(csvAdapter);
         } else
             System.out.println("ждем");
     }
