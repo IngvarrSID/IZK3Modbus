@@ -10,7 +10,6 @@ import ru.sid.izk.modbus.listener.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
 import java.io.File;
@@ -114,6 +113,7 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
     private JTable archiveTable;
+    private JToolBar menuBar;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -311,7 +311,9 @@ public class IZKModbusGUI extends JFrame {
         //settings
         digitFilter(addressIZK,2);
         addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
-
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createFileMenu());
+        setJMenuBar(menuBar);
     }
 
     public void relayActionListeners(ModbusReader modbusReader){
@@ -345,6 +347,16 @@ public class IZKModbusGUI extends JFrame {
         settingRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,32,false));
         numberRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,33,true));
         modeRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,34,false));
+    }
+
+    private JMenu createFileMenu(){
+        JMenu file = new JMenu("Файл");
+        JMenuItem open = new JMenuItem("Открыть");
+        JMenuItem exit = new JMenuItem("Закрыть");
+        file.add(open);
+        file.addSeparator();
+        file.add(exit);
+        return file;
     }
 
     public Timer getConnectionTimeoutTimer() {

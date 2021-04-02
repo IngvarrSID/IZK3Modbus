@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="IZK3Modbus:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/IZK3Modbus_jar</output-path>
+    <root id="archive" name="IZK3Modbus.jar">
+      <element id="module-output" name="IZK3Modbus" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/everit/osgi/bundles/org.everit.osgi.bundles.org.scream3r.jssc/2.8.0/org.everit.osgi.bundles.org.scream3r.jssc-2.8.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/intelligt/modbus/jlibmodbus/1.2.9.7/jlibmodbus-1.2.9.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
