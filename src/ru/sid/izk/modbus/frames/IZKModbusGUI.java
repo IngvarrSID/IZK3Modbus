@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -113,7 +115,6 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
     private JTable archiveTable;
-    private JToolBar menuBar;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -187,6 +188,10 @@ public class IZKModbusGUI extends JFrame {
         } catch (IOException e){
             e.printStackTrace();
         }
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createFileMenu());
+        menuBar.add(createSettingsMenu());
+        setJMenuBar(menuBar);
     }
 
     private void initTable(MasterModbus masterModbus, Query query){
@@ -309,11 +314,9 @@ public class IZKModbusGUI extends JFrame {
         floatFilter(autoMinFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         floatFilter(autoMaxFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         //settings
-        digitFilter(addressIZK,2);
+        digitFilter(addressIZK,3);
         addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createFileMenu());
-        setJMenuBar(menuBar);
+
     }
 
     public void relayActionListeners(ModbusReader modbusReader){
@@ -356,7 +359,19 @@ public class IZKModbusGUI extends JFrame {
         file.add(open);
         file.addSeparator();
         file.add(exit);
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
         return file;
+    }
+    private JMenu createSettingsMenu(){
+        JMenu settings = new JMenu("Настройки");
+        JMenuItem path = new JMenuItem("Путь к архиву");
+        settings.add(path);
+        return settings;
     }
 
     public Timer getConnectionTimeoutTimer() {
