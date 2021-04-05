@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class CSVAdapter {
 
@@ -24,6 +25,7 @@ public class CSVAdapter {
     private String time;
     private final IZKModbusGUI izkModbusGUI;
     private String currentChannel;
+    private String changePath;
     private final String path;
     private final String fullPath;
     private final String[] head;
@@ -37,11 +39,22 @@ public class CSVAdapter {
         this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       path = String.format("%s/Documents/Technosensor/Archive/%s/%s/%s/IZK%d",System.getProperty("user.home"),year,month,day,masterModbus.getId());
+       whatsThePath();
+       path = String.format("%s/%s/%s/%s/IZK%d",changePath,year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
        head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность".split("\\.");
     }
 
+    private void whatsThePath(){
+        try {
+            FileInputStream in = new FileInputStream("settings.properties");
+            Properties properties = new Properties();
+            properties.load(in);
+            changePath = properties.getProperty("Path");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     private void whatsTheTime(){
     String [] allDate = LocalDateTime.now().toString().split("T");
@@ -129,4 +142,39 @@ public class CSVAdapter {
         }
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getCurrentChannel() {
+        return currentChannel;
+    }
+
+    public String getChangePath() {
+        return changePath;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public String[] getHead() {
+        return head;
+    }
 }

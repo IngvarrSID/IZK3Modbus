@@ -127,6 +127,7 @@ public class IZKTerminal extends JFrame {
                 properties.setProperty("ComPort", comName);
                 properties.setProperty("BoundRate", bound);
                 properties.setProperty("Id", IZKCOMAddressField.getText());
+                properties.setProperty("Path",String.format("%s/Documents/Technosensor/Archive",System.getProperty("user.home")));
                 properties.store(out, "terminal settings");
             } catch (IOException q) {
                 q.printStackTrace();

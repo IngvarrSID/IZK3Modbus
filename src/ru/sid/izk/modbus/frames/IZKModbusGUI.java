@@ -371,6 +371,7 @@ public class IZKModbusGUI extends JFrame {
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
         settings.add(path);
+        path.addActionListener(new PathInputActionListener(this));
         return settings;
     }
 
