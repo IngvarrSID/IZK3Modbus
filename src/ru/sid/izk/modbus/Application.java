@@ -25,6 +25,7 @@ public class Application {
                     Terminal terminal = new Terminal(properties.getProperty("ComPort"), properties.getProperty("BoundRate"));
                     MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(properties.getProperty("Id")));
                     new IZKModbusGUI(terminal, masterModbus);
+                    in.close();
                 } else {
                     new IZKTerminal();
                 }

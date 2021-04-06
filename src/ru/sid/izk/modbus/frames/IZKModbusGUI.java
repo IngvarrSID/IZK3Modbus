@@ -115,6 +115,8 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
     private JTable archiveTable;
+    private JButton searchButton;
+    private JProgressBar progressBar;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -170,7 +172,8 @@ public class IZKModbusGUI extends JFrame {
         fourChannelButton.addActionListener(new ChannelsButtonActionListener(this,4,query,modbusReader));
         filterAndAddRegisterActionListeners(modbusReader);
         initTable(masterModbus,query);
-
+        progressBar.setVisible(false);
+        searchButton.addActionListener(new SearchButtonActionListener(this,query,modbusReader));
     }
 
     private void initWindow() {
@@ -359,12 +362,7 @@ public class IZKModbusGUI extends JFrame {
         file.add(open);
         file.addSeparator();
         file.add(exit);
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exit.addActionListener(e -> System.exit(0));
         return file;
     }
     private JMenu createSettingsMenu(){
@@ -729,6 +727,11 @@ public class IZKModbusGUI extends JFrame {
 
     public String[] getModesRelays() {
         return modesRelays;
+    }
+
+
+    public JProgressBar getProgressBar() {
+        return progressBar;
     }
 
     public boolean isReadyToWriteRelay() {

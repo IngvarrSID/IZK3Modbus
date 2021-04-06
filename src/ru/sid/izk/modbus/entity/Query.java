@@ -93,6 +93,10 @@ public class Query{
     private int modeRelay9;
     private int modeRelay10;
 
+    //Search
+    private int sensorCount;
+    private int searchAddress1;
+
     public int getAddressIZK() {
         return addressIZK;
     }
@@ -393,6 +397,24 @@ public class Query{
         humidity = 0;
 
 
+    }
+
+    public int searchProgress(){
+        try{
+            int[] registerValues = modbusReader.readRegisters(0,1,1);
+            return registerValues[0];
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    public void querySearch(){
+        try {
+            int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

@@ -122,13 +122,30 @@ public class IZKTerminal extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Properties properties = new Properties();
+            File file = new File("settings.properties");
             try {
-                FileOutputStream out = new FileOutputStream("settings.properties");
-                properties.setProperty("ComPort", comName);
-                properties.setProperty("BoundRate", bound);
-                properties.setProperty("Id", IZKCOMAddressField.getText());
-                properties.setProperty("Path",String.format("%s/Documents/Technosensor/Archive",System.getProperty("user.home")));
-                properties.store(out, "terminal settings");
+                if(!file.exists()) {
+                    FileOutputStream out = new FileOutputStream("settings.properties");
+                    properties.setProperty("ComPort", comName);
+                    properties.setProperty("BoundRate", bound);
+                    properties.setProperty("Id", IZKCOMAddressField.getText());
+                    properties.setProperty("Path", String.format("%s/Documents/Technosensor/Archive", System.getProperty("user.home")));
+                    properties.store(out, "terminal settings");
+                    out.close();
+                }
+                else {
+                    FileInputStream in = new FileInputStream("settings.properties");
+                    Properties propertiesRead = new Properties();
+                    propertiesRead.load(in);
+                    in.close();
+                    FileOutputStream out = new FileOutputStream("settings.properties");
+                    properties.setProperty("ComPort", comName);
+                    properties.setProperty("BoundRate", bound);
+                    properties.setProperty("Id", IZKCOMAddressField.getText());
+                    properties.setProperty("Path",propertiesRead.getProperty("Path"));
+                    properties.store(out, "terminal settings");
+                    out.close();
+                }
             } catch (IOException q) {
                 q.printStackTrace();
             }

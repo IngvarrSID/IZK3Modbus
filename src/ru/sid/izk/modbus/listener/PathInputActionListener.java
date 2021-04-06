@@ -30,11 +30,18 @@ public class PathInputActionListener implements ActionListener {
         } catch (IOException ex){
             ex.printStackTrace();
         }
-        String result = JOptionPane.showInputDialog(izkModbusGUI,changePath);
+        JFileChooser fileChooser = new JFileChooser(changePath);
+        fileChooser.setDialogTitle("Выбор дериктории архива");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = fileChooser.showOpenDialog(fileChooser);
         try {
-            FileOutputStream out = new FileOutputStream("settings.properties");
-            properties.setProperty("Path",result);
-            properties.store(out, "Path settings");
+            if(result == JFileChooser.APPROVE_OPTION) {
+                FileOutputStream out = new FileOutputStream("settings.properties");
+                properties.setProperty("Path", fileChooser.getSelectedFile().getAbsolutePath());
+                properties.store(out, "Path settings");
+                JOptionPane.showMessageDialog(izkModbusGUI,"Выбрана директория для архива: " + fileChooser.getSelectedFile().getAbsolutePath(),"Подтверждение",JOptionPane.INFORMATION_MESSAGE);
+                out.close();
+            }
         } catch (IOException q) {
             q.printStackTrace();
         }
