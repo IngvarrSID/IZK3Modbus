@@ -5,8 +5,6 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
 
-import java.awt.geom.QuadCurve2D;
-
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
 public class Query{
@@ -96,6 +94,69 @@ public class Query{
     //Search
     private int sensorCount;
     private int searchAddress1;
+    private int searchFirmware1;
+    private String searchDate1;
+    private int searchAddress2;
+    private int searchFirmware2;
+    private String searchDate2;
+    private int searchAddress3;
+    private int searchFirmware3;
+    private String searchDate3;
+    private int searchAddress4;
+    private int searchFirmware4;
+    private String searchDate4;
+
+    public int getSensorCount() {
+        return sensorCount;
+    }
+
+    public int getSearchAddress1() {
+        return searchAddress1;
+    }
+
+    public int getSearchFirmware1() {
+        return searchFirmware1;
+    }
+
+    public String getSearchDate1() {
+        return searchDate1;
+    }
+
+    public int getSearchAddress2() {
+        return searchAddress2;
+    }
+
+    public int getSearchFirmware2() {
+        return searchFirmware2;
+    }
+
+    public String getSearchDate2() {
+        return searchDate2;
+    }
+
+    public int getSearchAddress3() {
+        return searchAddress3;
+    }
+
+    public int getSearchFirmware3() {
+        return searchFirmware3;
+    }
+
+    public String getSearchDate3() {
+        return searchDate3;
+    }
+
+    public int getSearchAddress4() {
+        return searchAddress4;
+    }
+
+    public int getSearchFirmware4() {
+        return searchFirmware4;
+    }
+
+    public String getSearchDate4() {
+        return searchDate4;
+    }
 
     public int getAddressIZK() {
         return addressIZK;
@@ -411,6 +472,19 @@ public class Query{
     public void querySearch(){
         try {
             int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+            sensorCount = registerValues[2];
+            searchAddress1 = registerValues[3];
+            searchFirmware1 = registerValues[4];
+            searchDate1 = dateReader(registerValues[5],registerValues[6],registerValues[7]);
+            searchAddress2 = registerValues[8];
+            searchFirmware2 = registerValues[9];
+            searchDate2 = dateReader(registerValues[10],registerValues[11],registerValues[12]);
+            searchAddress3 = registerValues[13];
+            searchFirmware3 = registerValues[14];
+            searchDate3 = dateReader(registerValues[15],registerValues[16],registerValues[17]);
+            searchAddress4 = registerValues[18];
+            searchFirmware4 = registerValues[19];
+            searchDate4 = dateReader(registerValues[20],registerValues[21],registerValues[22]);
 
         } catch (Exception e){
             e.printStackTrace();
