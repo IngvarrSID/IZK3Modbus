@@ -12,14 +12,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
+import static ru.sid.izk.modbus.utils.FieldVisible.hideFielder;
 
 public class IZKModbusGUI extends JFrame {
 
@@ -117,6 +116,24 @@ public class IZKModbusGUI extends JFrame {
     private JTable archiveTable;
     private JButton searchButton;
     private JProgressBar progressBar;
+    private JButton manualButton;
+    private JButton modeButton;
+    private JButton closeButton;
+    private JButton openButton;
+    private JButton fullCloseButton;
+    private JButton fullOpenButton;
+    private JTextField oneStepRegulator;
+    private JTextField fullStepRegulator;
+    private JTextField humidityWriteField;
+    private JTextField kpWriteField;
+    private JTextField kiWriteField;
+    private JTextField kdWriteField;
+    private JTextField pidErrField;
+    private JTextField pidIntField;
+    private JTextField pidDifField;
+    private JProgressBar progressRegulatorBar;
+    private JLabel regulatorStatusField;
+    private JButton refreshRegulatorButton;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -182,7 +199,7 @@ public class IZKModbusGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1350, 900);
+        setSize(1350, 950);
         setLocationRelativeTo(null);
         setTitle("Конфигуратор СУ-5Д. Влагомер");
         File file = new File("icon.png");
@@ -195,6 +212,7 @@ public class IZKModbusGUI extends JFrame {
         menuBar.add(createFileMenu());
         menuBar.add(createSettingsMenu());
         setJMenuBar(menuBar);
+        hideFielder(this,false);
     }
 
     private void initTable(MasterModbus masterModbus, Query query){
@@ -729,7 +747,6 @@ public class IZKModbusGUI extends JFrame {
         return modesRelays;
     }
 
-
     public JProgressBar getProgressBar() {
         return progressBar;
     }
@@ -740,5 +757,77 @@ public class IZKModbusGUI extends JFrame {
 
     public void setReadyToWriteRelay(boolean readyToWriteRelay) {
         this.readyToWriteRelay = readyToWriteRelay;
+    }
+
+    public JButton getManualButton() {
+        return manualButton;
+    }
+
+    public JButton getModeButton() {
+        return modeButton;
+    }
+
+    public JButton getCloseButton() {
+        return closeButton;
+    }
+
+    public JButton getOpenButton() {
+        return openButton;
+    }
+
+    public JButton getFullCloseButton() {
+        return fullCloseButton;
+    }
+
+    public JButton getFullOpenButton() {
+        return fullOpenButton;
+    }
+
+    public JTextField getOneStepRegulator() {
+        return oneStepRegulator;
+    }
+
+    public JTextField getFullStepRegulator() {
+        return fullStepRegulator;
+    }
+
+    public JTextField getHumidityWriteField() {
+        return humidityWriteField;
+    }
+
+    public JTextField getKpWriteField() {
+        return kpWriteField;
+    }
+
+    public JTextField getKiWriteField() {
+        return kiWriteField;
+    }
+
+    public JTextField getKdWriteField() {
+        return kdWriteField;
+    }
+
+    public JTextField getPidErrField() {
+        return pidErrField;
+    }
+
+    public JTextField getPidIntField() {
+        return pidIntField;
+    }
+
+    public JTextField getPidDifField() {
+        return pidDifField;
+    }
+
+    public JProgressBar getProgressRegulatorBar() {
+        return progressRegulatorBar;
+    }
+
+    public JLabel getRegulatorStatusField() {
+        return regulatorStatusField;
+    }
+
+    public JButton getRefreshRegulatorButton() {
+        return refreshRegulatorButton;
     }
 }

@@ -4,6 +4,7 @@ import ru.sid.izk.modbus.archive.CSVAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.utils.FieldVisible;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,9 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getCs2Field().setText(String.format("CS2: %.1f Пф", query.getCs2()));
             izkModbusGUI.getErrorField().setText(String.format("Инстр. погрешность: %.1f у.е.", query.getError()));
             izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", query.getData()));
+            if (FieldVisible.isStatus()){
+
+            }
             System.out.println("Таймер");
             CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI,masterModbus,query);
             csvAdapter.fileWrite();

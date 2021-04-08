@@ -4,6 +4,7 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
+import ru.sid.izk.modbus.utils.FieldVisible;
 
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
@@ -22,6 +23,13 @@ public class Query{
     private float cs2;
     private float error;
     private String data;
+    private float pidErr;
+    private float pidInt;
+    private float pidDif;
+    private int position;
+    private String regStatus;
+
+
     //info
     private String versionFirm;
     private String dataFirm;
@@ -506,7 +514,10 @@ public class Query{
         System.out.println("Опрос запущен");
 
             try {
-                int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+                int count;
+                if (FieldVisible.isStatus()) count = 2;
+                else count = 1;
+                int[] registerValues = modbusReader.readRegisters(0, 32, count);
                 sensorAddress = registerValues[0];
                 time = timeReader(registerValues[4], registerValues[5], registerValues[6]);
                 humidity = hexToFloat(registerValues[7], registerValues[8]);
@@ -519,6 +530,15 @@ public class Query{
                 cs2 = hexToFloat(registerValues[28],registerValues[29]);
                 error = hexToFloat(registerValues[30],registerValues[31]);
                 data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
+                if (FieldVisible.isStatus()) {
+                    pidErr = hexToFloat(registerValues[38], registerValues[39]);
+                    pidInt = hexToFloat(registerValues[40], registerValues[41]);
+                    pidDif = hexToFloat(registerValues[42], registerValues[43]);
+                    position = registerValues[44];
+
+                }
+
+
 
 
 
