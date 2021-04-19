@@ -39,14 +39,19 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getCs2Field().setText(String.format("CS2: %.1f Пф", query.getCs2()));
             izkModbusGUI.getErrorField().setText(String.format("Инстр. погрешность: %.1f у.е.", query.getError()));
             izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", query.getData()));
-            if (FieldVisible.isStatus()){
 
-            }
-            System.out.println("Таймер");
             CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI,masterModbus,query);
             csvAdapter.fileWrite();
             izkModbusGUI.refreshTable(csvAdapter);
         } else
             System.out.println("ждем");
+        if (FieldVisible.isStatus()){
+            query.queryPidRegulator();
+            izkModbusGUI.getPidErrField().setText(String.format("PID_err: %.1f у.е.",query.getPidErr()));
+            izkModbusGUI.getPidIntField().setText(String.format("PID_int: %.1f у.е.",query.getPidInt()));
+            izkModbusGUI.getPidDifField().setText(String.format("PID_err: %.1f у.е.",query.getPidDif()));
+            izkModbusGUI.getProgressRegulatorBar().setValue(query.getPosition());
+            izkModbusGUI.getRegulatorStatusField().setText(query.getRegStatus());
+        }
     }
 }

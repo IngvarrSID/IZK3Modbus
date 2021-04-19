@@ -23,6 +23,7 @@ public class Query{
     private float cs2;
     private float error;
     private String data;
+    //PID
     private float pidErr;
     private float pidInt;
     private float pidDif;
@@ -458,6 +459,26 @@ public class Query{
         return ck1Write;
     }
 
+    public float getPidErr() {
+        return pidErr;
+    }
+
+    public float getPidInt() {
+        return pidInt;
+    }
+
+    public float getPidDif() {
+        return pidDif;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public String getRegStatus() {
+        return regStatus;
+    }
+
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
 
@@ -514,10 +535,7 @@ public class Query{
         System.out.println("Опрос запущен");
 
             try {
-                int count;
-                if (FieldVisible.isStatus()) count = 2;
-                else count = 1;
-                int[] registerValues = modbusReader.readRegisters(0, 32, count);
+                int[] registerValues = modbusReader.readRegisters(0, 32, 1);
                 sensorAddress = registerValues[0];
                 time = timeReader(registerValues[4], registerValues[5], registerValues[6]);
                 humidity = hexToFloat(registerValues[7], registerValues[8]);
@@ -530,28 +548,32 @@ public class Query{
                 cs2 = hexToFloat(registerValues[28],registerValues[29]);
                 error = hexToFloat(registerValues[30],registerValues[31]);
                 data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
-                if (FieldVisible.isStatus()) {
-                    pidErr = hexToFloat(registerValues[38], registerValues[39]);
-                    pidInt = hexToFloat(registerValues[40], registerValues[41]);
-                    pidDif = hexToFloat(registerValues[42], registerValues[43]);
-                    position = registerValues[44];
-
-                }
-
-
-
-
-
-                System.out.println(registerValues[19]);
-                System.out.println(registerValues[20]);
-                System.out.println(temperature);
-
 
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+    }
+
+    public void queryPidRegulator(){
+        try {
+            int[] registerValues = modbusReader.readRegisters(38,7,1);
+            pidErr = hexToFloat(registerValues[0], registerValues[1]);
+            pidInt = hexToFloat(registerValues[2], registerValues[3]);
+            pidDif = hexToFloat(registerValues[4], registerValues[5]);
+            position = registerValues[6];
+
+            boolean[] coils = modbusReader.discreteReader(12,4);
+            if (coils[0]) regStatus = "Закрывается";
+            else if (coils[1]) regStatus = "Открывается";
+            else if (coils[2]) regStatus = "Закрыт";
+            else if (coils[3]) regStatus = "Открыт";
+            else regStatus = "Остановлен";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void querySettings() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {

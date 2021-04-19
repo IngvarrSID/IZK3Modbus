@@ -46,6 +46,11 @@ public class QueryBoxItemListener implements ItemListener {
             izkModbusGUI.getDataField().setText("");
             izkModbusGUI.getTimeField().setText("");
             izkModbusGUI.getStatLabel().setText("Нет информации");
+            izkModbusGUI.getPidErrField().setText("");
+            izkModbusGUI.getPidIntField().setText("");
+            izkModbusGUI.getPidDifField().setText("");
+            izkModbusGUI.getProgressRegulatorBar().setValue(0);
+            izkModbusGUI.getRegulatorStatusField().setText("");
         }
     }
 }

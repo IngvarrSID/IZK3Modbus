@@ -63,4 +63,7 @@ public class ModbusReader {
     public boolean[] coilsReader(int offset,int quantity) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         return modbusMaster.readCoils(slaveID,offset,quantity);
     }
+    public boolean[] discreteReader(int offset,int quantity) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        return modbusMaster.readDiscreteInputs(slaveID,offset,quantity);
+    }
 }

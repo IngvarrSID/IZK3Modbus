@@ -191,6 +191,7 @@ public class IZKModbusGUI extends JFrame {
         initTable(masterModbus,query);
         progressBar.setVisible(false);
         searchButton.addActionListener(new SearchButtonActionListener(this,query,modbusReader));
+        refreshRegulatorButton.addActionListener(new RefreshRegulatorButtonActionListener(query,modbusReader,this));
     }
 
     private void initWindow() {
