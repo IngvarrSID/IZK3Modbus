@@ -50,6 +50,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 break;
             case REGULATOR:
                 hideFielder(izkModbusGUI,true);
+                izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 izkModbusGUI.getRefreshRegulatorButton().doClick();
                 break;
             default:

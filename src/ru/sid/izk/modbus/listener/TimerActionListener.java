@@ -52,6 +52,12 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getPidDifField().setText(String.format("PID_err: %.1f у.е.",query.getPidDif()));
             izkModbusGUI.getProgressRegulatorBar().setValue(query.getPosition());
             izkModbusGUI.getRegulatorStatusField().setText(query.getRegStatus());
+            izkModbusGUI.getModeButton().setText(query.getRegulatorMode());
+            izkModbusGUI.getManualButton().setText(query.getManualMode());
+            izkModbusGUI.getCloseButton().setText(query.getClose());
+            izkModbusGUI.getOpenButton().setText(query.getOpen());
+            izkModbusGUI.getFullOpenButton().setText(query.getOpenFull());
+            izkModbusGUI.getFullCloseButton().setText(query.getCloseFull());
         }
     }
 }

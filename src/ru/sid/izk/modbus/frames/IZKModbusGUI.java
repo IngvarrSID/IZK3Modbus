@@ -192,6 +192,7 @@ public class IZKModbusGUI extends JFrame {
         progressBar.setVisible(false);
         searchButton.addActionListener(new SearchButtonActionListener(this,query,modbusReader));
         refreshRegulatorButton.addActionListener(new RefreshRegulatorButtonActionListener(query,modbusReader,this));
+        regulatorButtonsInit();
     }
 
     private void initWindow() {
@@ -338,6 +339,19 @@ public class IZKModbusGUI extends JFrame {
         //settings
         digitFilter(addressIZK,3);
         addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
+        //PID
+        floatFilter(kpWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(kiWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(kdWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(humidityWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        digitFilter(oneStepRegulator,5);
+        digitFilter(fullStepRegulator,5);
+        kpWriteField.addActionListener(new TwoRegisterWriteActionListener(35,this,modbusReader));
+        kiWriteField.addActionListener(new TwoRegisterWriteActionListener(37,this,modbusReader));
+        kdWriteField.addActionListener(new TwoRegisterWriteActionListener(39,this,modbusReader));
+        humidityWriteField.addActionListener(new TwoRegisterWriteActionListener(41,this,modbusReader));
+        oneStepRegulator.addActionListener(new OneRegisterWriteActionListener(43,this,modbusReader));
+        fullStepRegulator.addActionListener(new OneRegisterWriteActionListener(44,this,modbusReader));
 
     }
 
@@ -372,6 +386,15 @@ public class IZKModbusGUI extends JFrame {
         settingRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,32,false));
         numberRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,33,true));
         modeRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,34,false));
+    }
+
+    public void regulatorButtonsInit(){
+        modeButton.addActionListener(new RegulatorButtonsActionListener(this,10,modbusReader));
+        manualButton.addActionListener(new RegulatorButtonsActionListener(this,11,modbusReader));
+        closeButton.addActionListener(new RegulatorButtonsActionListener(this,12,modbusReader));
+        openButton.addActionListener(new RegulatorButtonsActionListener(this,13,modbusReader));
+        fullCloseButton.addActionListener(new RegulatorButtonsActionListener(this,14,modbusReader));
+        fullOpenButton.addActionListener(new RegulatorButtonsActionListener(this,15,modbusReader));
     }
 
     private JMenu createFileMenu(){

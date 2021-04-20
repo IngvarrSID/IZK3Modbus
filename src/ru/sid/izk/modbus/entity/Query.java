@@ -29,6 +29,20 @@ public class Query{
     private float pidDif;
     private int position;
     private String regStatus;
+    private String manualMode;
+    private String regulatorMode;
+    private String close;
+    private String open;
+    private String closeFull;
+    private String openFull;
+    //PIDSettings
+    private float kP;
+    private float kI;
+    private float kD;
+    private float humidityRequired;
+    private int step;
+    private int fullStep;
+
 
 
     //info
@@ -479,6 +493,54 @@ public class Query{
         return regStatus;
     }
 
+    public String getManualMode() {
+        return manualMode;
+    }
+
+    public String getRegulatorMode() {
+        return regulatorMode;
+    }
+
+    public String getClose() {
+        return close;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public String getCloseFull() {
+        return closeFull;
+    }
+
+    public String getOpenFull() {
+        return openFull;
+    }
+
+    public float getkP() {
+        return kP;
+    }
+
+    public float getkI() {
+        return kI;
+    }
+
+    public float getkD() {
+        return kD;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public int getFullStep() {
+        return fullStep;
+    }
+
+    public float getHumidityRequired() {
+        return humidityRequired;
+    }
+
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
 
@@ -564,14 +626,38 @@ public class Query{
             pidDif = hexToFloat(registerValues[4], registerValues[5]);
             position = registerValues[6];
 
-            boolean[] coils = modbusReader.discreteReader(12,4);
-            if (coils[0]) regStatus = "Закрывается";
-            else if (coils[1]) regStatus = "Открывается";
-            else if (coils[2]) regStatus = "Закрыт";
-            else if (coils[3]) regStatus = "Открыт";
+            boolean[] inputs = modbusReader.discreteReader(12,4);
+            if (inputs[0]) regStatus = "Закрывается";
+            else if (inputs[1]) regStatus = "Открывается";
+            else if (inputs[2]) regStatus = "Закрыт";
+            else if (inputs[3]) regStatus = "Открыт";
             else regStatus = "Остановлен";
 
+            boolean[] coils = modbusReader.coilsReader(10,6);
+            regulatorMode = buttonReader(coils[0]);
+            manualMode = buttonReader(coils[1]);
+            close = buttonReader(coils[2]);
+            open = buttonReader(coils[3]);
+            closeFull = buttonReader(coils[4]);
+            openFull = buttonReader(coils[5]);
+
+
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void queryPidSettings(){
+        try {
+            int[] registerValues = modbusReader.readHoldingsRegisters(35,10,1);
+            kP = hexToFloat(registerValues[0],registerValues[1]);
+            kI = hexToFloat(registerValues[2],registerValues[3]);
+            kD = hexToFloat(registerValues[4],registerValues[5]);
+            humidityRequired = hexToFloat(registerValues[6],registerValues[7]);
+            step = registerValues[8];
+            fullStep = registerValues[9];
+
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -769,6 +855,10 @@ public class Query{
     private static String dateReader (int value1,int value2,int value3){
         return String.format("%s.%s.%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
                 String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), String.valueOf(value3).length()<3 ? "20" +value3 : value3);
+    }
+
+    private static String buttonReader(boolean bool){
+        return bool ? "ON" : "OFF";
     }
 
 }
