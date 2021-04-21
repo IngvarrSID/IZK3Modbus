@@ -2,6 +2,7 @@ package ru.sid.izk.modbus.frames;
 
 import ru.sid.izk.modbus.adapter.TabbedPaneMouseAdapter;
 import ru.sid.izk.modbus.archive.CSVAdapter;
+import ru.sid.izk.modbus.archive.ReadAllDataAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
@@ -134,12 +135,16 @@ public class IZKModbusGUI extends JFrame {
     private JProgressBar progressRegulatorBar;
     private JLabel regulatorStatusField;
     private JButton refreshRegulatorButton;
+    private JButton readAllButton;
+    private JLabel dataLabel;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
     private final String[] modesRelays;
 
     private boolean readyToWriteRelay;
+
+    private ReadAllDataAdapter readAllDataAdapter;
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
@@ -193,6 +198,8 @@ public class IZKModbusGUI extends JFrame {
         searchButton.addActionListener(new SearchButtonActionListener(this,query,modbusReader));
         refreshRegulatorButton.addActionListener(new RefreshRegulatorButtonActionListener(query,modbusReader,this));
         regulatorButtonsInit();
+        readAllDataAdapter = new ReadAllDataAdapter(query,modbusReader);
+        readAllButton.addActionListener(new ReadAllDataActionListener(readAllDataAdapter, this));
     }
 
     private void initWindow() {
@@ -400,10 +407,14 @@ public class IZKModbusGUI extends JFrame {
     private JMenu createFileMenu(){
         JMenu file = new JMenu("Файл");
         JMenuItem open = new JMenuItem("Открыть");
+        JMenuItem save = new JMenuItem("Сохранить");
         JMenuItem exit = new JMenuItem("Закрыть");
         file.add(open);
         file.addSeparator();
+        file.add(save);
+        file.addSeparator();
         file.add(exit);
+        save.addActionListener(new SaveFileActionListener(this));
         exit.addActionListener(e -> System.exit(0));
         return file;
     }
@@ -853,5 +864,13 @@ public class IZKModbusGUI extends JFrame {
 
     public JButton getRefreshRegulatorButton() {
         return refreshRegulatorButton;
+    }
+
+    public JLabel getDataLabel() {
+        return dataLabel;
+    }
+
+    public ReadAllDataAdapter getReadAllDataAdapter() {
+        return readAllDataAdapter;
     }
 }

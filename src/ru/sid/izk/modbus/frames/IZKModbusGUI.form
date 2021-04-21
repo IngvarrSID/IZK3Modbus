@@ -655,8 +655,8 @@
                   <component id="71a6e" class="javax.swing.JButton" binding="oneChannelButton">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                        <preferred-size width="180" height="30"/>
-                        <maximum-size width="180" height="30"/>
+                        <preferred-size width="180" height="40"/>
+                        <maximum-size width="180" height="40"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -666,8 +666,8 @@
                   <component id="60141" class="javax.swing.JButton" binding="twoChannelButton">
                     <constraints>
                       <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                        <preferred-size width="180" height="30"/>
-                        <maximum-size width="180" height="30"/>
+                        <preferred-size width="180" height="40"/>
+                        <maximum-size width="180" height="40"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -677,8 +677,8 @@
                   <component id="ef38d" class="javax.swing.JButton" binding="threeChannelButton">
                     <constraints>
                       <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                        <preferred-size width="180" height="30"/>
-                        <maximum-size width="180" height="30"/>
+                        <preferred-size width="180" height="40"/>
+                        <maximum-size width="180" height="40"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -688,8 +688,8 @@
                   <component id="1a1ca" class="javax.swing.JButton" binding="fourChannelButton">
                     <constraints>
                       <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                        <preferred-size width="180" height="30"/>
-                        <maximum-size width="180" height="30"/>
+                        <preferred-size width="180" height="40"/>
+                        <maximum-size width="180" height="40"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -1918,11 +1918,6 @@
           <text value="Терминал"/>
         </properties>
       </component>
-      <hspacer id="a81dc">
-        <constraints>
-          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
       <component id="f7add" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -1930,23 +1925,6 @@
         <properties>
           <text value="Полученные данные:"/>
         </properties>
-      </component>
-      <component id="dc435" class="javax.swing.JButton" binding="searchButton">
-        <constraints>
-          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Поиск датчиков"/>
-        </properties>
-      </component>
-      <component id="c2b60" class="javax.swing.JProgressBar" binding="progressBar">
-        <constraints>
-          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="25"/>
-            <maximum-size width="-1" height="25"/>
-          </grid>
-        </constraints>
-        <properties/>
       </component>
       <hspacer id="b0c2d">
         <constraints>
@@ -1956,6 +1934,39 @@
           </grid>
         </constraints>
       </hspacer>
+      <component id="c2b60" class="javax.swing.JProgressBar" binding="progressBar">
+        <constraints>
+          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="25"/>
+            <maximum-size width="-1" height="25"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="14324" class="javax.swing.JButton" binding="readAllButton">
+        <constraints>
+          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Считать все настройки"/>
+        </properties>
+      </component>
+      <component id="dc435" class="javax.swing.JButton" binding="searchButton">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Поиск датчиков"/>
+        </properties>
+      </component>
+      <component id="2a9db" class="javax.swing.JLabel" binding="dataLabel">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
