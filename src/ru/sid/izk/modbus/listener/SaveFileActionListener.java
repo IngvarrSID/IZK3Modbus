@@ -5,8 +5,9 @@ import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SaveFileActionListener implements ActionListener {
     private final IZKModbusGUI izkModbusGUI;
@@ -23,10 +24,13 @@ public class SaveFileActionListener implements ActionListener {
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int result = fileChooser.showOpenDialog(fileChooser);
             if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    FileOutputStream fileStream = new FileOutputStream(fileChooser.getSelectedFile());
-                    ObjectOutputStream os = new ObjectOutputStream(fileStream);
-                    os.writeObject(izkModbusGUI.getReadAllDataAdapter());
+                try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()))) {
+                    String newSaveFile = String.format("SU5D vlagomer SAVE FILE, currentDate: %s\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy")));
+                    writer.write(newSaveFile);
+                    String data = izkModbusGUI.getReadAllDataAdapter().compilationData();
+                    writer.write(data);
+
+
 
                 } catch (Exception ex) {
                     ex.printStackTrace();

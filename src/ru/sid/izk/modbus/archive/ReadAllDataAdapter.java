@@ -9,7 +9,7 @@ import ru.sid.izk.modbus.entity.Query;
 import java.io.Serializable;
 
 
-public class ReadAllDataAdapter implements Serializable {
+public class ReadAllDataAdapter {
     //mode0 = 1
     private int addressIZK;
     private boolean[] activatedChannel;
@@ -67,8 +67,6 @@ public class ReadAllDataAdapter implements Serializable {
     private float hMin1;
     private float tsd11;
     private float tsd21;
-    private float autoMin1;
-    private float autoMax1;
     private float d201;
     private float kd1;
     private int min1;
@@ -93,8 +91,6 @@ public class ReadAllDataAdapter implements Serializable {
     private float hMin2;
     private float tsd12;
     private float tsd22;
-    private float autoMin2;
-    private float autoMax2;
     private float d202;
     private float kd2;
     private int min2;
@@ -119,8 +115,6 @@ public class ReadAllDataAdapter implements Serializable {
     private float hMin3;
     private float tsd13;
     private float tsd23;
-    private float autoMin3;
-    private float autoMax3;
     private float d203;
     private float kd3;
     private int min3;
@@ -145,8 +139,6 @@ public class ReadAllDataAdapter implements Serializable {
     private float hMin4;
     private float tsd14;
     private float tsd24;
-    private float autoMin4;
-    private float autoMax4;
     private float d204;
     private float kd4;
     private int min4;
@@ -239,8 +231,6 @@ public class ReadAllDataAdapter implements Serializable {
             hMin1 = query.gethMin();
             tsd11 = query.getTsd1();
             tsd21 = query.getTsd1();
-            autoMin1 = query.getAutoMin();
-            autoMax1 = query.getAutoMax();
             d201 = query.getD20();
             kd1 = query.getKd();
             min1 = query.getMin();
@@ -271,8 +261,6 @@ public class ReadAllDataAdapter implements Serializable {
             hMin2 = query.gethMin();
             tsd12 = query.getTsd1();
             tsd22 = query.getTsd1();
-            autoMin2 = query.getAutoMin();
-            autoMax2 = query.getAutoMax();
             d202 = query.getD20();
             kd2 = query.getKd();
             min2 = query.getMin();
@@ -304,8 +292,6 @@ public class ReadAllDataAdapter implements Serializable {
             hMin3 = query.gethMin();
             tsd13 = query.getTsd1();
             tsd23 = query.getTsd1();
-            autoMin3 = query.getAutoMin();
-            autoMax3 = query.getAutoMax();
             d203 = query.getD20();
             kd3 = query.getKd();
             min3 = query.getMin();
@@ -336,8 +322,6 @@ public class ReadAllDataAdapter implements Serializable {
             hMin4 = query.gethMin();
             tsd14 = query.getTsd1();
             tsd24 = query.getTsd1();
-            autoMin4 = query.getAutoMin();
-            autoMax4 = query.getAutoMax();
             d204 = query.getD20();
             kd4 = query.getKd();
             min4 = query.getMin();
@@ -345,6 +329,19 @@ public class ReadAllDataAdapter implements Serializable {
             emerMax4 = query.getEmerMax();
             noDensity4 = query.getNoDensity();
 
+    }
+
+    public String compilationData(){
+        return ((String.format("%d;%b;%b;%b;%b;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%f;%f;%f;%f;%d;%d\n",addressIZK,activatedChannel[0],
+                activatedChannel[1],activatedChannel[2],activatedChannel[3],settingRelay1,numberRelay1,modeRelay1,settingRelay2,numberRelay2,modeRelay2,settingRelay3,numberRelay3,modeRelay3,
+                settingRelay4,numberRelay4,modeRelay4,settingRelay5,numberRelay5,modeRelay5,settingRelay6,numberRelay6,modeRelay6,settingRelay7,numberRelay7,modeRelay7,settingRelay8,numberRelay8,modeRelay8,
+                settingRelay9,numberRelay9,modeRelay9,settingRelay10,numberRelay10,modeRelay10,kP,kI,kD,requiredHumidity,step,fullStep) +String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f" +
+                ";%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite1,timeoutWrite1,periodWrite1,t01Write1,ck1Write1,cd1Write1,checkPeriod1,errorWrite1,cs1001,cm1,k1,cs01,tc1,csMin1,hMin1,tsd11,
+                tsd21,d201,kd1,min1,max1,emerMax1,noDensity1) + String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite2,timeoutWrite2,periodWrite2,
+                t01Write2,ck1Write2,cd1Write2,checkPeriod2,errorWrite2,cs1002,cm2,k2,cs02,tc2,csMin2,hMin2,tsd12,tsd22,d202,kd2,min2,max2,emerMax2,noDensity2) + String.format("%d;%d;%d;%d;%f;%f;" +
+                        "%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite3,timeoutWrite3,periodWrite3,t01Write3,ck1Write3,cd1Write3,checkPeriod3,errorWrite3,cs1003,cm3,k3,cs03,tc3,csMin3,
+                hMin3,tsd13,tsd23,d203,kd3,min3,max3,emerMax3,noDensity3) + String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite4,timeoutWrite4,
+                periodWrite4,t01Write4,ck1Write4,cd1Write4,checkPeriod4,errorWrite4,cs1004,cm4,k4,cs04,tc4,csMin4,hMin4,tsd14, tsd24,d204,kd4,min4,max4,emerMax4,noDensity4)));
     }
 
 
