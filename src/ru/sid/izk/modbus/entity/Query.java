@@ -770,15 +770,20 @@ public class Query{
             dataFirm = builderData.toString();
 
             StringBuilder builderIdentif = new StringBuilder();
-            for (int i = 18; i < 21; i++) {
+            for (int i = 18; i < 26; i++) {
                 String s = Integer.toHexString(registerValues[i]);
-
-                String a = s.substring(2,4);
-                String b = s.substring(0,2);
-                int c = Integer.valueOf(a, 16);
-                int d = Integer.valueOf(b, 16);
-                builderIdentif.append((char)c);
-                builderIdentif.append((char)d);
+                if(s.length()>2) {
+                    String a = s.substring(2, 4);
+                    String b = s.substring(0, 2);
+                    int c = Integer.valueOf(a, 16);
+                    int d = Integer.valueOf(b, 16);
+                    builderIdentif.append((char) c);
+                    builderIdentif.append((char) d);
+                }
+                else {
+                    int c = Integer.valueOf(s,16);
+                    builderIdentif.append((char) c);
+                }
 
             }
             identificator = builderIdentif.toString();

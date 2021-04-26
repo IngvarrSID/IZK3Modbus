@@ -870,6 +870,10 @@ public class IZKModbusGUI extends JFrame {
         return dataLabel;
     }
 
+    public JButton getReadAllButton() {
+        return readAllButton;
+    }
+
     public ReadAllDataAdapter getReadAllDataAdapter() {
         return readAllDataAdapter;
     }

@@ -352,4 +352,8 @@ public class ReadAllDataAdapter {
     public void setDataUpDate(boolean dataUpDate) {
         this.dataUpDate = dataUpDate;
     }
+
+    public int getAddressIZK() {
+        return addressIZK;
+    }
 }

@@ -15,6 +15,15 @@ public class Application {
 
     public static void main(String[] args) {
 
+        UIManager.put("FileChooser.saveButtonText"      , "Сохранить"             );
+        UIManager.put("FileChooser.openButtonText"      , "Открыть"               );
+        UIManager.put("FileChooser.cancelButtonText"    , "Отмена"                );
+        UIManager.put("FileChooser.fileNameLabelText"   , "Наименование файла"    );
+        UIManager.put("FileChooser.filesOfTypeLabelText", "Типы файлов"           );
+        UIManager.put("FileChooser.lookInLabelText"     , "Директория"            );
+        UIManager.put("FileChooser.saveInLabelText"     , "Сохранить в директории");
+        UIManager.put("FileChooser.folderNameLabelText" , "Путь директории"       );
+
         SwingUtilities.invokeLater(() -> {
             try {
                 File settings = new File("settings.properties");
