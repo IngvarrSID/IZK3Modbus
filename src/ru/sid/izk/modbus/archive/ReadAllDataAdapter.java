@@ -8,6 +8,9 @@ import ru.sid.izk.modbus.entity.Query;
 
 import java.io.Serializable;
 
+import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
+import static ru.sid.izk.modbus.utils.FromHexUtils.stringFromHex;
+
 
 public class ReadAllDataAdapter {
     //mode0 = 1
@@ -151,6 +154,12 @@ public class ReadAllDataAdapter {
 
     private boolean dataUpDate;
 
+    private int[] settings;
+    private int[] sensor1;
+    private int[] sensor2;
+    private int[] sensor3;
+    private int[] sensor4;
+
 
     public ReadAllDataAdapter(Query query, ModbusReader modbusReader) {
         this.query = query;
@@ -159,189 +168,471 @@ public class ReadAllDataAdapter {
 
     public void readSettingsData() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-            modbusReader.writeModeRegister(0, 1);
-            query.querySettings();
-            addressIZK = query.getAddressIZK();
-            activatedChannel = query.getChannels();
-            settingRelay1 = query.getSettingRelay1();
-            numberRelay1 = query.getNumberRelay1();
-            modeRelay1 = query.getModeRelay1();
-            settingRelay2 = query.getSettingRelay2();
-            numberRelay2 = query.getNumberRelay2();
-            modeRelay2 = query.getModeRelay2();
-            settingRelay3 = query.getSettingRelay3();
-            numberRelay3 = query.getNumberRelay3();
-            modeRelay3 = query.getModeRelay3();
-            settingRelay4 = query.getSettingRelay4();
-            numberRelay4 = query.getNumberRelay4();
-            modeRelay4 = query.getModeRelay4();
-            settingRelay5 = query.getSettingRelay5();
-            numberRelay5 = query.getNumberRelay5();
-            modeRelay5 = query.getModeRelay5();
-            settingRelay6 = query.getSettingRelay6();
-            numberRelay6 = query.getNumberRelay6();
-            modeRelay6 = query.getModeRelay6();
-            settingRelay7 = query.getSettingRelay7();
-            numberRelay7 = query.getNumberRelay7();
-            modeRelay7 = query.getModeRelay7();
-            settingRelay8 = query.getSettingRelay8();
-            numberRelay8 = query.getNumberRelay8();
-            modeRelay8 = query.getModeRelay8();
-            settingRelay9 = query.getSettingRelay9();
-            numberRelay9 = query.getNumberRelay9();
-            modeRelay9 = query.getModeRelay9();
-            settingRelay10 = query.getSettingRelay10();
-            numberRelay10 = query.getNumberRelay10();
-            modeRelay10 = query.getModeRelay10();
+        modbusReader.writeModeRegister(0, 1);
+        query.querySettings();
+        addressIZK = query.getAddressIZK();
+        activatedChannel = query.getChannels();
+        settingRelay1 = query.getSettingRelay1();
+        numberRelay1 = query.getNumberRelay1();
+        modeRelay1 = query.getModeRelay1();
+        settingRelay2 = query.getSettingRelay2();
+        numberRelay2 = query.getNumberRelay2();
+        modeRelay2 = query.getModeRelay2();
+        settingRelay3 = query.getSettingRelay3();
+        numberRelay3 = query.getNumberRelay3();
+        modeRelay3 = query.getModeRelay3();
+        settingRelay4 = query.getSettingRelay4();
+        numberRelay4 = query.getNumberRelay4();
+        modeRelay4 = query.getModeRelay4();
+        settingRelay5 = query.getSettingRelay5();
+        numberRelay5 = query.getNumberRelay5();
+        modeRelay5 = query.getModeRelay5();
+        settingRelay6 = query.getSettingRelay6();
+        numberRelay6 = query.getNumberRelay6();
+        modeRelay6 = query.getModeRelay6();
+        settingRelay7 = query.getSettingRelay7();
+        numberRelay7 = query.getNumberRelay7();
+        modeRelay7 = query.getModeRelay7();
+        settingRelay8 = query.getSettingRelay8();
+        numberRelay8 = query.getNumberRelay8();
+        modeRelay8 = query.getModeRelay8();
+        settingRelay9 = query.getSettingRelay9();
+        numberRelay9 = query.getNumberRelay9();
+        modeRelay9 = query.getModeRelay9();
+        settingRelay10 = query.getSettingRelay10();
+        numberRelay10 = query.getNumberRelay10();
+        modeRelay10 = query.getModeRelay10();
 
     }
 
     public void readRegulatorData() {
 
 
-            query.queryPidSettings();
-            kP = query.getkP();
-            kI = query.getkI();
-            kD = query.getkD();
-            requiredHumidity = query.getHumidityRequired();
-            step = query.getStep();
-            fullStep = query.getFullStep();
+        query.queryPidSettings();
+        kP = query.getkP();
+        kI = query.getkI();
+        kD = query.getkD();
+        requiredHumidity = query.getHumidityRequired();
+        step = query.getStep();
+        fullStep = query.getFullStep();
 
 
     }
 
     public void readSensorOneData() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-            modbusReader.writeModeRegister(0, 5);
-            query.querySensor();
-            sensorAddressWrite1 = query.getSensorAddressWrite();
-            timeoutWrite1 = query.getTimeoutWrite();
-            periodWrite1 = query.getPeriodWrite();
-            t01Write1 = query.getT01Write();
-            ck1Write1 = query.getCk1Write();
-            cd1Write1 = query.getCd1Write();
-            checkPeriod1 = query.getCheckPeriod();
-            errorWrite1 = query.getErrorWrite();
-            cs1001 = query.getCs100();
-            cm1 = query.getCm();
-            k1 = query.getK();
-            cs01 = query.getCs1();
-            tc1 = query.getTc();
-            csMin1 = query.getCsMin();
-            hMin1 = query.gethMin();
-            tsd11 = query.getTsd1();
-            tsd21 = query.getTsd1();
-            d201 = query.getD20();
-            kd1 = query.getKd();
-            min1 = query.getMin();
-            max1 = query.getMax();
-            emerMax1 = query.getEmerMax();
-            noDensity1 = query.getNoDensity();
+        modbusReader.writeModeRegister(0, 5);
+        query.querySensor();
+        sensorAddressWrite1 = query.getSensorAddressWrite();
+        timeoutWrite1 = query.getTimeoutWrite();
+        periodWrite1 = query.getPeriodWrite();
+        t01Write1 = query.getT01Write();
+        ck1Write1 = query.getCk1Write();
+        cd1Write1 = query.getCd1Write();
+        checkPeriod1 = query.getCheckPeriod();
+        errorWrite1 = query.getErrorWrite();
+        cs1001 = query.getCs100();
+        cm1 = query.getCm();
+        k1 = query.getK();
+        cs01 = query.getCs1();
+        tc1 = query.getTc();
+        csMin1 = query.getCsMin();
+        hMin1 = query.gethMin();
+        tsd11 = query.getTsd1();
+        tsd21 = query.getTsd1();
+        d201 = query.getD20();
+        kd1 = query.getKd();
+        min1 = query.getMin();
+        max1 = query.getMax();
+        emerMax1 = query.getEmerMax();
+        noDensity1 = query.getNoDensity();
 
     }
 
     public void readSensorTwoData() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-            modbusReader.writeModeRegister(0, 6);
-            query.querySensor();
-            sensorAddressWrite2 = query.getSensorAddressWrite();
-            timeoutWrite2 = query.getTimeoutWrite();
-            periodWrite2 = query.getPeriodWrite();
-            t01Write2 = query.getT01Write();
-            ck1Write2 = query.getCk1Write();
-            cd1Write2 = query.getCd1Write();
-            checkPeriod2 = query.getCheckPeriod();
-            errorWrite2 = query.getErrorWrite();
-            cs1002 = query.getCs100();
-            cm2 = query.getCm();
-            k2 = query.getK();
-            cs02 = query.getCs1();
-            tc2 = query.getTc();
-            csMin2 = query.getCsMin();
-            hMin2 = query.gethMin();
-            tsd12 = query.getTsd1();
-            tsd22 = query.getTsd1();
-            d202 = query.getD20();
-            kd2 = query.getKd();
-            min2 = query.getMin();
-            max2 = query.getMax();
-            emerMax2 = query.getEmerMax();
-            noDensity2 = query.getNoDensity();
+        modbusReader.writeModeRegister(0, 6);
+        query.querySensor();
+        sensorAddressWrite2 = query.getSensorAddressWrite();
+        timeoutWrite2 = query.getTimeoutWrite();
+        periodWrite2 = query.getPeriodWrite();
+        t01Write2 = query.getT01Write();
+        ck1Write2 = query.getCk1Write();
+        cd1Write2 = query.getCd1Write();
+        checkPeriod2 = query.getCheckPeriod();
+        errorWrite2 = query.getErrorWrite();
+        cs1002 = query.getCs100();
+        cm2 = query.getCm();
+        k2 = query.getK();
+        cs02 = query.getCs1();
+        tc2 = query.getTc();
+        csMin2 = query.getCsMin();
+        hMin2 = query.gethMin();
+        tsd12 = query.getTsd1();
+        tsd22 = query.getTsd1();
+        d202 = query.getD20();
+        kd2 = query.getKd();
+        min2 = query.getMin();
+        max2 = query.getMax();
+        emerMax2 = query.getEmerMax();
+        noDensity2 = query.getNoDensity();
 
 
     }
 
     public void readSensorThreeData() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-            modbusReader.writeModeRegister(0, 7);
-            query.querySensor();
-            sensorAddressWrite3 = query.getSensorAddressWrite();
-            timeoutWrite3 = query.getTimeoutWrite();
-            periodWrite3 = query.getPeriodWrite();
-            t01Write3 = query.getT01Write();
-            ck1Write3 = query.getCk1Write();
-            cd1Write3 = query.getCd1Write();
-            checkPeriod3 = query.getCheckPeriod();
-            errorWrite3 = query.getErrorWrite();
-            cs1003 = query.getCs100();
-            cm3 = query.getCm();
-            k3 = query.getK();
-            cs03 = query.getCs1();
-            tc3 = query.getTc();
-            csMin3 = query.getCsMin();
-            hMin3 = query.gethMin();
-            tsd13 = query.getTsd1();
-            tsd23 = query.getTsd1();
-            d203 = query.getD20();
-            kd3 = query.getKd();
-            min3 = query.getMin();
-            max3 = query.getMax();
-            emerMax3 = query.getEmerMax();
-            noDensity3 = query.getNoDensity();
+        modbusReader.writeModeRegister(0, 7);
+        query.querySensor();
+        sensorAddressWrite3 = query.getSensorAddressWrite();
+        timeoutWrite3 = query.getTimeoutWrite();
+        periodWrite3 = query.getPeriodWrite();
+        t01Write3 = query.getT01Write();
+        ck1Write3 = query.getCk1Write();
+        cd1Write3 = query.getCd1Write();
+        checkPeriod3 = query.getCheckPeriod();
+        errorWrite3 = query.getErrorWrite();
+        cs1003 = query.getCs100();
+        cm3 = query.getCm();
+        k3 = query.getK();
+        cs03 = query.getCs1();
+        tc3 = query.getTc();
+        csMin3 = query.getCsMin();
+        hMin3 = query.gethMin();
+        tsd13 = query.getTsd1();
+        tsd23 = query.getTsd1();
+        d203 = query.getD20();
+        kd3 = query.getKd();
+        min3 = query.getMin();
+        max3 = query.getMax();
+        emerMax3 = query.getEmerMax();
+        noDensity3 = query.getNoDensity();
 
     }
 
     public void readSensorFourData() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
 
-            modbusReader.writeModeRegister(0, 8);
-            query.querySensor();
-            sensorAddressWrite4 = query.getSensorAddressWrite();
-            timeoutWrite4 = query.getTimeoutWrite();
-            periodWrite4 = query.getPeriodWrite();
-            t01Write4 = query.getT01Write();
-            ck1Write4 = query.getCk1Write();
-            cd1Write4 = query.getCd1Write();
-            checkPeriod4 = query.getCheckPeriod();
-            errorWrite4 = query.getErrorWrite();
-            cs1004 = query.getCs100();
-            cm4 = query.getCm();
-            k4 = query.getK();
-            cs04 = query.getCs1();
-            tc4 = query.getTc();
-            csMin4 = query.getCsMin();
-            hMin4 = query.gethMin();
-            tsd14 = query.getTsd1();
-            tsd24 = query.getTsd1();
-            d204 = query.getD20();
-            kd4 = query.getKd();
-            min4 = query.getMin();
-            max4 = query.getMax();
-            emerMax4 = query.getEmerMax();
-            noDensity4 = query.getNoDensity();
+        modbusReader.writeModeRegister(0, 8);
+        query.querySensor();
+        sensorAddressWrite4 = query.getSensorAddressWrite();
+        timeoutWrite4 = query.getTimeoutWrite();
+        periodWrite4 = query.getPeriodWrite();
+        t01Write4 = query.getT01Write();
+        ck1Write4 = query.getCk1Write();
+        cd1Write4 = query.getCd1Write();
+        checkPeriod4 = query.getCheckPeriod();
+        errorWrite4 = query.getErrorWrite();
+        cs1004 = query.getCs100();
+        cm4 = query.getCm();
+        k4 = query.getK();
+        cs04 = query.getCs1();
+        tc4 = query.getTc();
+        csMin4 = query.getCsMin();
+        hMin4 = query.gethMin();
+        tsd14 = query.getTsd1();
+        tsd24 = query.getTsd1();
+        d204 = query.getD20();
+        kd4 = query.getKd();
+        min4 = query.getMin();
+        max4 = query.getMax();
+        emerMax4 = query.getEmerMax();
+        noDensity4 = query.getNoDensity();
 
     }
 
-    public String compilationData(){
-        return ((String.format("%d;%b;%b;%b;%b;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%f;%f;%f;%f;%d;%d\n",addressIZK,activatedChannel[0],
-                activatedChannel[1],activatedChannel[2],activatedChannel[3],settingRelay1,numberRelay1,modeRelay1,settingRelay2,numberRelay2,modeRelay2,settingRelay3,numberRelay3,modeRelay3,
-                settingRelay4,numberRelay4,modeRelay4,settingRelay5,numberRelay5,modeRelay5,settingRelay6,numberRelay6,modeRelay6,settingRelay7,numberRelay7,modeRelay7,settingRelay8,numberRelay8,modeRelay8,
-                settingRelay9,numberRelay9,modeRelay9,settingRelay10,numberRelay10,modeRelay10,kP,kI,kD,requiredHumidity,step,fullStep) +String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f" +
-                ";%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite1,timeoutWrite1,periodWrite1,t01Write1,ck1Write1,cd1Write1,checkPeriod1,errorWrite1,cs1001,cm1,k1,cs01,tc1,csMin1,hMin1,tsd11,
-                tsd21,d201,kd1,min1,max1,emerMax1,noDensity1) + String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite2,timeoutWrite2,periodWrite2,
-                t01Write2,ck1Write2,cd1Write2,checkPeriod2,errorWrite2,cs1002,cm2,k2,cs02,tc2,csMin2,hMin2,tsd12,tsd22,d202,kd2,min2,max2,emerMax2,noDensity2) + String.format("%d;%d;%d;%d;%f;%f;" +
-                        "%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite3,timeoutWrite3,periodWrite3,t01Write3,ck1Write3,cd1Write3,checkPeriod3,errorWrite3,cs1003,cm3,k3,cs03,tc3,csMin3,
-                hMin3,tsd13,tsd23,d203,kd3,min3,max3,emerMax3,noDensity3) + String.format("%d;%d;%d;%d;%f;%f;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d\n",sensorAddressWrite4,timeoutWrite4,
-                periodWrite4,t01Write4,ck1Write4,cd1Write4,checkPeriod4,errorWrite4,cs1004,cm4,k4,cs04,tc4,csMin4,hMin4,tsd14, tsd24,d204,kd4,min4,max4,emerMax4,noDensity4)));
+    public String compilationData() {
+        return ((String.format("Settings:%d;%b;%b;%b;%b;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%.1f;%.1f;%.1f;%.1f;%d;%d\n",
+                addressIZK, activatedChannel[0], activatedChannel[1], activatedChannel[2], activatedChannel[3], settingRelay1, numberRelay1, modeRelay1, settingRelay2, numberRelay2, modeRelay2, settingRelay3, numberRelay3, modeRelay3,
+                settingRelay4, numberRelay4, modeRelay4, settingRelay5, numberRelay5, modeRelay5, settingRelay6, numberRelay6, modeRelay6, settingRelay7, numberRelay7, modeRelay7, settingRelay8, numberRelay8, modeRelay8,
+                settingRelay9, numberRelay9, modeRelay9, settingRelay10, numberRelay10, modeRelay10, kP, kI, kD, requiredHumidity, step, fullStep) +
+                String.format("Sensor1:%d;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d;%f;%d\n",
+                        sensorAddressWrite1, timeoutWrite1, periodWrite1, t01Write1, ck1Write1, cd1Write1, cs1001, cm1, k1, cs01, csMin1, hMin1, d201, kd1, tsd11, tsd21, tc1, min1, max1, emerMax1, noDensity1, errorWrite1, checkPeriod1) +
+                String.format("Sensor2:%d;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d;%f;%d\n",
+                        sensorAddressWrite2, timeoutWrite2, periodWrite2, t01Write2, ck1Write2, cd1Write2, cs1002, cm2, k2, cs02, csMin2, hMin2, d202, kd2, tsd12, tsd22, tc2, min2, max2, emerMax2, noDensity2, errorWrite2, checkPeriod2) +
+                String.format("Sensor3:%d;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d;%f;%d\n",
+                        sensorAddressWrite3, timeoutWrite3, periodWrite3, t01Write3, ck1Write3, cd1Write3, cs1003, cm3, k3, cs03, csMin3, hMin3, d203, kd3, tsd13, tsd23, tc3, min3, max3, emerMax3, noDensity3, errorWrite3, checkPeriod3) +
+                String.format("Sensor4:%d;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d;%f;%d\n",
+                        sensorAddressWrite4, timeoutWrite4, periodWrite4, t01Write4, ck1Write4, cd1Write4, cs1004, cm4, k4, cs04, csMin4, hMin4, d204, kd4, tsd14, tsd24, tc4, min4, max4, emerMax4, noDensity4, errorWrite4, checkPeriod4)));
+    }
+
+
+    public void readFileSettings(String[] readDataStrings) {
+        addressIZK = Integer.parseInt(readDataStrings[0]);
+        activatedChannel = new boolean[4];
+        for (int i = 0; i < 4; i++) {
+            activatedChannel[i] = readDataStrings[1 + i].equals("true");
+        }
+        settingRelay1 = Integer.parseInt(readDataStrings[5]);
+        numberRelay1 = Integer.parseInt(readDataStrings[6]);
+        modeRelay1 = Integer.parseInt(readDataStrings[7]);
+        settingRelay2 = Integer.parseInt(readDataStrings[8]);
+        numberRelay2 = Integer.parseInt(readDataStrings[9]);
+        modeRelay2 = Integer.parseInt(readDataStrings[10]);
+        settingRelay3 = Integer.parseInt(readDataStrings[11]);
+        numberRelay3 = Integer.parseInt(readDataStrings[12]);
+        modeRelay3 = Integer.parseInt(readDataStrings[13]);
+        settingRelay4 = Integer.parseInt(readDataStrings[14]);
+        numberRelay4 = Integer.parseInt(readDataStrings[15]);
+        modeRelay4 = Integer.parseInt(readDataStrings[16]);
+        settingRelay5 = Integer.parseInt(readDataStrings[17]);
+        numberRelay5 = Integer.parseInt(readDataStrings[18]);
+        modeRelay5 = Integer.parseInt(readDataStrings[19]);
+        settingRelay6 = Integer.parseInt(readDataStrings[20]);
+        numberRelay6 = Integer.parseInt(readDataStrings[21]);
+        modeRelay6 = Integer.parseInt(readDataStrings[22]);
+        settingRelay7 = Integer.parseInt(readDataStrings[23]);
+        numberRelay7 = Integer.parseInt(readDataStrings[24]);
+        modeRelay7 = Integer.parseInt(readDataStrings[25]);
+        settingRelay8 = Integer.parseInt(readDataStrings[26]);
+        numberRelay8 = Integer.parseInt(readDataStrings[27]);
+        modeRelay8 = Integer.parseInt(readDataStrings[28]);
+        settingRelay9 = Integer.parseInt(readDataStrings[29]);
+        numberRelay9 = Integer.parseInt(readDataStrings[30]);
+        modeRelay9 = Integer.parseInt(readDataStrings[31]);
+        settingRelay10 = Integer.parseInt(readDataStrings[32]);
+        numberRelay10 = Integer.parseInt(readDataStrings[33]);
+        modeRelay10 = Integer.parseInt(readDataStrings[34]);
+        kP = Float.parseFloat(readDataStrings[35]);
+        kI = Float.parseFloat(readDataStrings[36]);
+        kD = Float.parseFloat(readDataStrings[37]);
+        requiredHumidity = Float.parseFloat(readDataStrings[38]);
+        step = Integer.parseInt(readDataStrings[39]);
+        fullStep = Integer.parseInt(readDataStrings[40]);
+
+        settings = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            if (i == 1) {
+                StringBuilder bits = new StringBuilder();
+                for (int j = 0; j < 16; j++) {
+                    if (activatedChannel.length > j) bits.append(activatedChannel[j] ? "1" : "0");
+                    else bits.append("0");
+                }
+                settings[in] = Integer.parseInt(bitsReader(bits.toString()), 2);
+                in++;
+                i = i + 3;
+            } else if (in == 2) {
+                settings[in] = 0;
+                in++;
+                i--;
+            } else if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = stringFromHex(f);
+                sF = sF.replace("0x", "");
+                settings[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                settings[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            } else {
+                settings[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+        }
+    }
+
+    public void readFileSensorOne(String[] readDataStrings) {
+        sensorAddressWrite1 = Integer.parseInt(readDataStrings[0]);
+        timeoutWrite1 = Integer.parseInt(readDataStrings[1]);
+        periodWrite1 = Integer.parseInt(readDataStrings[2]);
+        t01Write1 = Integer.parseInt(readDataStrings[3]);
+        ck1Write1 = Float.parseFloat(readDataStrings[4]);
+        cd1Write1 = Float.parseFloat(readDataStrings[5]);
+        cs1001 = Float.parseFloat(readDataStrings[6]);
+        cm1 = Float.parseFloat(readDataStrings[7]);
+        k1 = Float.parseFloat(readDataStrings[8]);
+        cs01 = Float.parseFloat(readDataStrings[9]);
+        tc1 = Float.parseFloat(readDataStrings[10]);
+        csMin1 = Float.parseFloat(readDataStrings[11]);
+        hMin1 = Float.parseFloat(readDataStrings[12]);
+        tsd11 = Float.parseFloat(readDataStrings[13]);
+        tsd21 = Float.parseFloat(readDataStrings[14]);
+        d201 = Float.parseFloat(readDataStrings[15]);
+        kd1 = Float.parseFloat(readDataStrings[16]);
+        min1 = Integer.parseInt(readDataStrings[17]);
+        max1 = Integer.parseInt(readDataStrings[18]);
+        emerMax1 = Integer.parseInt(readDataStrings[19]);
+        noDensity1 = Integer.parseInt(readDataStrings[20]);
+        errorWrite1 = Float.parseFloat(readDataStrings[21]);
+        checkPeriod1 = Integer.parseInt(readDataStrings[22]);
+
+
+        sensor1 = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            //TODO разобраься с регистром аварийной плотности, 34 или 35
+            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
+                sensor1[in] = 0;
+                i--;
+                in++;
+            }
+            else if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = stringFromHex(f);
+                sF = sF.replace("0x", "");
+                sensor1[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                sensor1[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            } else {
+                sensor1[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+
+        }
+    }
+
+    public void readFileSensorTwo(String[] readDataStrings) {
+        sensorAddressWrite2 = Integer.parseInt(readDataStrings[0]);
+        timeoutWrite2 = Integer.parseInt(readDataStrings[1]);
+        periodWrite2 = Integer.parseInt(readDataStrings[2]);
+        t01Write2 = Integer.parseInt(readDataStrings[3]);
+        ck1Write2 = Float.parseFloat(readDataStrings[4]);
+        cd1Write2 = Float.parseFloat(readDataStrings[5]);
+        cs1002 = Float.parseFloat(readDataStrings[6]);
+        cm2 = Float.parseFloat(readDataStrings[7]);
+        k2 = Float.parseFloat(readDataStrings[8]);
+        cs02 = Float.parseFloat(readDataStrings[9]);
+        tc2 = Float.parseFloat(readDataStrings[10]);
+        csMin2 = Float.parseFloat(readDataStrings[11]);
+        hMin2 = Float.parseFloat(readDataStrings[12]);
+        tsd12 = Float.parseFloat(readDataStrings[13]);
+        tsd22 = Float.parseFloat(readDataStrings[14]);
+        d202 = Float.parseFloat(readDataStrings[15]);
+        ;
+        kd2 = Float.parseFloat(readDataStrings[16]);
+        min2 = Integer.parseInt(readDataStrings[17]);
+        max2 = Integer.parseInt(readDataStrings[18]);
+        emerMax2 = Integer.parseInt(readDataStrings[19]);
+        noDensity2 = Integer.parseInt(readDataStrings[20]);
+        errorWrite2 = Float.parseFloat(readDataStrings[21]);
+        checkPeriod2 = Integer.parseInt(readDataStrings[22]);
+
+
+        sensor2 = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+                sensor2[in] = 0;
+                i--;
+                in++;
+            }
+            else  if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = stringFromHex(f);
+                sF = sF.replace("0x", "");
+                sensor2[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                sensor2[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            }
+
+            else {
+                sensor2[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+        }
+    }
+
+    public void readFileSensorThree(String[] readDataStrings) {
+        sensorAddressWrite3 = Integer.parseInt(readDataStrings[0]);
+        timeoutWrite3 = Integer.parseInt(readDataStrings[1]);
+        periodWrite3 = Integer.parseInt(readDataStrings[2]);
+        t01Write3 = Integer.parseInt(readDataStrings[3]);
+        ck1Write3 = Float.parseFloat(readDataStrings[4]);
+        cd1Write3 = Float.parseFloat(readDataStrings[5]);
+        cs1003 = Float.parseFloat(readDataStrings[6]);
+        cm3 = Float.parseFloat(readDataStrings[7]);
+        k3 = Float.parseFloat(readDataStrings[8]);
+        cs03 = Float.parseFloat(readDataStrings[9]);
+        tc3 = Float.parseFloat(readDataStrings[10]);
+        csMin3 = Float.parseFloat(readDataStrings[11]);
+        hMin3 = Float.parseFloat(readDataStrings[12]);
+        tsd13 = Float.parseFloat(readDataStrings[13]);
+        tsd23 = Float.parseFloat(readDataStrings[14]);
+        d203 = Float.parseFloat(readDataStrings[15]);
+        ;
+        kd3 = Float.parseFloat(readDataStrings[16]);
+        min3 = Integer.parseInt(readDataStrings[17]);
+        max3 = Integer.parseInt(readDataStrings[18]);
+        emerMax3 = Integer.parseInt(readDataStrings[19]);
+        noDensity3 = Integer.parseInt(readDataStrings[20]);
+        errorWrite3 = Float.parseFloat(readDataStrings[21]);
+        checkPeriod3 = Integer.parseInt(readDataStrings[22]);
+
+
+        sensor3 = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+                sensor3[in] = 0;
+                i--;
+                in++;
+            }
+            else if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = stringFromHex(f);
+                sF = sF.replace("0x", "");
+                sensor3[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                sensor3[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            }
+            else {
+                sensor3[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+        }
+    }
+
+    public void readFileSensorFour(String[] readDataStrings) {
+        sensorAddressWrite4 = Integer.parseInt(readDataStrings[0]);
+        timeoutWrite4 = Integer.parseInt(readDataStrings[1]);
+        periodWrite4 = Integer.parseInt(readDataStrings[2]);
+        t01Write4 = Integer.parseInt(readDataStrings[3]);
+        ck1Write4 = Float.parseFloat(readDataStrings[4]);
+        cd1Write4 = Float.parseFloat(readDataStrings[5]);
+        cs1004 = Float.parseFloat(readDataStrings[6]);
+        cm4 = Float.parseFloat(readDataStrings[7]);
+        k4 = Float.parseFloat(readDataStrings[8]);
+        cs04 = Float.parseFloat(readDataStrings[9]);
+        tc4 = Float.parseFloat(readDataStrings[10]);
+        csMin4 = Float.parseFloat(readDataStrings[11]);
+        hMin4 = Float.parseFloat(readDataStrings[12]);
+        tsd14 = Float.parseFloat(readDataStrings[13]);
+        tsd24 = Float.parseFloat(readDataStrings[14]);
+        d204 = Float.parseFloat(readDataStrings[15]);
+        ;
+        kd4 = Float.parseFloat(readDataStrings[16]);
+        min4 = Integer.parseInt(readDataStrings[17]);
+        max4 = Integer.parseInt(readDataStrings[18]);
+        emerMax4 = Integer.parseInt(readDataStrings[19]);
+        noDensity4 = Integer.parseInt(readDataStrings[20]);
+        errorWrite4 = Float.parseFloat(readDataStrings[21]);
+        checkPeriod4 = Integer.parseInt(readDataStrings[22]);
+
+
+        sensor4 = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+                sensor4[in] = 0;
+                i--;
+                in++;
+            }
+            else if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = stringFromHex(f);
+                sF = sF.replace("0x", "");
+                sensor4[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                sensor4[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            }
+            else {
+                sensor4[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+        }
     }
 
 
@@ -355,5 +646,29 @@ public class ReadAllDataAdapter {
 
     public int getAddressIZK() {
         return addressIZK;
+    }
+
+    public boolean[] getActivatedChannel() {
+        return activatedChannel;
+    }
+
+    public int[] getSettings() {
+        return settings;
+    }
+
+    public int[] getSensor1() {
+        return sensor1;
+    }
+
+    public int[] getSensor2() {
+        return sensor2;
+    }
+
+    public int[] getSensor3() {
+        return sensor3;
+    }
+
+    public int[] getSensor4() {
+        return sensor4;
     }
 }

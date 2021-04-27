@@ -7,14 +7,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TimerBar implements ActionListener {
+public class TimerReadBar implements ActionListener {
     private final IZKModbusGUI izkModbusGUI;
     private final ReadAllDataAdapter readAllDataAdapter;
     private int state;
 
 
 
-    public TimerBar(IZKModbusGUI izkModbusGUI, ReadAllDataAdapter readAllDataAdapter, int state) {
+    public TimerReadBar(IZKModbusGUI izkModbusGUI, ReadAllDataAdapter readAllDataAdapter, int state) {
         this.izkModbusGUI = izkModbusGUI;
         this.readAllDataAdapter = readAllDataAdapter;
         this.state = state;

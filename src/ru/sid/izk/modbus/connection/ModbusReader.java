@@ -70,4 +70,8 @@ public class ModbusReader {
     public void  writeCoil(int offset,boolean bool) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         modbusMaster.writeSingleCoil(slaveID,offset,bool);
     }
+
+    public void writeMultipleRegisters(int offset,int[] registers) throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+        modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
+    }
 }

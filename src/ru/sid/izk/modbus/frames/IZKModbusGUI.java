@@ -137,6 +137,7 @@ public class IZKModbusGUI extends JFrame {
     private JButton refreshRegulatorButton;
     private JButton readAllButton;
     private JLabel dataLabel;
+    private JButton writeAllButton;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -144,7 +145,7 @@ public class IZKModbusGUI extends JFrame {
 
     private boolean readyToWriteRelay;
 
-    private ReadAllDataAdapter readAllDataAdapter;
+    private final ReadAllDataAdapter readAllDataAdapter;
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
@@ -200,6 +201,7 @@ public class IZKModbusGUI extends JFrame {
         regulatorButtonsInit();
         readAllDataAdapter = new ReadAllDataAdapter(query,modbusReader);
         readAllButton.addActionListener(new ReadAllDataActionListener(readAllDataAdapter, this));
+        writeAllButton.addActionListener(new WriteAllDataActionListener(readAllDataAdapter,this,modbusReader));
     }
 
     private void initWindow() {
@@ -415,6 +417,7 @@ public class IZKModbusGUI extends JFrame {
         file.addSeparator();
         file.add(exit);
         save.addActionListener(new SaveFileActionListener(this));
+        open.addActionListener(new OpenFileActionListener(this));
         exit.addActionListener(e -> System.exit(0));
         return file;
     }
