@@ -22,12 +22,27 @@ public class WriteAllDataActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final JCheckBox queryBox = izkModbusGUI.getQueryBox();
-        if (queryBox.isSelected()) queryBox.setSelected(false);
-        izkModbusGUI.getProgressBar().setValue(0);
-        izkModbusGUI.getProgressBar().setVisible(true);
-        izkModbusGUI.getProgressBar().setMaximum(5);
-        Timer timer = new Timer(500,new TimerWriteBar(izkModbusGUI,readAllDataAdapter,modbusReader,1));
-        timer.start();
+        if(readAllDataAdapter.isDataUpDate()) {
+            int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Внимание! Запись всех настроек может <br>привести к потери данным блока ИЗК-3!<br>" +
+                    "Записать все настройки?</html>", "Подтверждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                final JCheckBox queryBox = izkModbusGUI.getQueryBox();
+                if (queryBox.isSelected()) queryBox.setSelected(false);
+                izkModbusGUI.getProgressBar().setValue(0);
+                izkModbusGUI.getProgressBar().setVisible(true);
+                izkModbusGUI.getProgressBar().setMaximum(5);
+                Timer timer = new Timer(200, new TimerWriteBar(izkModbusGUI, readAllDataAdapter, modbusReader, 1));
+                timer.start();
+            }
+        } else {
+            int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Данные для записи не обнаружены!<br>" +
+                    "Открыть файл с данными?</html>", "Ошибка", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            "Записать все настройки?</html>", "Подтверждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+
+            }
+        }
+
+
     }
 }

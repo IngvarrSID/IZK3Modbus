@@ -731,7 +731,7 @@ public class Query{
             min = registerValues[31];
             max = registerValues[32];
             emerMax = registerValues[33];
-            noDensity = registerValues[34];
+            noDensity = registerValues[35];
 
         } catch (Exception e){
             e.printStackTrace();

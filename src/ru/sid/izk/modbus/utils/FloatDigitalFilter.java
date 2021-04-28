@@ -21,11 +21,13 @@ public class FloatDigitalFilter extends DocumentFilter {
 
     @Override
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-    //    String numS = fb.getDocument().getText(0,fb.getDocument().getLength());
-   //     numS += text;
-     //   if (numS.matches(pattern)) {
-
-                super.replace(fb, offset, length, text, attrs);
-
+        String numS = fb.getDocument().getText(0, fb.getDocument().getLength());
+        numS += text;
+        if (numS.matches(pattern))
+            super.replace(fb, offset, length, text, attrs);
     }
+
+
+
+
 }

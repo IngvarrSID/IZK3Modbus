@@ -459,7 +459,6 @@ public class ReadAllDataAdapter {
         sensor1 = new int[43];
         int in = 0;
         for (int i = 0; i < readDataStrings.length; i++) {
-            //TODO разобраься с регистром аварийной плотности, 34 или 35
             if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
                 sensor1[in] = 0;
                 i--;
@@ -511,7 +510,7 @@ public class ReadAllDataAdapter {
         sensor2 = new int[43];
         int in = 0;
         for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
                 sensor2[in] = 0;
                 i--;
                 in++;
@@ -563,7 +562,7 @@ public class ReadAllDataAdapter {
         sensor3 = new int[43];
         int in = 0;
         for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
                 sensor3[in] = 0;
                 i--;
                 in++;
@@ -614,7 +613,7 @@ public class ReadAllDataAdapter {
         sensor4 = new int[43];
         int in = 0;
         for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 35 || in == 36 || in == 37 || in == 38) {
+            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
                 sensor4[in] = 0;
                 i--;
                 in++;
