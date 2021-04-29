@@ -5,6 +5,7 @@ import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -36,10 +37,9 @@ public class WriteAllDataActionListener implements ActionListener {
             }
         } else {
             int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Данные для записи не обнаружены!<br>" +
-                    "Открыть файл с данными?</html>", "Ошибка", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-            "Записать все настройки?</html>", "Подтверждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    "Открыть файл с данными?</html>", "Ошибка", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
-
+                new OpenFileActionListener(izkModbusGUI).actionPerformed(new ActionEvent(new JButton(),Event.ACTION_EVENT,""));
             }
         }
 

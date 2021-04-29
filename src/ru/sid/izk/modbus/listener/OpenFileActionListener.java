@@ -50,7 +50,7 @@ public class OpenFileActionListener implements ActionListener {
                     }
                 }
                 if(izkModbusGUI.getReadAllDataAdapter().isDataUpDate()){
-                    izkModbusGUI.getDataLabel().setText("Данные загружены из файла");
+                    izkModbusGUI.getDataLabel().setText("Данные загружены");
                     JOptionPane.showMessageDialog(izkModbusGUI, "Данные загружены из файла", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(izkModbusGUI, "Ошибка чтения файла!", "Ошибка", JOptionPane.ERROR_MESSAGE);

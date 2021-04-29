@@ -31,7 +31,9 @@ public class SaveFileActionListener implements ActionListener {
                     writer.write(newSaveFile);
                     String data = izkModbusGUI.getReadAllDataAdapter().compilationData();
                     writer.write(data);
-                    JOptionPane.showMessageDialog(izkModbusGUI,"Файл '" + fileChooser.getSelectedFile() + " ) сохранен","Подтверждение",JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(izkModbusGUI,"Файл " + fileChooser.getSelectedFile() + " сохранен","Подтверждение",JOptionPane.INFORMATION_MESSAGE);
+                    izkModbusGUI.getReadAllDataAdapter().setDataUpDate(false);
+                    izkModbusGUI.getDataLabel().setText("Файл сохранен");
 
                 } catch (Exception ex) {
                     ex.printStackTrace();

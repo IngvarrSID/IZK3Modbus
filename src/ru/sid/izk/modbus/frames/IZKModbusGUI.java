@@ -32,7 +32,6 @@ public class IZKModbusGUI extends JFrame {
     private JTextField timeField;
     private JCheckBox queryBox;
     private JTextField densityField;
-    private JLabel nameStatLabel;
     private JLabel statLabel;
     private JTextField dataField;
     private JTextField periodField;
@@ -153,7 +152,6 @@ public class IZKModbusGUI extends JFrame {
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
 
         initWindow();
-        nameStatLabel.setText("Состояние датчика:");
         statLabel.setText("Нет информации");
         if (!terminal.isError())
             comLabel.setText(String.format("Подключено к %s на скорости %s", terminal.getComName(), terminal.getBound()));

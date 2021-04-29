@@ -55,6 +55,7 @@ public class TimerWriteBar implements ActionListener {
             JOptionPane.showMessageDialog(izkModbusGUI, "Запись всех настроек завершена!", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
             izkModbusGUI.getProgressBar().setVisible(false);
             izkModbusGUI.getDataLabel().setText("Данные записаны");
+            izkModbusGUI.getReadAllDataAdapter().setDataUpDate(false);
         }
         else state++;
 
