@@ -1,11 +1,21 @@
 package ru.sid.izk.modbus.archive;
 
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import ru.sid.izk.modbus.connection.MasterModbus;
+import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class CSVAdapter {
 
@@ -13,26 +23,48 @@ public class CSVAdapter {
     private String month;
     private String day;
     private String time;
-    private IZKModbusGUI izkModbusGUI;
+    private final IZKModbusGUI izkModbusGUI;
     private String currentChannel;
-    private String path;
+    private String changePath;
+    private final String path;
+    private final String fullPath;
+    private final String[] head;
+    private final MasterModbus masterModbus;
+    private final Query query;
 
-    public CSVAdapter(IZKModbusGUI izkModbusGUI){
+
+    public CSVAdapter(IZKModbusGUI izkModbusGUI, MasterModbus masterModbus, Query query){
         this.izkModbusGUI = izkModbusGUI;
+        this.masterModbus =  masterModbus;
+        this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       fileCheck();
-
+       whatsThePath();
+       path = String.format("%s/%s/%s/%s/IZK%d",changePath,year,month,day,masterModbus.getId());
+       fullPath = String.format("%s/%s.csv",path,currentChannel);
+       head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность".split("\\.");
     }
 
+    private void whatsThePath(){
+        try {
+            FileInputStream in = new FileInputStream("settings.properties");
+            Properties properties = new Properties();
+            properties.load(in);
+            changePath = properties.getProperty("Path");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     private void whatsTheTime(){
     String [] allDate = LocalDateTime.now().toString().split("T");
     String [] date = allDate[0].split("-");
     year = date[0];
-    month = date[1];
+    String[] months = "January,February,March,April,May,June,July,August,September,October,November,December".split(",");
+    month = months[Integer.parseInt(date[1])-1];
     day = date[2];
-    time = allDate[1];
+    String[] fullTime = allDate[1].split("\\.");
+    time = fullTime[0];
     }
 
     private void whatsTheChannel(){
@@ -54,17 +86,95 @@ public class CSVAdapter {
         }
     }
 
-    private void fileCheck(){
-        path = String.format("archive/%s/%s/%s/%s.csv",year,month,day,currentChannel);
+    public void fileWrite(){
+        String dgsAddress = String.valueOf(query.getSensorAddress());
+        String humidity = String.format("%.2f",query.getHumidity());
+        String density = String.format("%.1f",query.getDensity());
+        String temperature = String.format("%.1f",query.getTemperature());
+        String cs1 = String.format("%.1f",query.getCs1());
+        String cs2 = String.format("%.1f",query.getCs2());
+        String period = String.format("%.1f",query.getPeriod());
+        String error = String.format("%.1f",query.getError());
         try {
-            File file = new File(path);
+            File file = new File(fullPath);
             if (file.exists()){
-                //do something
+                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),';','"');
+                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
+                writer.writeNext(data);
+                writer.close();
+
             }else {
-                CSVWriter writer = new CSVWriter(new FileWriter(path));
+                File dir = new File(path);
+                if (dir.mkdirs()) System.out.println("Путь создан");
+                else System.out.println("Путь не создан");
+                FileOutputStream fos = new FileOutputStream(fullPath);
+                Writer preWriter = new OutputStreamWriter(fos,Charset.forName("Windows-1251"));
+                CSVWriter writer = new CSVWriter(preWriter,';','"');
+                writer.writeNext(head);
+                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
+                writer.writeNext(data);
+                writer.close();
+                fos.close();
             }
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public List<String[]> fileRead(){
+        try {
+            File file = new File(fullPath);
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(fullPath);
+                Reader preReader = new InputStreamReader(fis,Charset.forName("Windows-1251"));
+                CSVReader reader = new CSVReader(preReader, ';', '"');
+                return reader.readAll();
+            } else {
+                List<String[]> list = new ArrayList<>();
+                list.add(head);
+                return list;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            List<String[]> list = new ArrayList<>();
+            list.add(head);
+            return list;
+        }
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getCurrentChannel() {
+        return currentChannel;
+    }
+
+    public String getChangePath() {
+        return changePath;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public String[] getHead() {
+        return head;
     }
 }

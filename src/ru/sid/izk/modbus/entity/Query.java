@@ -4,6 +4,7 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
+import ru.sid.izk.modbus.utils.FieldVisible;
 
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
@@ -22,6 +23,28 @@ public class Query{
     private float cs2;
     private float error;
     private String data;
+    //PID
+    private float pidErr;
+    private float pidInt;
+    private float pidDif;
+    private int position;
+    private String regStatus;
+    private String manualMode;
+    private String regulatorMode;
+    private String close;
+    private String open;
+    private String closeFull;
+    private String openFull;
+    //PIDSettings
+    private float kP;
+    private float kI;
+    private float kD;
+    private float humidityRequired;
+    private int step;
+    private int fullStep;
+
+
+
     //info
     private String versionFirm;
     private String dataFirm;
@@ -90,6 +113,73 @@ public class Query{
     private int modeRelay8;
     private int modeRelay9;
     private int modeRelay10;
+
+    //Search
+    private int sensorCount;
+    private int searchAddress1;
+    private int searchFirmware1;
+    private String searchDate1;
+    private int searchAddress2;
+    private int searchFirmware2;
+    private String searchDate2;
+    private int searchAddress3;
+    private int searchFirmware3;
+    private String searchDate3;
+    private int searchAddress4;
+    private int searchFirmware4;
+    private String searchDate4;
+
+    public int getSensorCount() {
+        return sensorCount;
+    }
+
+    public int getSearchAddress1() {
+        return searchAddress1;
+    }
+
+    public int getSearchFirmware1() {
+        return searchFirmware1;
+    }
+
+    public String getSearchDate1() {
+        return searchDate1;
+    }
+
+    public int getSearchAddress2() {
+        return searchAddress2;
+    }
+
+    public int getSearchFirmware2() {
+        return searchFirmware2;
+    }
+
+    public String getSearchDate2() {
+        return searchDate2;
+    }
+
+    public int getSearchAddress3() {
+        return searchAddress3;
+    }
+
+    public int getSearchFirmware3() {
+        return searchFirmware3;
+    }
+
+    public String getSearchDate3() {
+        return searchDate3;
+    }
+
+    public int getSearchAddress4() {
+        return searchAddress4;
+    }
+
+    public int getSearchFirmware4() {
+        return searchFirmware4;
+    }
+
+    public String getSearchDate4() {
+        return searchDate4;
+    }
 
     public int getAddressIZK() {
         return addressIZK;
@@ -383,6 +473,74 @@ public class Query{
         return ck1Write;
     }
 
+    public float getPidErr() {
+        return pidErr;
+    }
+
+    public float getPidInt() {
+        return pidInt;
+    }
+
+    public float getPidDif() {
+        return pidDif;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public String getRegStatus() {
+        return regStatus;
+    }
+
+    public String getManualMode() {
+        return manualMode;
+    }
+
+    public String getRegulatorMode() {
+        return regulatorMode;
+    }
+
+    public String getClose() {
+        return close;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public String getCloseFull() {
+        return closeFull;
+    }
+
+    public String getOpenFull() {
+        return openFull;
+    }
+
+    public float getkP() {
+        return kP;
+    }
+
+    public float getkI() {
+        return kI;
+    }
+
+    public float getkD() {
+        return kD;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public int getFullStep() {
+        return fullStep;
+    }
+
+    public float getHumidityRequired() {
+        return humidityRequired;
+    }
+
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
 
@@ -391,6 +549,37 @@ public class Query{
         humidity = 0;
 
 
+    }
+
+    public int searchProgress(){
+        try{
+            int[] registerValues = modbusReader.readRegisters(0,1,1);
+            return registerValues[0];
+        } catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    public void querySearch(){
+        try {
+            int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+            sensorCount = registerValues[2];
+            searchAddress1 = registerValues[3];
+            searchFirmware1 = registerValues[4];
+            searchDate1 = dateReader(registerValues[5],registerValues[6],registerValues[7]);
+            searchAddress2 = registerValues[8];
+            searchFirmware2 = registerValues[9];
+            searchDate2 = dateReader(registerValues[10],registerValues[11],registerValues[12]);
+            searchAddress3 = registerValues[13];
+            searchFirmware3 = registerValues[14];
+            searchDate3 = dateReader(registerValues[15],registerValues[16],registerValues[17]);
+            searchAddress4 = registerValues[18];
+            searchFirmware4 = registerValues[19];
+            searchDate4 = dateReader(registerValues[20],registerValues[21],registerValues[22]);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -423,17 +612,54 @@ public class Query{
                 data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
 
 
-
-                System.out.println(registerValues[19]);
-                System.out.println(registerValues[20]);
-                System.out.println(temperature);
-
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+    }
+
+    public void queryPidRegulator(){
+        try {
+            int[] registerValues = modbusReader.readRegisters(38,7,1);
+            pidErr = hexToFloat(registerValues[0], registerValues[1]);
+            pidInt = hexToFloat(registerValues[2], registerValues[3]);
+            pidDif = hexToFloat(registerValues[4], registerValues[5]);
+            position = registerValues[6];
+
+            boolean[] inputs = modbusReader.discreteReader(12,4);
+            if (inputs[0]) regStatus = "Закрывается";
+            else if (inputs[1]) regStatus = "Открывается";
+            else if (inputs[2]) regStatus = "Закрыт";
+            else if (inputs[3]) regStatus = "Открыт";
+            else regStatus = "Остановлен";
+
+            boolean[] coils = modbusReader.coilsReader(10,6);
+            regulatorMode = buttonReader(coils[0]);
+            manualMode = buttonReader(coils[1]);
+            close = buttonReader(coils[2]);
+            open = buttonReader(coils[3]);
+            closeFull = buttonReader(coils[4]);
+            openFull = buttonReader(coils[5]);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void queryPidSettings(){
+        try {
+            int[] registerValues = modbusReader.readHoldingsRegisters(35,10,1);
+            kP = hexToFloat(registerValues[0],registerValues[1]);
+            kI = hexToFloat(registerValues[2],registerValues[3]);
+            kD = hexToFloat(registerValues[4],registerValues[5]);
+            humidityRequired = hexToFloat(registerValues[6],registerValues[7]);
+            step = registerValues[8];
+            fullStep = registerValues[9];
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void querySettings() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
@@ -544,15 +770,20 @@ public class Query{
             dataFirm = builderData.toString();
 
             StringBuilder builderIdentif = new StringBuilder();
-            for (int i = 18; i < 21; i++) {
+            for (int i = 18; i < 26; i++) {
                 String s = Integer.toHexString(registerValues[i]);
-
-                String a = s.substring(2,4);
-                String b = s.substring(0,2);
-                int c = Integer.valueOf(a, 16);
-                int d = Integer.valueOf(b, 16);
-                builderIdentif.append((char)c);
-                builderIdentif.append((char)d);
+                if(s.length()>2) {
+                    String a = s.substring(2, 4);
+                    String b = s.substring(0, 2);
+                    int c = Integer.valueOf(a, 16);
+                    int d = Integer.valueOf(b, 16);
+                    builderIdentif.append((char) c);
+                    builderIdentif.append((char) d);
+                }
+                else {
+                    int c = Integer.valueOf(s,16);
+                    builderIdentif.append((char) c);
+                }
 
             }
             identificator = builderIdentif.toString();
@@ -594,7 +825,8 @@ public class Query{
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
         else s = Integer.toHexString(value1);
         Long value1AsLong = Long.parseLong(s, 16);
-        return Float.intBitsToFloat(value1AsLong.intValue());
+        float f = Float.intBitsToFloat(value1AsLong.intValue());
+        return f;
     }
 
     private static String statusReader (String reversStatus){
@@ -628,6 +860,10 @@ public class Query{
     private static String dateReader (int value1,int value2,int value3){
         return String.format("%s.%s.%s", String.valueOf(value1).length() < 2 ? "0" + value1 : String.valueOf(value1),
                 String.valueOf(value2).length() < 2 ? "0" + value2 : String.valueOf(value2), String.valueOf(value3).length()<3 ? "20" +value3 : value3);
+    }
+
+    private static String buttonReader(boolean bool){
+        return bool ? "ON" : "OFF";
     }
 
 }

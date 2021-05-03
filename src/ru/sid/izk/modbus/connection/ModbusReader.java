@@ -18,10 +18,11 @@ public class ModbusReader {
 
     public int[] readRegisters(int offset, int quantity, int count) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         int[] allRegisters = new int[quantity * count];
+        int indent = offset;
         for (int i = 0; i < count; i++) {
-            int[] registers = modbusMaster.readInputRegisters(slaveID, offset, quantity);
-            System.arraycopy(registers, 0, allRegisters, 0, offset + registers.length - offset);
-            offset = offset + quantity;
+            int[] registers = modbusMaster.readInputRegisters(slaveID,offset,quantity);
+            System.arraycopy(registers, 0, allRegisters, offset - indent, offset + registers.length - offset);
+            offset = offset+quantity;
         }
         return allRegisters;
     }
@@ -50,11 +51,27 @@ public class ModbusReader {
 
     public int[] readHoldingsRegisters(int offset, int quantity, int count) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
         int[] allRegisters = new int[quantity * count];
+        int indent = offset;
         for (int i = 0; i < count; i++) {
-            int[] registers = modbusMaster.readHoldingRegisters(slaveID, offset, quantity);
-            System.arraycopy(registers, 0, allRegisters, offset - count, offset + registers.length - offset);
-            offset = offset + quantity;
+            int[] registers = modbusMaster.readHoldingRegisters(slaveID,offset,quantity);
+            System.arraycopy(registers, 0, allRegisters, offset - indent, offset + registers.length - offset);
+            offset = offset+quantity;
         }
         return allRegisters;
+    }
+
+    public boolean[] coilsReader(int offset,int quantity) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        return modbusMaster.readCoils(slaveID,offset,quantity);
+    }
+    public boolean[] discreteReader(int offset,int quantity) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        return modbusMaster.readDiscreteInputs(slaveID,offset,quantity);
+    }
+
+    public void  writeCoil(int offset,boolean bool) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
+        modbusMaster.writeSingleCoil(slaveID,offset,bool);
+    }
+
+    public void writeMultipleRegisters(int offset,int[] registers) throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+        modbusMaster.writeMultipleRegisters(slaveID,offset,registers);
     }
 }

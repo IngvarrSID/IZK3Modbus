@@ -35,7 +35,22 @@ public class QueryBoxItemListener implements ItemListener {
         } else {
             timer1.stop();
             System.out.println("Опрос завершен");
+            izkModbusGUI.getSensorAddressField().setText("");
+            izkModbusGUI.getHumidityField().setText("");
+            izkModbusGUI.getTemperatureField().setText("");
+            izkModbusGUI.getDensityField().setText("");
+            izkModbusGUI.getPeriodField().setText("");
+            izkModbusGUI.getCs1Field().setText("");
+            izkModbusGUI.getCs2Field().setText("");
+            izkModbusGUI.getErrorField().setText("");
+            izkModbusGUI.getDataField().setText("");
+            izkModbusGUI.getTimeField().setText("");
             izkModbusGUI.getStatLabel().setText("Нет информации");
+            izkModbusGUI.getPidErrField().setText("");
+            izkModbusGUI.getPidIntField().setText("");
+            izkModbusGUI.getPidDifField().setText("");
+            izkModbusGUI.getProgressRegulatorBar().setValue(0);
+            izkModbusGUI.getRegulatorStatusField().setText("");
         }
     }
 }

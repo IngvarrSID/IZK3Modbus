@@ -1,6 +1,8 @@
 package ru.sid.izk.modbus.frames;
 
 import ru.sid.izk.modbus.adapter.TabbedPaneMouseAdapter;
+import ru.sid.izk.modbus.archive.CSVAdapter;
+import ru.sid.izk.modbus.archive.ReadAllDataAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
@@ -9,12 +11,15 @@ import ru.sid.izk.modbus.listener.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
+import static ru.sid.izk.modbus.utils.FieldVisible.hideFielder;
 
 public class IZKModbusGUI extends JFrame {
 
@@ -27,7 +32,6 @@ public class IZKModbusGUI extends JFrame {
     private JTextField timeField;
     private JCheckBox queryBox;
     private JTextField densityField;
-    private JLabel nameStatLabel;
     private JLabel statLabel;
     private JTextField dataField;
     private JTextField periodField;
@@ -109,6 +113,30 @@ public class IZKModbusGUI extends JFrame {
     private JComboBox<String> modeRelayBox8;
     private JComboBox<String> modeRelayBox9;
     private JComboBox<String> modeRelayBox10;
+    private JTable archiveTable;
+    private JButton searchButton;
+    private JProgressBar progressBar;
+    private JButton manualButton;
+    private JButton modeButton;
+    private JButton closeButton;
+    private JButton openButton;
+    private JButton fullCloseButton;
+    private JButton fullOpenButton;
+    private JTextField oneStepRegulator;
+    private JTextField fullStepRegulator;
+    private JTextField humidityWriteField;
+    private JTextField kpWriteField;
+    private JTextField kiWriteField;
+    private JTextField kdWriteField;
+    private JTextField pidErrField;
+    private JTextField pidIntField;
+    private JTextField pidDifField;
+    private JProgressBar progressRegulatorBar;
+    private JLabel regulatorStatusField;
+    private JButton refreshRegulatorButton;
+    private JButton readAllButton;
+    private JLabel dataLabel;
+    private JButton writeAllButton;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -116,13 +144,14 @@ public class IZKModbusGUI extends JFrame {
 
     private boolean readyToWriteRelay;
 
+    private final ReadAllDataAdapter readAllDataAdapter;
+
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
 
         initWindow();
-        nameStatLabel.setText("Состояние датчика:");
         statLabel.setText("Нет информации");
         if (!terminal.isError())
             comLabel.setText(String.format("Подключено к %s на скорости %s", terminal.getComName(), terminal.getBound()));
@@ -148,7 +177,7 @@ public class IZKModbusGUI extends JFrame {
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this));
+        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this,masterModbus));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
@@ -163,6 +192,14 @@ public class IZKModbusGUI extends JFrame {
         threeChannelButton.addActionListener(new ChannelsButtonActionListener(this,3,query,modbusReader));
         fourChannelButton.addActionListener(new ChannelsButtonActionListener(this,4,query,modbusReader));
         filterAndAddRegisterActionListeners(modbusReader);
+        initTable(masterModbus,query);
+        progressBar.setVisible(false);
+        searchButton.addActionListener(new SearchButtonActionListener(this,query,modbusReader));
+        refreshRegulatorButton.addActionListener(new RefreshRegulatorButtonActionListener(query,modbusReader,this));
+        regulatorButtonsInit();
+        readAllDataAdapter = new ReadAllDataAdapter(query,modbusReader);
+        readAllButton.addActionListener(new ReadAllDataActionListener(readAllDataAdapter, this));
+        writeAllButton.addActionListener(new WriteAllDataActionListener(readAllDataAdapter,this,modbusReader));
     }
 
     private void initWindow() {
@@ -171,7 +208,7 @@ public class IZKModbusGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1440, 900);
+        setSize(1350, 950);
         setLocationRelativeTo(null);
         setTitle("Конфигуратор СУ-5Д. Влагомер");
         File file = new File("icon.png");
@@ -180,6 +217,41 @@ public class IZKModbusGUI extends JFrame {
         } catch (IOException e){
             e.printStackTrace();
         }
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createFileMenu());
+        menuBar.add(createSettingsMenu());
+        setJMenuBar(menuBar);
+        hideFielder(this,false);
+    }
+
+    private void initTable(MasterModbus masterModbus, Query query){
+        CSVAdapter csvAdapter = new CSVAdapter(this,masterModbus,query);
+        List<String[]> allRows = csvAdapter.fileRead();
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
+        for (String s:allRows.get(0)) {
+            model.addColumn(s);
+        }
+        if (allRows.size()>1) {
+            for (int i = 1; i < allRows.size(); i++) {
+                model.addRow(allRows.get(i));
+            }
+        }
+        archiveTable.setFillsViewportHeight(true);
+    }
+
+    public void refreshTable(CSVAdapter csvAdapter){
+        List<String[]> allRows = csvAdapter.fileRead();
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
+        int rowCount = model.getRowCount();
+        for (int i = rowCount-1; i >= 0 ; i--) {
+            model.removeRow(i);
+        }
+        if (allRows.size()>1) {
+            for (int i = 1; i < allRows.size(); i++) {
+                model.addRow(allRows.get(i));
+            }
+        }
+        archiveTable.setFillsViewportHeight(true);
     }
 
     private void initIZKSettings(){
@@ -272,8 +344,21 @@ public class IZKModbusGUI extends JFrame {
         floatFilter(autoMinFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         floatFilter(autoMaxFieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
         //settings
-        digitFilter(addressIZK,2);
+        digitFilter(addressIZK,3);
         addressIZK.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
+        //PID
+        floatFilter(kpWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(kiWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(kdWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        floatFilter(humidityWriteField,"^[0-9]{1,3}+[,]?[0-9]?$");
+        digitFilter(oneStepRegulator,5);
+        digitFilter(fullStepRegulator,5);
+        kpWriteField.addActionListener(new TwoRegisterWriteActionListener(35,this,modbusReader));
+        kiWriteField.addActionListener(new TwoRegisterWriteActionListener(37,this,modbusReader));
+        kdWriteField.addActionListener(new TwoRegisterWriteActionListener(39,this,modbusReader));
+        humidityWriteField.addActionListener(new TwoRegisterWriteActionListener(41,this,modbusReader));
+        oneStepRegulator.addActionListener(new OneRegisterWriteActionListener(43,this,modbusReader));
+        fullStepRegulator.addActionListener(new OneRegisterWriteActionListener(44,this,modbusReader));
 
     }
 
@@ -308,6 +393,38 @@ public class IZKModbusGUI extends JFrame {
         settingRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,32,false));
         numberRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,33,true));
         modeRelayBox10.addActionListener(new ComboBoxActionListener(this,modbusReader,34,false));
+    }
+
+    public void regulatorButtonsInit(){
+        modeButton.addActionListener(new RegulatorButtonsActionListener(this,10,modbusReader));
+        manualButton.addActionListener(new RegulatorButtonsActionListener(this,11,modbusReader));
+        closeButton.addActionListener(new RegulatorButtonsActionListener(this,12,modbusReader));
+        openButton.addActionListener(new RegulatorButtonsActionListener(this,13,modbusReader));
+        fullCloseButton.addActionListener(new RegulatorButtonsActionListener(this,14,modbusReader));
+        fullOpenButton.addActionListener(new RegulatorButtonsActionListener(this,15,modbusReader));
+    }
+
+    private JMenu createFileMenu(){
+        JMenu file = new JMenu("Файл");
+        JMenuItem open = new JMenuItem("Открыть");
+        JMenuItem save = new JMenuItem("Сохранить");
+        JMenuItem exit = new JMenuItem("Закрыть");
+        file.add(open);
+        file.addSeparator();
+        file.add(save);
+        file.addSeparator();
+        file.add(exit);
+        save.addActionListener(new SaveFileActionListener(this));
+        open.addActionListener(new OpenFileActionListener(this));
+        exit.addActionListener(e -> System.exit(0));
+        return file;
+    }
+    private JMenu createSettingsMenu(){
+        JMenu settings = new JMenu("Настройки");
+        JMenuItem path = new JMenuItem("Путь к архиву");
+        settings.add(path);
+        path.addActionListener(new PathInputActionListener(this));
+        return settings;
     }
 
     public Timer getConnectionTimeoutTimer() {
@@ -666,11 +783,99 @@ public class IZKModbusGUI extends JFrame {
         return modesRelays;
     }
 
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
     public boolean isReadyToWriteRelay() {
         return readyToWriteRelay;
     }
 
     public void setReadyToWriteRelay(boolean readyToWriteRelay) {
         this.readyToWriteRelay = readyToWriteRelay;
+    }
+
+    public JButton getManualButton() {
+        return manualButton;
+    }
+
+    public JButton getModeButton() {
+        return modeButton;
+    }
+
+    public JButton getCloseButton() {
+        return closeButton;
+    }
+
+    public JButton getOpenButton() {
+        return openButton;
+    }
+
+    public JButton getFullCloseButton() {
+        return fullCloseButton;
+    }
+
+    public JButton getFullOpenButton() {
+        return fullOpenButton;
+    }
+
+    public JTextField getOneStepRegulator() {
+        return oneStepRegulator;
+    }
+
+    public JTextField getFullStepRegulator() {
+        return fullStepRegulator;
+    }
+
+    public JTextField getHumidityWriteField() {
+        return humidityWriteField;
+    }
+
+    public JTextField getKpWriteField() {
+        return kpWriteField;
+    }
+
+    public JTextField getKiWriteField() {
+        return kiWriteField;
+    }
+
+    public JTextField getKdWriteField() {
+        return kdWriteField;
+    }
+
+    public JTextField getPidErrField() {
+        return pidErrField;
+    }
+
+    public JTextField getPidIntField() {
+        return pidIntField;
+    }
+
+    public JTextField getPidDifField() {
+        return pidDifField;
+    }
+
+    public JProgressBar getProgressRegulatorBar() {
+        return progressRegulatorBar;
+    }
+
+    public JLabel getRegulatorStatusField() {
+        return regulatorStatusField;
+    }
+
+    public JButton getRefreshRegulatorButton() {
+        return refreshRegulatorButton;
+    }
+
+    public JLabel getDataLabel() {
+        return dataLabel;
+    }
+
+    public JButton getReadAllButton() {
+        return readAllButton;
+    }
+
+    public ReadAllDataAdapter getReadAllDataAdapter() {
+        return readAllDataAdapter;
     }
 }
