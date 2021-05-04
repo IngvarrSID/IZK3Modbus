@@ -4,6 +4,7 @@ import jssc.SerialPortList;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.utils.DigitFilter;
+import ru.sid.izk.modbus.utils.Settings;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,10 +12,7 @@ import javax.swing.text.PlainDocument;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 public class IZKTerminal extends JFrame {
 
@@ -41,7 +39,7 @@ public class IZKTerminal extends JFrame {
         doc.setDocumentFilter(new DigitFilter(3));
         try {
             initTerminalSettings();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
 
         }
@@ -49,7 +47,8 @@ public class IZKTerminal extends JFrame {
         comboBoxBound.addActionListener(new ActionListenerBound());
         oKButton.addActionListener(new ActionListenerButton());
     }
-    private void initTerminalWindow(){
+
+    private void initTerminalWindow() {
         setContentPane(terminalPanel);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -59,21 +58,19 @@ public class IZKTerminal extends JFrame {
         File file = new File("icon.png");
         try {
             setIconImage(ImageIO.read(file));
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     private void initTerminalSettings() throws IOException {
-        File settings = new File("settings.properties");
-        if (settings.exists()){
-            FileInputStream in = new FileInputStream(settings);
-            Properties properties = new Properties();
-            properties.load(in);
-            String currentCOM = properties.getProperty("ComPort");
-            String currentBound = properties.getProperty("Bound");
-            String currentAddress = properties.getProperty("Id");
-            for (int i = 0; i <portNames.length ; i++) {
-                if (portNames[i].equals(currentCOM)){
+        if (Settings.propertiesFileExists()) {
+            final Settings settings = new Settings();
+            final String currentCOM = settings.getComPort();
+            final String currentBound = settings.getBoundRate();
+            final String currentAddress = settings.getId();
+            for (int i = 0; i < portNames.length; i++) {
+                if (portNames[i].equals(currentCOM)) {
                     comName = currentCOM;
                     comboBoxCOM.setSelectedIndex(i);
                     break;
@@ -82,18 +79,17 @@ public class IZKTerminal extends JFrame {
                     comboBoxCOM.setSelectedIndex(0);
                 }
             }
-            for (int i = 0; i <bounds.length ; i++) {
-                if (bounds[i].equals(currentBound)){
+            for (int i = 0; i < bounds.length; i++) {
+                if (bounds[i].equals(currentBound)) {
                     bound = currentBound;
                     comboBoxBound.setSelectedIndex(i);
-                }else {
+                } else {
                     bound = bounds[3];
                     comboBoxBound.setSelectedIndex(3);
                 }
             }
             IZKCOMAddressField.setText(currentAddress);
-        }
-        else {
+        } else {
             comName = portNames[0];
             comboBoxCOM.setSelectedIndex(0);
             bound = bounds[3];
@@ -121,32 +117,18 @@ public class IZKTerminal extends JFrame {
     class ActionListenerButton implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Properties properties = new Properties();
-            File file = new File("settings.properties");
+            final Settings settings;
             try {
-                if(!file.exists()) {
-                    FileOutputStream out = new FileOutputStream("settings.properties");
-                    properties.setProperty("ComPort", comName);
-                    properties.setProperty("BoundRate", bound);
-                    properties.setProperty("Id", IZKCOMAddressField.getText());
-                    properties.setProperty("Path", String.format("%s/Documents/Technosensor/Archive", System.getProperty("user.home")));
-                    properties.store(out, "terminal settings");
-                    out.close();
+                if (!Settings.propertiesFileExists()) {
+                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/Archive", System.getProperty("user.home")));
+                } else {
+                    settings = new Settings();
+                    settings.setComPort(comName);
+                    settings.setBoundRate(bound);
+                    settings.setId(IZKCOMAddressField.getText());
                 }
-                else {
-                    FileInputStream in = new FileInputStream("settings.properties");
-                    Properties propertiesRead = new Properties();
-                    propertiesRead.load(in);
-                    in.close();
-                    FileOutputStream out = new FileOutputStream("settings.properties");
-                    properties.setProperty("ComPort", comName);
-                    properties.setProperty("BoundRate", bound);
-                    properties.setProperty("Id", IZKCOMAddressField.getText());
-                    properties.setProperty("Path",propertiesRead.getProperty("Path"));
-                    properties.store(out, "terminal settings");
-                    out.close();
-                }
-            } catch (IOException q) {
+                settings.storeProperties("terminal settings");
+            } catch (Exception q) {
                 q.printStackTrace();
             }
             Terminal terminal = new Terminal(comName, bound);
