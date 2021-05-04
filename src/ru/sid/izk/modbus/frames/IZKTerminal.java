@@ -12,9 +12,7 @@ import javax.swing.text.PlainDocument;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 public class IZKTerminal extends JFrame {
 
@@ -66,14 +64,11 @@ public class IZKTerminal extends JFrame {
     }
 
     private void initTerminalSettings() throws IOException {
-        File settings = new File("settings.properties");
-        if (settings.exists()) {
-            FileInputStream in = new FileInputStream(settings);
-            Properties properties = new Properties();
-            properties.load(in);
-            String currentCOM = properties.getProperty("ComPort");
-            String currentBound = properties.getProperty("Bound");
-            String currentAddress = properties.getProperty("Id");
+        if (Settings.propertiesFileExists()) {
+            final Settings settings = new Settings();
+            final String currentCOM = settings.getComPort();
+            final String currentBound = settings.getBoundRate();
+            final String currentAddress = settings.getId();
             for (int i = 0; i < portNames.length; i++) {
                 if (portNames[i].equals(currentCOM)) {
                     comName = currentCOM;
