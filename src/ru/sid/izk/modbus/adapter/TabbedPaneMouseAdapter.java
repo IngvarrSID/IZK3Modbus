@@ -58,5 +58,4 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 break;
         }
     }
-
 }

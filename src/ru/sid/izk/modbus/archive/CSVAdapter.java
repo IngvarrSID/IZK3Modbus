@@ -5,17 +5,13 @@ import au.com.bytecode.opencsv.CSVWriter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.utils.Settings;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class CSVAdapter {
 
@@ -25,7 +21,6 @@ public class CSVAdapter {
     private String time;
     private final IZKModbusGUI izkModbusGUI;
     private String currentChannel;
-    private String changePath;
     private final String path;
     private final String fullPath;
     private final String[] head;
@@ -39,21 +34,10 @@ public class CSVAdapter {
         this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       whatsThePath();
-       path = String.format("%s/%s/%s/%s/IZK%d",changePath,year,month,day,masterModbus.getId());
+       final Settings settings=new Settings();
+       path = String.format("%s/%s/%s/%s/IZK%d",settings.getPath(),year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
        head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность".split("\\.");
-    }
-
-    private void whatsThePath(){
-        try {
-            FileInputStream in = new FileInputStream("settings.properties");
-            Properties properties = new Properties();
-            properties.load(in);
-            changePath = properties.getProperty("Path");
-        } catch (IOException e){
-            e.printStackTrace();
-        }
     }
 
     private void whatsTheTime(){
@@ -160,10 +144,6 @@ public class CSVAdapter {
 
     public String getCurrentChannel() {
         return currentChannel;
-    }
-
-    public String getChangePath() {
-        return changePath;
     }
 
     public String getPath() {
