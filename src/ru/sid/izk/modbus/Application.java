@@ -20,6 +20,9 @@ public class Application {
         UIManager.put("FileChooser.lookInLabelText"     , "Директория"            );
         UIManager.put("FileChooser.saveInLabelText"     , "Сохранить в директории");
         UIManager.put("FileChooser.folderNameLabelText" , "Путь директории"       );
+        UIManager.put("OptionPane.yesButtonText"   , "Да"    );
+        UIManager.put("OptionPane.noButtonText"    , "Нет"   );
+        UIManager.put("OptionPane.cancelButtonText", "Отмена");
 
         SwingUtilities.invokeLater(() -> {
             try {
