@@ -4,6 +4,7 @@ import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -50,10 +51,12 @@ public class OpenFileActionListener implements ActionListener {
                     }
                 }
                 if(izkModbusGUI.getReadAllDataAdapter().isDataUpDate()){
+                    izkModbusGUI.getDataLabel().setForeground(new Color(0,120,60));
                     izkModbusGUI.getDataLabel().setText("Данные загружены");
                     JOptionPane.showMessageDialog(izkModbusGUI, "Данные загружены из файла", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(izkModbusGUI, "Ошибка чтения файла!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    izkModbusGUI.getDataLabel().setForeground(Color.red);
                     izkModbusGUI.getDataLabel().setText("Ошибка чтения файла");
                 }
             } catch (Exception ex){

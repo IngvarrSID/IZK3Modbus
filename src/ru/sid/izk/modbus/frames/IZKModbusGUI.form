@@ -714,7 +714,7 @@
                 <children>
                   <component id="237a7" class="javax.swing.JButton" binding="refreshSensorButton">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="30"/>
                         <maximum-size width="150" height="30"/>
                       </grid>
@@ -1330,7 +1330,7 @@
                     <children>
                       <component id="ad469" class="javax.swing.JLabel">
                         <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
                             <preferred-size width="300" height="-1"/>
                             <maximum-size width="300" height="-1"/>
                           </grid>
@@ -1455,10 +1455,13 @@
                       </component>
                       <component id="839f1" class="javax.swing.JButton" binding="refreshRegulatorButton">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="30"/>
+                            <maximum-size width="150" height="30"/>
+                          </grid>
                         </constraints>
                         <properties>
-                          <text value="Обновить"/>
+                          <text value="Обновить данные"/>
                         </properties>
                       </component>
                     </children>
@@ -1490,8 +1493,8 @@
                       <component id="b67df" class="javax.swing.JTextField" binding="oneStepRegulator">
                         <constraints>
                           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties/>
@@ -1499,8 +1502,8 @@
                       <component id="bbe98" class="javax.swing.JTextField" binding="fullStepRegulator">
                         <constraints>
                           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties>
@@ -1546,8 +1549,8 @@
                       <component id="93090" class="javax.swing.JTextField" binding="humidityWriteField">
                         <constraints>
                           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties/>
@@ -1563,8 +1566,8 @@
                       <component id="8878f" class="javax.swing.JTextField" binding="kpWriteField">
                         <constraints>
                           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties/>
@@ -1572,8 +1575,8 @@
                       <component id="87809" class="javax.swing.JTextField" binding="kiWriteField">
                         <constraints>
                           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties/>
@@ -1581,8 +1584,8 @@
                       <component id="c2e8d" class="javax.swing.JTextField" binding="kdWriteField">
                         <constraints>
                           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="100" height="-1"/>
-                            <maximum-size width="100" height="-1"/>
+                            <preferred-size width="50" height="-1"/>
+                            <maximum-size width="50" height="-1"/>
                           </grid>
                         </constraints>
                         <properties/>

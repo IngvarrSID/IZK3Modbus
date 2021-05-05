@@ -3,6 +3,7 @@ package ru.sid.izk.modbus.listener;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -29,10 +30,11 @@ public class SaveFileActionListener implements ActionListener {
                 try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()))) {
                     String newSaveFile = String.format("SU5D vlagomer SAVE FILE, currentDate: %s\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy")));
                     writer.write(newSaveFile);
-                    String data = izkModbusGUI.getReadAllDataAdapter().compilationData();
+                    String data = izkModbusGUI.getReadAllDataAdapter().getDataCompiled();
                     writer.write(data);
                     JOptionPane.showMessageDialog(izkModbusGUI,"Файл " + fileChooser.getSelectedFile() + " сохранен","Подтверждение",JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getReadAllDataAdapter().setDataUpDate(false);
+                    izkModbusGUI.getDataLabel().setForeground(new Color(0,120,60));
                     izkModbusGUI.getDataLabel().setText("Файл сохранен");
 
                 } catch (Exception ex) {

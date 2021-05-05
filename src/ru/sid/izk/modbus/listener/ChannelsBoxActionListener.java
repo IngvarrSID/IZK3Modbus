@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static ru.sid.izk.modbus.utils.ClearSensorFields.clearFields;
+
 public class ChannelsBoxActionListener implements ActionListener {
 
     private final IZKModbusGUI izkModbusGUI;
@@ -29,7 +31,7 @@ public class ChannelsBoxActionListener implements ActionListener {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 1 измерительного канала");
-                    clearFields();
+                    clearFields(izkModbusGUI);
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 1:
@@ -37,7 +39,7 @@ public class ChannelsBoxActionListener implements ActionListener {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 2 измерительного канала");
-                    clearFields();
+                    clearFields(izkModbusGUI);
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 2:
@@ -45,7 +47,7 @@ public class ChannelsBoxActionListener implements ActionListener {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 3 измерительного канала");
-                    clearFields();
+                    clearFields(izkModbusGUI);
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
                 case 3:
@@ -53,7 +55,7 @@ public class ChannelsBoxActionListener implements ActionListener {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             text, "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                     izkModbusGUI.getChannelLabel().setText("Настройка 4 измерительного канала");
-                    clearFields();
+                    clearFields(izkModbusGUI);
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
             }
@@ -64,31 +66,5 @@ public class ChannelsBoxActionListener implements ActionListener {
         }
     }
 
-    public void clearFields(){
-        izkModbusGUI.getAddressSensorFieldWrite().setText("");
-        izkModbusGUI.getTimeoutFieldWrite().setText("");
-        izkModbusGUI.getPeriodFieldWrite().setText("");
-        izkModbusGUI.getT01FieldWrite().setText("");
-        izkModbusGUI.getCk1FieldWrite().setText("");
-        izkModbusGUI.getCd1FieldWrite().setText("");
-        izkModbusGUI.getCheckPeriodFieldWrite().setText("");
-        izkModbusGUI.getErrorFieldWrite().setText("");
-        izkModbusGUI.getCs100FieldWrite().setText("");
-        izkModbusGUI.getCmFieldWrite().setText("");
-        izkModbusGUI.getkFieldWrite().setText("");
-        izkModbusGUI.getCs0FieldWrite().setText("");
-        izkModbusGUI.getTcFieldWrite().setText("");
-        izkModbusGUI.getCsMinFieldWrite().setText("");
-        izkModbusGUI.gethMinFieldWrite().setText("");
-        izkModbusGUI.getTsd1FieldWrite().setText("");
-        izkModbusGUI.getTsd2FieldWrite().setText("");
-        izkModbusGUI.getAutoMinFieldWrite().setText("");
-        izkModbusGUI.getAutoMaxFieldWrite().setText("");
-        izkModbusGUI.getD20FieldWrite().setText("");
-        izkModbusGUI.getKdFieldWrite().setText("");
-        izkModbusGUI.getMinFieldWrite().setText("");
-        izkModbusGUI.getMaxFieldWrite().setText("");
-        izkModbusGUI.getEmerMaxFieldWrite().setText("");
-        izkModbusGUI.getNoDensityFieldWrite().setText("");
-    }
+
 }
