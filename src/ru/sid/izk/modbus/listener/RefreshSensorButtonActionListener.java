@@ -6,6 +6,8 @@ import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static ru.sid.izk.modbus.utils.ClearSensorFields.clearFields;
+
 public class RefreshSensorButtonActionListener implements ActionListener {
 
     private final Query query;
@@ -19,7 +21,7 @@ public class RefreshSensorButtonActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        clearFields(izkModbusGUI);
         query.querySensor();
         izkModbusGUI.getAddressSensorFieldWrite().setText(String.valueOf(query.getSensorAddressWrite()));
         izkModbusGUI.getTimeoutFieldWrite().setText(String.valueOf(query.getTimeoutWrite()));

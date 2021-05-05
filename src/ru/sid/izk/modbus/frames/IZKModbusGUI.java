@@ -210,6 +210,7 @@ public class IZKModbusGUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1350, 950);
         setLocationRelativeTo(null);
+        setResizable(false);
         setTitle("Конфигуратор СУ-5Д. Влагомер");
         File file = new File("icon.png");
         try {

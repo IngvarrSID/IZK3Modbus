@@ -6,10 +6,8 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.entity.Query;
 
-import java.io.Serializable;
-
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
-import static ru.sid.izk.modbus.utils.FromHexUtils.stringFromHex;
+import static ru.sid.izk.modbus.utils.FromHexUtils.hexStringFromFloat;
 
 
 public class ReadAllDataAdapter {
@@ -154,6 +152,8 @@ public class ReadAllDataAdapter {
 
     private boolean dataUpDate;
 
+    private String dataCompiled;
+
     private int[] settings;
     private int[] sensor1;
     private int[] sensor2;
@@ -234,7 +234,7 @@ public class ReadAllDataAdapter {
         cs1001 = query.getCs100();
         cm1 = query.getCm();
         k1 = query.getK();
-        cs01 = query.getCs1();
+        cs01 = query.getCs0();
         tc1 = query.getTc();
         csMin1 = query.getCsMin();
         hMin1 = query.gethMin();
@@ -264,7 +264,7 @@ public class ReadAllDataAdapter {
         cs1002 = query.getCs100();
         cm2 = query.getCm();
         k2 = query.getK();
-        cs02 = query.getCs1();
+        cs02 = query.getCs0();
         tc2 = query.getTc();
         csMin2 = query.getCsMin();
         hMin2 = query.gethMin();
@@ -295,7 +295,7 @@ public class ReadAllDataAdapter {
         cs1003 = query.getCs100();
         cm3 = query.getCm();
         k3 = query.getK();
-        cs03 = query.getCs1();
+        cs03 = query.getCs0();
         tc3 = query.getTc();
         csMin3 = query.getCsMin();
         hMin3 = query.gethMin();
@@ -325,7 +325,7 @@ public class ReadAllDataAdapter {
         cs1004 = query.getCs100();
         cm4 = query.getCm();
         k4 = query.getK();
-        cs04 = query.getCs1();
+        cs04 = query.getCs0();
         tc4 = query.getTc();
         csMin4 = query.getCsMin();
         hMin4 = query.gethMin();
@@ -340,8 +340,8 @@ public class ReadAllDataAdapter {
 
     }
 
-    public String compilationData() {
-        return ((String.format("Settings:%d;%b;%b;%b;%b;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%.1f;%.1f;%.1f;%.1f;%d;%d\n",
+    public void compilationData() {
+        dataCompiled = ((String.format("Settings:%d;%b;%b;%b;%b;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%.1f;%.1f;%.1f;%.1f;%d;%d\n",
                 addressIZK, activatedChannel[0], activatedChannel[1], activatedChannel[2], activatedChannel[3], settingRelay1, numberRelay1, modeRelay1, settingRelay2, numberRelay2, modeRelay2, settingRelay3, numberRelay3, modeRelay3,
                 settingRelay4, numberRelay4, modeRelay4, settingRelay5, numberRelay5, modeRelay5, settingRelay6, numberRelay6, modeRelay6, settingRelay7, numberRelay7, modeRelay7, settingRelay8, numberRelay8, modeRelay8,
                 settingRelay9, numberRelay9, modeRelay9, settingRelay10, numberRelay10, modeRelay10, kP, kI, kD, requiredHumidity, step, fullStep) +
@@ -353,6 +353,21 @@ public class ReadAllDataAdapter {
                         sensorAddressWrite3, timeoutWrite3, periodWrite3, t01Write3, ck1Write3, cd1Write3, cs1003, cm3, k3, cs03, csMin3, hMin3, d203, kd3, tsd13, tsd23, tc3, min3, max3, emerMax3, noDensity3, errorWrite3, checkPeriod3) +
                 String.format("Sensor4:%d;%d;%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%f;%d;%d;%d;%d;%f;%d\n",
                         sensorAddressWrite4, timeoutWrite4, periodWrite4, t01Write4, ck1Write4, cd1Write4, cs1004, cm4, k4, cs04, csMin4, hMin4, d204, kd4, tsd14, tsd24, tc4, min4, max4, emerMax4, noDensity4, errorWrite4, checkPeriod4)));
+
+        String dataFull = dataCompiled.replace(",",".");
+        String[] strings = dataFull.split("\n");
+        String data;
+        data = strings[0].split(":")[1];
+        settings = settingsBuild(data.split(";"));
+        data = strings[1].split(":")[1];
+        sensor1 = sensorBuild(data.split(";"));
+        data = strings[2].split(":")[1];
+        sensor2 = sensorBuild(data.split(";"));
+        data = strings[3].split(":")[1];
+        sensor3 = sensorBuild(data.split(";"));
+        data = strings[4].split(":")[1];
+        sensor4 = sensorBuild(data.split(";"));
+
     }
 
 
@@ -399,35 +414,7 @@ public class ReadAllDataAdapter {
         step = Integer.parseInt(readDataStrings[39]);
         fullStep = Integer.parseInt(readDataStrings[40]);
 
-        settings = new int[43];
-        int in = 0;
-        for (int i = 0; i < readDataStrings.length; i++) {
-            if (i == 1) {
-                StringBuilder bits = new StringBuilder();
-                for (int j = 0; j < 16; j++) {
-                    if (activatedChannel.length > j) bits.append(activatedChannel[j] ? "1" : "0");
-                    else bits.append("0");
-                }
-                settings[in] = Integer.parseInt(bitsReader(bits.toString()), 2);
-                in++;
-                i = i + 3;
-            } else if (in == 2) {
-                settings[in] = 0;
-                in++;
-                i--;
-            } else if (readDataStrings[i].contains(".")) {
-                float f = Float.parseFloat(readDataStrings[i]);
-                String sF = stringFromHex(f);
-                sF = sF.replace("0x", "");
-                settings[in] = Integer.valueOf(sF.substring(4, 8), 16);
-                in++;
-                settings[in] = Integer.valueOf(sF.substring(0, 4), 16);
-                in++;
-            } else {
-                settings[in] = Integer.parseInt(readDataStrings[i]);
-                in++;
-            }
-        }
+        settings = settingsBuild(readDataStrings);
     }
 
     public void readFileSensorOne(String[] readDataStrings) {
@@ -456,28 +443,7 @@ public class ReadAllDataAdapter {
         checkPeriod1 = Integer.parseInt(readDataStrings[22]);
 
 
-        sensor1 = new int[43];
-        int in = 0;
-        for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
-                sensor1[in] = 0;
-                i--;
-                in++;
-            }
-            else if (readDataStrings[i].contains(".")) {
-                float f = Float.parseFloat(readDataStrings[i]);
-                String sF = stringFromHex(f);
-                sF = sF.replace("0x", "");
-                sensor1[in] = Integer.valueOf(sF.substring(4, 8), 16);
-                in++;
-                sensor1[in] = Integer.valueOf(sF.substring(0, 4), 16);
-                in++;
-            } else {
-                sensor1[in] = Integer.parseInt(readDataStrings[i]);
-                in++;
-            }
-
-        }
+        sensor1 = sensorBuild(readDataStrings);
     }
 
     public void readFileSensorTwo(String[] readDataStrings) {
@@ -497,7 +463,6 @@ public class ReadAllDataAdapter {
         tsd12 = Float.parseFloat(readDataStrings[13]);
         tsd22 = Float.parseFloat(readDataStrings[14]);
         d202 = Float.parseFloat(readDataStrings[15]);
-        ;
         kd2 = Float.parseFloat(readDataStrings[16]);
         min2 = Integer.parseInt(readDataStrings[17]);
         max2 = Integer.parseInt(readDataStrings[18]);
@@ -507,29 +472,7 @@ public class ReadAllDataAdapter {
         checkPeriod2 = Integer.parseInt(readDataStrings[22]);
 
 
-        sensor2 = new int[43];
-        int in = 0;
-        for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
-                sensor2[in] = 0;
-                i--;
-                in++;
-            }
-            else  if (readDataStrings[i].contains(".")) {
-                float f = Float.parseFloat(readDataStrings[i]);
-                String sF = stringFromHex(f);
-                sF = sF.replace("0x", "");
-                sensor2[in] = Integer.valueOf(sF.substring(4, 8), 16);
-                in++;
-                sensor2[in] = Integer.valueOf(sF.substring(0, 4), 16);
-                in++;
-            }
-
-            else {
-                sensor2[in] = Integer.parseInt(readDataStrings[i]);
-                in++;
-            }
-        }
+        sensor2 = sensorBuild(readDataStrings);
     }
 
     public void readFileSensorThree(String[] readDataStrings) {
@@ -549,7 +492,6 @@ public class ReadAllDataAdapter {
         tsd13 = Float.parseFloat(readDataStrings[13]);
         tsd23 = Float.parseFloat(readDataStrings[14]);
         d203 = Float.parseFloat(readDataStrings[15]);
-        ;
         kd3 = Float.parseFloat(readDataStrings[16]);
         min3 = Integer.parseInt(readDataStrings[17]);
         max3 = Integer.parseInt(readDataStrings[18]);
@@ -559,28 +501,7 @@ public class ReadAllDataAdapter {
         checkPeriod3 = Integer.parseInt(readDataStrings[22]);
 
 
-        sensor3 = new int[43];
-        int in = 0;
-        for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
-                sensor3[in] = 0;
-                i--;
-                in++;
-            }
-            else if (readDataStrings[i].contains(".")) {
-                float f = Float.parseFloat(readDataStrings[i]);
-                String sF = stringFromHex(f);
-                sF = sF.replace("0x", "");
-                sensor3[in] = Integer.valueOf(sF.substring(4, 8), 16);
-                in++;
-                sensor3[in] = Integer.valueOf(sF.substring(0, 4), 16);
-                in++;
-            }
-            else {
-                sensor3[in] = Integer.parseInt(readDataStrings[i]);
-                in++;
-            }
-        }
+        sensor3 = sensorBuild(readDataStrings);
     }
 
     public void readFileSensorFour(String[] readDataStrings) {
@@ -600,7 +521,6 @@ public class ReadAllDataAdapter {
         tsd14 = Float.parseFloat(readDataStrings[13]);
         tsd24 = Float.parseFloat(readDataStrings[14]);
         d204 = Float.parseFloat(readDataStrings[15]);
-        ;
         kd4 = Float.parseFloat(readDataStrings[16]);
         min4 = Integer.parseInt(readDataStrings[17]);
         max4 = Integer.parseInt(readDataStrings[18]);
@@ -610,28 +530,62 @@ public class ReadAllDataAdapter {
         checkPeriod4 = Integer.parseInt(readDataStrings[22]);
 
 
-        sensor4 = new int[43];
+        sensor4 = sensorBuild(readDataStrings);
+    }
+
+    public int[] settingsBuild(String[] readDataStrings) {
+        int[] hex = new int[43];
         int in = 0;
         for (int i = 0; i < readDataStrings.length; i++) {
-            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
-                sensor4[in] = 0;
+            if (i == 1) {
+                StringBuilder bits = new StringBuilder();
+                for (int j = 0; j < 16; j++) {
+                    if (activatedChannel.length > j) bits.append(activatedChannel[j] ? "1" : "0");
+                    else bits.append("0");
+                }
+                hex[in] = Integer.parseInt(bitsReader(bits.toString()), 2);
+                in++;
+                i = i + 3;
+            } else if (in == 2) {
+                hex[in] = 0;
+                in++;
                 i--;
-                in++;
-            }
-            else if (readDataStrings[i].contains(".")) {
+            } else if (readDataStrings[i].contains(".")) {
                 float f = Float.parseFloat(readDataStrings[i]);
-                String sF = stringFromHex(f);
-                sF = sF.replace("0x", "");
-                sensor4[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                String sF = hexStringFromFloat(f);
+                hex[in] = Integer.valueOf(sF.substring(4, 8), 16);
                 in++;
-                sensor4[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                hex[in] = Integer.valueOf(sF.substring(0, 4), 16);
                 in++;
-            }
-            else {
-                sensor4[in] = Integer.parseInt(readDataStrings[i]);
+            } else {
+                hex[in] = Integer.parseInt(readDataStrings[i]);
                 in++;
             }
         }
+        return hex;
+    }
+
+    public int[] sensorBuild(String[] readDataStrings) {
+        int[] hex = new int[43];
+        int in = 0;
+        for (int i = 0; i < readDataStrings.length; i++) {
+            if (in == 2 || in == 39 || in == 34 || in == 36 || in == 37 || in == 38) {
+                hex[in] = 0;
+                i--;
+                in++;
+            } else if (readDataStrings[i].contains(".")) {
+                float f = Float.parseFloat(readDataStrings[i]);
+                String sF = hexStringFromFloat(f);
+                hex[in] = Integer.valueOf(sF.substring(4, 8), 16);
+                in++;
+                hex[in] = Integer.valueOf(sF.substring(0, 4), 16);
+                in++;
+            } else {
+                hex[in] = Integer.parseInt(readDataStrings[i]);
+                in++;
+            }
+        }
+        return hex;
     }
 
 
@@ -669,5 +623,9 @@ public class ReadAllDataAdapter {
 
     public int[] getSensor4() {
         return sensor4;
+    }
+
+    public String getDataCompiled() {
+        return dataCompiled;
     }
 }
