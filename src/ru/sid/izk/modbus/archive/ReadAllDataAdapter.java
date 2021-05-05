@@ -234,7 +234,7 @@ public class ReadAllDataAdapter {
         cs1001 = query.getCs100();
         cm1 = query.getCm();
         k1 = query.getK();
-        cs01 = query.getCs1();
+        cs01 = query.getCs0();
         tc1 = query.getTc();
         csMin1 = query.getCsMin();
         hMin1 = query.gethMin();
@@ -264,7 +264,7 @@ public class ReadAllDataAdapter {
         cs1002 = query.getCs100();
         cm2 = query.getCm();
         k2 = query.getK();
-        cs02 = query.getCs1();
+        cs02 = query.getCs0();
         tc2 = query.getTc();
         csMin2 = query.getCsMin();
         hMin2 = query.gethMin();
@@ -295,7 +295,7 @@ public class ReadAllDataAdapter {
         cs1003 = query.getCs100();
         cm3 = query.getCm();
         k3 = query.getK();
-        cs03 = query.getCs1();
+        cs03 = query.getCs0();
         tc3 = query.getTc();
         csMin3 = query.getCsMin();
         hMin3 = query.gethMin();
@@ -325,7 +325,7 @@ public class ReadAllDataAdapter {
         cs1004 = query.getCs100();
         cm4 = query.getCm();
         k4 = query.getK();
-        cs04 = query.getCs1();
+        cs04 = query.getCs0();
         tc4 = query.getTc();
         csMin4 = query.getCsMin();
         hMin4 = query.gethMin();
