@@ -4,7 +4,6 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
-import ru.sid.izk.modbus.utils.FieldVisible;
 
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
@@ -756,8 +755,8 @@ public class Query{
 
             StringBuilder builderData = new StringBuilder();
             for (int i = 10; i < 13; i++) {
+                //TODO: duplicated fragment below (6 lines long).
                 String s = Integer.toHexString(registerValues[i]);
-
                 String a = s.substring(2,4);
                 String b = s.substring(0,2);
                 int c = Integer.valueOf(a, 16);
@@ -765,7 +764,6 @@ public class Query{
                 builderData.append((char)c);
                 builderData.append((char)d);
                 if (builderData.length()<6) builderData.append(".");
-
             }
             dataFirm = builderData.toString();
 
@@ -824,9 +822,8 @@ public class Query{
         }
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
         else s = Integer.toHexString(value1);
-        Long value1AsLong = Long.parseLong(s, 16);
-        float f = Float.intBitsToFloat(value1AsLong.intValue());
-        return f;
+        long value1AsLong = Long.parseLong(s, 16);
+        return Float.intBitsToFloat((int) value1AsLong);
     }
 
     private static String statusReader (String reversStatus){

@@ -40,7 +40,7 @@ public class ModbusReader {
                modbusMaster.writeSingleRegister(slaveID, 1, channel - 1);
                return String.format("Выбран %d измерительный канал", channel);
            }
-           else return "Что то пошло не так";
+           else return "Что то пошло не так: condition 'channel>0 && channel <5' is false";
         }
 
     public void writeRegister(int offset, int[] registers) throws ModbusNumberException, ModbusProtocolException, ModbusIOException {

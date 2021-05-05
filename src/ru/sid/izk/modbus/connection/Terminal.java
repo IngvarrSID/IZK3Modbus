@@ -40,6 +40,8 @@ public class Terminal {
             case "115200":
                 sp.setBaudRate(SerialPort.BaudRate.BAUD_RATE_115200);
                 break;
+            default:
+                break;
         }
         sp.setDataBits(8);
         sp.setParity(SerialPort.Parity.NONE);

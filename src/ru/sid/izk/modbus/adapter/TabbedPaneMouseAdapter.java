@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static ru.sid.izk.modbus.utils.FieldVisible.hideFielder;
+import static ru.sid.izk.modbus.utils.FieldVisible.toggleFields;
 
 public class TabbedPaneMouseAdapter extends MouseAdapter {
 
@@ -29,17 +29,17 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
             queryBox.setSelected(false);
         switch (idx) {
             case INFO:
-                hideFielder(izkModbusGUI,false);
+                toggleFields(izkModbusGUI,false);
                 izkModbusGUI.getRefButton().doClick();
                 break;
             case IZK_SETTINGS:
-                hideFielder(izkModbusGUI,false);
+                toggleFields(izkModbusGUI,false);
                 izkModbusGUI.getRefreshSettingsButton().doClick();
                 izkModbusGUI.setReadyToWriteRelay(true);
                 izkModbusGUI.relayActionListeners(izkModbusGUI.getModbusReader());
                 break;
             case SENSOR:
-                hideFielder(izkModbusGUI,false);
+                toggleFields(izkModbusGUI,false);
                 try {
                     izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 } catch (Exception e1) {
@@ -49,7 +49,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 }
                 break;
             case REGULATOR:
-                hideFielder(izkModbusGUI,true);
+                toggleFields(izkModbusGUI,true);
                 izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 izkModbusGUI.getRefreshRegulatorButton().doClick();
                 break;

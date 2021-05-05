@@ -19,7 +19,7 @@ import java.util.List;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
-import static ru.sid.izk.modbus.utils.FieldVisible.hideFielder;
+import static ru.sid.izk.modbus.utils.FieldVisible.toggleFields;
 
 public class IZKModbusGUI extends JFrame {
 
@@ -221,7 +221,7 @@ public class IZKModbusGUI extends JFrame {
         menuBar.add(createFileMenu());
         menuBar.add(createSettingsMenu());
         setJMenuBar(menuBar);
-        hideFielder(this,false);
+        toggleFields(this,false);
     }
 
     private void initTable(MasterModbus masterModbus, Query query){

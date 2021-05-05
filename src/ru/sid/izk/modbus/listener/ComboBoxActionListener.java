@@ -23,7 +23,7 @@ public class ComboBoxActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO добавил буллиан, чтоб бы при инициализации комбобоксов не срабатывали листенеры, хз насколько это правильно
+        //TODO добавил буллиан, чтобы при инициализации комбобоксов не срабатывали листенеры, хз насколько это правильно
         if (izkModbusGUI.isReadyToWriteRelay()) {
             try {
                 if(isNumber){

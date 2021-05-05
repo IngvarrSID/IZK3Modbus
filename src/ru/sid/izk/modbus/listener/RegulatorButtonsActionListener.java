@@ -1,7 +1,6 @@
 package ru.sid.izk.modbus.listener;
 
 import ru.sid.izk.modbus.connection.ModbusReader;
-import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;

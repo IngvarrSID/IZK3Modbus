@@ -5,6 +5,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
 public class FloatDigitalFilter extends DocumentFilter {
+
     private final String pattern;
 
     public FloatDigitalFilter(String pattern) {
@@ -26,8 +27,4 @@ public class FloatDigitalFilter extends DocumentFilter {
         if (numS.matches(pattern))
             super.replace(fb, offset, length, text, attrs);
     }
-
-
-
-
 }

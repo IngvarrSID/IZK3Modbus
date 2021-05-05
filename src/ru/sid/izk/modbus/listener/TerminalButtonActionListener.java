@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 
 public class TerminalButtonActionListener implements ActionListener {
 
-    private IZKModbusGUI izkModbusGUI;
-    private MasterModbus masterModbus;
+    private final IZKModbusGUI izkModbusGUI;
+    private final MasterModbus masterModbus;
 
     public TerminalButtonActionListener(IZKModbusGUI izkModbusGUI, MasterModbus masterModbus) {
         this.izkModbusGUI = izkModbusGUI;

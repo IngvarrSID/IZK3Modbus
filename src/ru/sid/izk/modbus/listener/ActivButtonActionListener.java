@@ -43,7 +43,7 @@ public class ActivButtonActionListener implements ActionListener {
                 passwordField.setText("Ошибка записи");
             }
         } else {
-            passwordField.setText("Не верный код активации!");
+            passwordField.setText("Неверный код активации!");
         }
     }
 }
