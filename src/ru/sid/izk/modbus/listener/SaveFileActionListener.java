@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SaveFileActionListener implements ActionListener {
+
     private final IZKModbusGUI izkModbusGUI;
 
     public SaveFileActionListener(IZKModbusGUI izkModbusGUI) {
@@ -40,8 +41,6 @@ public class SaveFileActionListener implements ActionListener {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
-
             }
         }
         else {
