@@ -2,6 +2,7 @@ package ru.sid.izk.modbus.utils;
 
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
+//TODO: WTF is this!!
 public final class ClearSensorFields {
 
     public static void clearFields(IZKModbusGUI izkModbusGUI){

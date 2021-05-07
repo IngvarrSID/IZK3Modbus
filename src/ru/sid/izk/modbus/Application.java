@@ -12,18 +12,7 @@ public class Application {
 
     public static void main(String[] args) {
 
-        UIManager.put("FileChooser.saveButtonText"      , "Сохранить"             );
-        UIManager.put("FileChooser.openButtonText"      , "Открыть"               );
-        UIManager.put("FileChooser.cancelButtonText"    , "Отмена"                );
-        UIManager.put("FileChooser.fileNameLabelText"   , "Наименование файла"    );
-        UIManager.put("FileChooser.filesOfTypeLabelText", "Типы файлов"           );
-        UIManager.put("FileChooser.lookInLabelText"     , "Директория"            );
-        UIManager.put("FileChooser.saveInLabelText"     , "Сохранить в директории");
-        UIManager.put("FileChooser.folderNameLabelText" , "Путь директории"       );
-        UIManager.put("OptionPane.yesButtonText"   , "Да"    );
-        UIManager.put("OptionPane.noButtonText"    , "Нет"   );
-        UIManager.put("OptionPane.cancelButtonText", "Отмена");
-
+        initUiManager();
         SwingUtilities.invokeLater(() -> {
             try {
                 if (Settings.propertiesFileExists()) {
@@ -38,5 +27,20 @@ public class Application {
                 e.printStackTrace();
             }
         });
+    }
+
+    private static void initUiManager() {
+
+        UIManager.put("FileChooser.saveButtonText", "Сохранить");
+        UIManager.put("FileChooser.openButtonText", "Открыть");
+        UIManager.put("FileChooser.cancelButtonText", "Отмена");
+        UIManager.put("FileChooser.fileNameLabelText", "Наименование файла");
+        UIManager.put("FileChooser.filesOfTypeLabelText", "Типы файлов");
+        UIManager.put("FileChooser.lookInLabelText", "Директория");
+        UIManager.put("FileChooser.saveInLabelText", "Сохранить в директории");
+        UIManager.put("FileChooser.folderNameLabelText", "Путь директории");
+        UIManager.put("OptionPane.yesButtonText", "Да");
+        UIManager.put("OptionPane.noButtonText", "Нет");
+        UIManager.put("OptionPane.cancelButtonText", "Отмена");
     }
 }

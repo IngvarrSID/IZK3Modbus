@@ -6,7 +6,7 @@ public final class FieldVisible {
 
     private static boolean status;
 
-    public static void hideFielder(IZKModbusGUI izkModbusGUI, Boolean bool){
+    public static void toggleFields(IZKModbusGUI izkModbusGUI, Boolean bool){
         izkModbusGUI.getPidErrField().setVisible(bool);
         izkModbusGUI.getPidDifField().setVisible(bool);
         izkModbusGUI.getPidIntField().setVisible(bool);
