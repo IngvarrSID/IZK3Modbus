@@ -148,9 +148,14 @@ public class IZKModbusGUI extends JFrame {
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
+    private final MasterModbus maserModbus;
+    private final Terminal terminal;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
-
+        this.maserModbus = masterModbus;
+        this.terminal = terminal;
+        modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
+        final Query query = new Query(modbusReader);
         initWindow();
         statLabel.setText("Нет информации");
         if (!terminal.isError())
@@ -158,8 +163,7 @@ public class IZKModbusGUI extends JFrame {
         else
             comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
         terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
-        modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
-        final Query query = new Query(modbusReader);
+
         //menu
         tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this));
         //channels
@@ -423,8 +427,12 @@ public class IZKModbusGUI extends JFrame {
     private JMenu createSettingsMenu(){
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
+        JMenuItem downloader = new JMenuItem("Загрузчик");
         settings.add(path);
+        settings.addSeparator();
+        settings.add(downloader);
         path.addActionListener(new PathInputActionListener(this));
+        downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
         return settings;
     }
 

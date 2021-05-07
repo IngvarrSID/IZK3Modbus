@@ -37,7 +37,7 @@ public class CSVAdapter {
        final Settings settings=new Settings();
        path = String.format("%s/%s/%s/%s/IZK%d",settings.getPath(),year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
-       head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность".split("\\.");
+       head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
     }
 
     private void whatsTheTime(){
