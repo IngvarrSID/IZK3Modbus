@@ -4,10 +4,14 @@ import com.intelligt.modbus.jlibmodbus.serial.SerialPortAT;
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
+import ru.sid.izk.modbus.frames.IZKModbusGUI;
+
+import java.awt.*;
+import java.io.File;
 
 public class DownloaderSerialPort {
 
-    public SerialPort serialPort;
+    private SerialPort serialPort;
 
     public DownloaderSerialPort(String id) {
         try {
@@ -21,15 +25,17 @@ public class DownloaderSerialPort {
     }
 
     public class PortReader implements SerialPortEventListener{
-//TODO работает!
         @Override
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue()>0){
                 try {
                     String s = serialPort.readString(event.getEventValue());
-                    System.out.println(s);
                     if(s.contains("AVRREADY")){
                         serialPort.writeString("@");
+                        File file = new File("AVRprog.exe");
+                        serialPort.closePort();
+                        Desktop.getDesktop().open(file);
+                        System.exit(0);
                     }
                 } catch (Exception e){
                     e.printStackTrace();

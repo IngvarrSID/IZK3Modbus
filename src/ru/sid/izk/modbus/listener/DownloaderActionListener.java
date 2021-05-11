@@ -5,6 +5,8 @@ import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,8 +22,17 @@ public class DownloaderActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//TODO будет переводить блок в режим загрузчика
-        masterModbus.disconnect();
-        new DownloaderSerialPort(String.valueOf(masterModbus.getTerminal().getComName()));
+        try {
+            int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Вы переходите в режим загрузчика!<br>" +
+                    "Продолжить?</html>", "Предупреждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                izkModbusGUI.getModbusReader().writeModeRegister(0,65535);
+                masterModbus.disconnect();
+                new DownloaderSerialPort(masterModbus.getTerminal().getComName());
+            }
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
