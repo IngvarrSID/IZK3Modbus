@@ -14,6 +14,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -228,6 +230,7 @@ public class IZKModbusGUI extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
         menuBar.add(createSettingsMenu());
+        menuBar.add(createHelpMenu());
         setJMenuBar(menuBar);
         toggleFields(this,false);
     }
@@ -437,6 +440,14 @@ public class IZKModbusGUI extends JFrame {
         path.addActionListener(new PathInputActionListener(this));
         downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
         return settings;
+    }
+
+    private JMenu createHelpMenu(){
+        JMenu help = new JMenu("Помощь");
+        JMenuItem about = new JMenuItem("О программе");
+        help.add(about);
+        about.addActionListener(new AboutActionListener(this));
+        return help;
     }
 
     public Timer getConnectionTimeoutTimer() {
