@@ -39,7 +39,7 @@ public class ActivButtonActionListener implements ActionListener {
             } catch (Exception e1) {
                 e1.printStackTrace();
                 JOptionPane.showMessageDialog(izkModbusGUI,
-                        "Ошибка записи! " + e1.getMessage(), "", JOptionPane.ERROR_MESSAGE);
+                        "Ошибка записи! " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 passwordField.setText("Ошибка записи");
             }
         } else {

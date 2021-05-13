@@ -6,14 +6,17 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
 public class DownloaderSerialPort {
 
     private SerialPort serialPort;
+    private final IZKModbusGUI izkModbusGUI;
 
-    public DownloaderSerialPort(String id) {
+    public DownloaderSerialPort(String id, IZKModbusGUI izkModbusGUI) {
+        this.izkModbusGUI = izkModbusGUI;
         try {
             serialPort = new SerialPort(id);
             serialPort.openPort();
@@ -21,6 +24,8 @@ public class DownloaderSerialPort {
             serialPort.addEventListener(new PortReader());
         } catch (Exception e){
             e.printStackTrace();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    "Ошибка COM порта! " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -39,6 +44,8 @@ public class DownloaderSerialPort {
                     }
                 } catch (Exception e){
                     e.printStackTrace();
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Ошибка запуска загрузчика " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

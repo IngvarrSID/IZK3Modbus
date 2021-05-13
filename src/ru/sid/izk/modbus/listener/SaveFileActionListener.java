@@ -40,6 +40,8 @@ public class SaveFileActionListener implements ActionListener {
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Ошибка сохранения файла " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

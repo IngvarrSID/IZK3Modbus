@@ -28,11 +28,13 @@ public class DownloaderActionListener implements ActionListener {
             if (result == JOptionPane.YES_OPTION) {
                 izkModbusGUI.getModbusReader().writeModeRegister(0,65535);
                 masterModbus.disconnect();
-                new DownloaderSerialPort(masterModbus.getTerminal().getComName());
+                new DownloaderSerialPort(masterModbus.getTerminal().getComName(),izkModbusGUI);
             }
 
         } catch (Exception ex){
             ex.printStackTrace();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    "Ошибка перехода в загрузчик! " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

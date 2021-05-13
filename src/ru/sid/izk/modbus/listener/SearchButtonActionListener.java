@@ -55,6 +55,7 @@ public class SearchButtonActionListener implements ActionListener {
 
     public Timer createTimer(){
         return new Timer(500, e -> {
+            try {
             izkModbusGUI.getProgressBar().setVisible(true);
             izkModbusGUI.getProgressBar().setMaximum(0);
             izkModbusGUI.getProgressBar().setMaximum(100);
@@ -110,6 +111,11 @@ public class SearchButtonActionListener implements ActionListener {
              }
 
          }
+        }catch (Exception ex){
+            ex.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
         });
     }
 }

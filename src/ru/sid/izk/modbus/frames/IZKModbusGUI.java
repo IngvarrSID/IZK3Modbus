@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -149,19 +150,21 @@ public class IZKModbusGUI extends JFrame {
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
     private final MasterModbus maserModbus;
-    private final Terminal terminal;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
         this.maserModbus = masterModbus;
-        this.terminal = terminal;
         modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         final Query query = new Query(modbusReader);
         initWindow();
         statLabel.setText("Нет информации");
-        if (!terminal.isError())
+        if (!terminal.isError()) {
+            comLabel.setForeground(new Color(0, 120, 60));
             comLabel.setText(String.format("Подключено к %s на скорости %s", terminal.getComName(), terminal.getBound()));
-        else
+        }
+        else {
+            comLabel.setForeground(Color.RED);
             comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
+        }
         terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
 
         //menu

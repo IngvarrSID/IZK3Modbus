@@ -543,25 +543,13 @@ public class Query{
 
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
-
-        sensorAddress = 0;
-        time = null;
-        humidity = 0;
-
-
     }
 
-    public int searchProgress(){
-        try{
+    public int searchProgress() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(0,1,1);
             return registerValues[0];
-        } catch (Exception e){
-            e.printStackTrace();
-            return 0;
-        }
     }
-    public void querySearch(){
-        try {
+    public void querySearch() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(0, 32, 1);
             sensorCount = registerValues[2];
             searchAddress1 = registerValues[3];
@@ -576,27 +564,15 @@ public class Query{
             searchAddress4 = registerValues[18];
             searchFirmware4 = registerValues[19];
             searchDate4 = dateReader(registerValues[20],registerValues[21],registerValues[22]);
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
 
-     public void queryStatus (){
-        try {
+     public void queryStatus () throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(22, 1, 1);
             String reversStatus = Integer.toBinaryString(registerValues[0]);
             status = statusReader(reversStatus);
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
-     public void queryMain(){
-        System.out.println("Опрос запущен");
-
-            try {
+     public void queryMain() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
                 int[] registerValues = modbusReader.readRegisters(0, 32, 1);
                 sensorAddress = registerValues[0];
                 time = timeReader(registerValues[4], registerValues[5], registerValues[6]);
@@ -611,15 +587,9 @@ public class Query{
                 error = hexToFloat(registerValues[30],registerValues[31]);
                 data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
 
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
     }
 
-    public void queryPidRegulator(){
-        try {
+    public void queryPidRegulator() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(38,7,1);
             pidErr = hexToFloat(registerValues[0], registerValues[1]);
             pidInt = hexToFloat(registerValues[2], registerValues[3]);
@@ -641,14 +611,9 @@ public class Query{
             closeFull = buttonReader(coils[4]);
             openFull = buttonReader(coils[5]);
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    public void queryPidSettings(){
-        try {
+    public void queryPidSettings() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readHoldingsRegisters(35,10,1);
             kP = hexToFloat(registerValues[0],registerValues[1]);
             kI = hexToFloat(registerValues[2],registerValues[3]);
@@ -656,10 +621,6 @@ public class Query{
             humidityRequired = hexToFloat(registerValues[6],registerValues[7]);
             step = registerValues[8];
             fullStep = registerValues[9];
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     public void querySettings() throws ModbusNumberException, ModbusProtocolException, ModbusIOException {
@@ -704,8 +665,7 @@ public class Query{
 
     }
 
-    public void querySensor(){
-        try {
+    public void querySensor() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readHoldingsRegisters(2,32,2);
             sensorAddressWrite = registerValues[0];
             timeoutWrite = registerValues[1];
@@ -732,13 +692,8 @@ public class Query{
             max = registerValues[32];
             emerMax = registerValues[33];
             noDensity = registerValues[35];
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
-    public void queryInfo (){
-        try {
+    public void queryInfo () throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(0, 32, 1);
             StringBuilder builderVersion = new StringBuilder();
             for (int i = 0; i < 10; i++) {
@@ -808,12 +763,6 @@ public class Query{
                     break;
 
             }
-
-
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     public static Float hexToFloat(int value1, int value2){

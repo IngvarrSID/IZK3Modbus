@@ -6,6 +6,7 @@ import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import ru.sid.izk.modbus.utils.FieldVisible;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -24,6 +25,7 @@ public class TimerActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
         query.queryStatus();
         final String status = query.getStatus();
         izkModbusGUI.getStatLabel().setText(status);
@@ -43,13 +45,12 @@ public class TimerActionListener implements ActionListener {
             CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI,masterModbus,query);
             csvAdapter.fileWrite();
             izkModbusGUI.refreshTable(csvAdapter);
-        } else
-            System.out.println("ждем");
-        if (FieldVisible.isStatus()){
+        }
+        if (FieldVisible.isStatus()) {
             query.queryPidRegulator();
-            izkModbusGUI.getPidErrField().setText(String.format("PID_err: %.1f у.е.",query.getPidErr()));
-            izkModbusGUI.getPidIntField().setText(String.format("PID_int: %.1f у.е.",query.getPidInt()));
-            izkModbusGUI.getPidDifField().setText(String.format("PID_err: %.1f у.е.",query.getPidDif()));
+            izkModbusGUI.getPidErrField().setText(String.format("PID_err: %.1f у.е.", query.getPidErr()));
+            izkModbusGUI.getPidIntField().setText(String.format("PID_int: %.1f у.е.", query.getPidInt()));
+            izkModbusGUI.getPidDifField().setText(String.format("PID_err: %.1f у.е.", query.getPidDif()));
             izkModbusGUI.getProgressRegulatorBar().setValue(query.getPosition());
             izkModbusGUI.getRegulatorStatusField().setText(query.getRegStatus());
             izkModbusGUI.getModeButton().setText(query.getRegulatorMode());
@@ -58,6 +59,12 @@ public class TimerActionListener implements ActionListener {
             izkModbusGUI.getOpenButton().setText(query.getOpen());
             izkModbusGUI.getFullOpenButton().setText(query.getOpenFull());
             izkModbusGUI.getFullCloseButton().setText(query.getCloseFull());
+        }
+        } catch (Exception ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            izkModbusGUI.getQueryBox().setSelected(false);
         }
     }
 }
