@@ -120,7 +120,7 @@ public class IZKTerminal extends JFrame {
             final Settings settings;
             try {
                 if (!Settings.propertiesFileExists()) {
-                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/Archive", System.getProperty("user.home")));
+                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")));
                 } else {
                     settings = new Settings();
                     settings.setComPort(comName);

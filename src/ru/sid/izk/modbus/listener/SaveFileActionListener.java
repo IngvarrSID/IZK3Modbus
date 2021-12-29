@@ -21,7 +21,7 @@ public class SaveFileActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (izkModbusGUI.getReadAllDataAdapter().isDataUpDate()) {
-            JFileChooser fileChooser = new JFileChooser(String.format("%s/Documents/Technosensor/", System.getProperty("user.home")));
+            JFileChooser fileChooser = new JFileChooser(String.format("%s/Documents/Technosensor/ConfigSU5DV", System.getProperty("user.home")));
             fileChooser.setDialogTitle("Сохранение настроек");
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             File file = new File(String.format("izk%d.su5v",izkModbusGUI.getReadAllDataAdapter().getAddressIZK()));

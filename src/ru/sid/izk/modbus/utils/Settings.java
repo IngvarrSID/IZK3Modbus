@@ -13,9 +13,10 @@ public class Settings {
     private String boundRate;
     private String id;
     private String path;
+    private static final String settingsPath = String.format("%s/Documents/Technosensor/ConfigSU5DV", System.getProperty("user.home"));
 
     public Settings() {
-        try (FileInputStream in = new FileInputStream("settings.properties")) {
+        try (FileInputStream in = new FileInputStream(settingsPath + "/settings.properties")) {
             final Properties properties = new Properties();
             properties.load(in);
             this.comPort = properties.getProperty("ComPort");
@@ -39,7 +40,7 @@ public class Settings {
     }
 
     public static boolean propertiesFileExists() {
-        File f = new File("settings.properties");
+        File f = new File(settingsPath + "/settings.properties");
         return f.exists();
     }
 
@@ -77,7 +78,11 @@ public class Settings {
 
     public void storeProperties(final String comments) {
 
-        try (FileOutputStream out = new FileOutputStream("settings.properties")) {
+        File dir = new File(settingsPath);
+        if (dir.mkdirs()) System.out.println("Путь создан");
+        else System.out.println("Путь не создан");
+
+        try (FileOutputStream out = new FileOutputStream(settingsPath + "/settings.properties")) {
             final Properties properties = new Properties();
             Optional.ofNullable(comPort).ifPresent(v -> properties.setProperty("ComPort", comPort));
             Optional.ofNullable(boundRate).ifPresent(v -> properties.setProperty("BoundRate", boundRate));

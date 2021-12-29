@@ -140,6 +140,8 @@ public class IZKModbusGUI extends JFrame {
     private JButton readAllButton;
     private JLabel dataLabel;
     private JButton writeAllButton;
+    private JTextField Date;
+    private JLabel dayWriteTextField;
     private final Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
