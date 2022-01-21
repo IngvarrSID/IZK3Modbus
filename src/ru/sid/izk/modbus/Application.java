@@ -17,7 +17,7 @@ public class Application {
             try {
                 if (Settings.propertiesFileExists()) {
                     final Settings settings = new Settings();
-                    Terminal terminal = new Terminal(settings.getComPort(), settings.getBoundRate());
+                    Terminal terminal = new Terminal(settings.getComPort(), settings.getBoundRate(),settings.getTimeOut());
                     MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(settings.getId()));
                     new IZKModbusGUI(terminal, masterModbus);
                 } else {

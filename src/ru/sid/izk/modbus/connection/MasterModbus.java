@@ -15,6 +15,7 @@ public class MasterModbus {
         this.terminal = terminal;
         try {
             modbusMaster = ModbusMasterFactory.createModbusMasterASCII(terminal.getSp());
+            modbusMaster.setResponseTimeout(Integer.parseInt(terminal.getTimeOut()));
             modbusMaster.connect();
         } catch (Exception e) {
             e.printStackTrace();

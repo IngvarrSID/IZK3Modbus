@@ -37,7 +37,11 @@ public class CSVAdapter {
        final Settings settings=new Settings();
        path = String.format("%s/%s/%s/%s/IZK%d",settings.getPath(),year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
-       head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
+       if (izkModbusGUI.getChannelsBox().getSelectedIndex() != 5) {
+           head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
+       } else {
+           head = "Время.Адрес ИЗК.Влажность, %.Плотность, кг/м².Уровень ЭлМетро, мм.Дистанция ЭлМетро, мм.Температура ЭлМетро, °C.Уровень воды корунд, мм.Уровень мазута корунд, мм.Температуры, °C".split("\\.");
+       }
     }
 
     private void whatsTheTime(){
@@ -64,6 +68,12 @@ public class CSVAdapter {
                 break;
             case 3:
                 currentChannel = "channel4";
+                break;
+            case 4:
+                currentChannel = "allChannel";
+                break;
+            case 5:
+                currentChannel = "levels";
                 break;
             default:
                 currentChannel = "unknown";

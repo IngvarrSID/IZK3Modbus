@@ -21,6 +21,7 @@ public class IZKTerminal extends JFrame {
     private JFormattedTextField IZKCOMAddressField;
     private JButton oKButton;
     private JPanel terminalPanel;
+    private JTextField timeOutField;
     private final String[] portNames = SerialPortList.getPortNames();
     private final String[] bounds = {"4800", "9600", "14400", "19200", "38400", "57600", "115200"};
     private String comName;
@@ -37,6 +38,8 @@ public class IZKTerminal extends JFrame {
         }
         PlainDocument doc = (PlainDocument) IZKCOMAddressField.getDocument();
         doc.setDocumentFilter(new DigitFilter(3));
+        PlainDocument doc1 = (PlainDocument) timeOutField.getDocument();
+        doc1.setDocumentFilter(new DigitFilter(6));
         try {
             initTerminalSettings();
         } catch (IOException e) {
@@ -69,6 +72,7 @@ public class IZKTerminal extends JFrame {
             final String currentCOM = settings.getComPort();
             final String currentBound = settings.getBoundRate();
             final String currentAddress = settings.getId();
+            final String currentTimeOut = settings.getTimeOut();
             for (int i = 0; i < portNames.length; i++) {
                 if (portNames[i].equals(currentCOM)) {
                     comName = currentCOM;
@@ -89,12 +93,14 @@ public class IZKTerminal extends JFrame {
                 }
             }
             IZKCOMAddressField.setText(currentAddress);
+            timeOutField.setText(currentTimeOut);
         } else {
             comName = portNames[0];
             comboBoxCOM.setSelectedIndex(0);
             bound = bounds[3];
             comboBoxBound.setSelectedIndex(3);
             IZKCOMAddressField.setText("80");
+            timeOutField.setText("1000");
         }
     }
 
@@ -120,18 +126,19 @@ public class IZKTerminal extends JFrame {
             final Settings settings;
             try {
                 if (!Settings.propertiesFileExists()) {
-                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")));
+                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")),timeOutField.getText());
                 } else {
                     settings = new Settings();
                     settings.setComPort(comName);
                     settings.setBoundRate(bound);
                     settings.setId(IZKCOMAddressField.getText());
+                    settings.setTimeOut(timeOutField.getText());
                 }
                 settings.storeProperties("terminal settings");
             } catch (Exception q) {
                 q.printStackTrace();
             }
-            Terminal terminal = new Terminal(comName, bound);
+            Terminal terminal = new Terminal(comName, bound, timeOutField.getText());
             MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(IZKCOMAddressField.getText()));
             dispose();
             new IZKModbusGUI(terminal, masterModbus);

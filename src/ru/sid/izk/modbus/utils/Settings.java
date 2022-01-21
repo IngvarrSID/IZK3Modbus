@@ -14,6 +14,7 @@ public class Settings {
     private String id;
     private String path;
     private static final String settingsPath = String.format("%s/Documents/Technosensor/ConfigSU5DV", System.getProperty("user.home"));
+    private String timeOut;
 
     public Settings() {
         try (FileInputStream in = new FileInputStream(settingsPath + "/settings.properties")) {
@@ -23,16 +24,18 @@ public class Settings {
             this.boundRate = properties.getProperty("BoundRate");
             this.id = properties.getProperty("Id");
             this.path = properties.getProperty("Path");
+            this.timeOut = properties.getProperty("Timeout");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public Settings(final String comPort, final String boundRate, final String id, final String path) {
+    public Settings(final String comPort, final String boundRate, final String id, final String path, final String timeOut) {
         this.comPort = comPort;
         this.boundRate = boundRate;
         this.id = id;
         this.path = path;
+        this.timeOut = timeOut;
     }
 
     public Settings(final String path) {
@@ -59,6 +62,10 @@ public class Settings {
     public String getPath() {
         return path;
     }
+    public String getTimeOut() {
+        return timeOut;
+    }
+
 
     public void setComPort(String comPort) {
         this.comPort = comPort;
@@ -76,6 +83,10 @@ public class Settings {
         this.path = path;
     }
 
+    public void setTimeOut(String timeOut) {
+        this.timeOut = timeOut;
+    }
+
     public void storeProperties(final String comments) {
 
         File dir = new File(settingsPath);
@@ -88,6 +99,7 @@ public class Settings {
             Optional.ofNullable(boundRate).ifPresent(v -> properties.setProperty("BoundRate", boundRate));
             Optional.ofNullable(id).ifPresent(v -> properties.setProperty("Id", id));
             Optional.ofNullable(path).ifPresent(v -> properties.setProperty("Path", path));
+            Optional.ofNullable(timeOut).ifPresent(v -> properties.setProperty("Timeout",timeOut));
             properties.store(out, comments);
         } catch (IOException e) {
             throw new IllegalStateException(e);

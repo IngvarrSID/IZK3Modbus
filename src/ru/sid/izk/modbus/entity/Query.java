@@ -129,6 +129,48 @@ public class Query{
     private int searchFirmware4;
     private String searchDate4;
 
+    //Level
+    private float humidityLevel;
+    private float densityLevel;
+    private float elMetroLevel;
+    private float elMetroDistance;
+    private float elMetroTemperature;
+    private float korundWaterLevel;
+    private float korundFuelOil;
+    private float[] temperatures = new float[10];
+
+    public float getHumidityLevel() {
+        return humidityLevel;
+    }
+
+    public float getDensityLevel() {
+        return densityLevel;
+    }
+
+    public float getElMetroLevel() {
+        return elMetroLevel;
+    }
+
+    public float getElMetroDistance() {
+        return elMetroDistance;
+    }
+
+    public float getElMetroTemperature() {
+        return elMetroTemperature;
+    }
+
+    public float getKorundWaterLevel() {
+        return korundWaterLevel;
+    }
+
+    public float getKorundFuelOil() {
+        return korundFuelOil;
+    }
+
+    public float[] getTemperatures() {
+        return temperatures;
+    }
+
     public int getSensorCount() {
         return sensorCount;
     }
@@ -543,6 +585,22 @@ public class Query{
 
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
+    }
+
+    public void queryLevel() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+        int[] registerValues = modbusReader.readRegisters(0, 34, 1);
+        humidityLevel = hexToFloat(registerValues[0],registerValues[1]);
+        densityLevel =  hexToFloat(registerValues[2],registerValues[3]);
+        elMetroLevel = hexToFloat(registerValues[4],registerValues[5]);
+        elMetroDistance = hexToFloat(registerValues[6],registerValues[7]);
+        elMetroTemperature = hexToFloat(registerValues[8],registerValues[9]);
+        korundWaterLevel = hexToFloat(registerValues[10],registerValues[11]);
+        korundFuelOil = hexToFloat(registerValues[12],registerValues[13]);
+        int j = 0;
+        for (int i = 0; i < temperatures.length; i++) {
+            temperatures[i] = hexToFloat(registerValues[14+j],registerValues[15+j]);
+            j+=2;
+        }
     }
 
     public int searchProgress() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
