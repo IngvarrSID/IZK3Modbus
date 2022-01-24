@@ -1,5 +1,7 @@
 package ru.sid.izk.modbus.adapter;
 
+import ru.sid.izk.modbus.connection.MasterModbus;
+import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
@@ -17,9 +19,13 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
     private static final int TIME =4;
     private static final int LEVEL =5;
     private final IZKModbusGUI izkModbusGUI;
+    private final Query query;
+    private final MasterModbus masterModbus;
 
-    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI) {
+    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI, Query query, MasterModbus masterModbus) {
         this.izkModbusGUI = izkModbusGUI;
+        this.query = query;
+        this.masterModbus = masterModbus;
     }
 
     @Override
@@ -61,6 +67,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 toggleFields(izkModbusGUI,false);
                 try {
                     izkModbusGUI.getChannelsBox().setSelectedIndex(5);
+                    izkModbusGUI.initTable(masterModbus,query);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     JOptionPane.showMessageDialog(izkModbusGUI,

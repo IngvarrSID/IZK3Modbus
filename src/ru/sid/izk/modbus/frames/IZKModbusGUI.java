@@ -142,7 +142,11 @@ public class IZKModbusGUI extends JFrame {
     private JButton writeAllButton;
     private JTextField Date;
     private JLabel dayWriteTextField;
-    private final Timer connectionTimeoutTimer;
+    private JTextField mode0Field;
+    private JButton testButton;
+    private JTextField querySpeedField;
+    private int querySpeed = 1000;
+    private Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
     private final String[] modesRelays;
@@ -172,7 +176,7 @@ public class IZKModbusGUI extends JFrame {
         terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
 
         //menu
-        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this));
+        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this, query,masterModbus));
         //channels
         final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4", "Все каналы", "Уровнемеры"};
         for (String s : channels) {
@@ -187,8 +191,11 @@ public class IZKModbusGUI extends JFrame {
         //info
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
-        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(1000, new TimerActionListener(query, this,masterModbus));
+        //query
+        queryInit(query,masterModbus);
+
+        //Check mode0
+        testButton.addActionListener(new TestButtonActionListener(this,query,modbusReader));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
@@ -237,10 +244,11 @@ public class IZKModbusGUI extends JFrame {
         toggleFields(this,false);
     }
 
-    private void initTable(MasterModbus masterModbus, Query query){
+    public void initTable(MasterModbus masterModbus, Query query){
+        archiveTable.setModel(new DefaultTableModel());
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
         CSVAdapter csvAdapter = new CSVAdapter(this,masterModbus,query);
         List<String[]> allRows = csvAdapter.fileRead();
-        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
         for (String s:allRows.get(0)) {
             model.addColumn(s);
         }
@@ -265,6 +273,14 @@ public class IZKModbusGUI extends JFrame {
             }
         }
         archiveTable.setFillsViewportHeight(true);
+    }
+
+    public void queryInit(Query query,MasterModbus masterModbus){
+        //query
+        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
+        connectionTimeoutTimer = new Timer(querySpeed, new TimerActionListener(query, this,masterModbus));
+        querySpeedField.setText(String.valueOf(querySpeed));
+        querySpeedField.addActionListener(new QuerySpeedActionListener(this,query,masterModbus));
     }
 
     private void initIZKSettings(){
@@ -372,6 +388,9 @@ public class IZKModbusGUI extends JFrame {
         humidityWriteField.addActionListener(new TwoRegisterWriteActionListener(41,this,modbusReader));
         oneStepRegulator.addActionListener(new OneRegisterWriteActionListener(43,this,modbusReader));
         fullStepRegulator.addActionListener(new OneRegisterWriteActionListener(44,this,modbusReader));
+
+        //query
+        digitFilter(querySpeedField,5);
 
     }
 
@@ -904,4 +923,23 @@ public class IZKModbusGUI extends JFrame {
         return readAllDataAdapter;
     }
 
+    public JTextField getMode0Field() {
+        return mode0Field;
+    }
+
+    public JButton getTestButton() {
+        return testButton;
+    }
+
+    public JTextField getQuerySpeedField() {
+        return querySpeedField;
+    }
+
+    public int getQuerySpeed() {
+        return querySpeed;
+    }
+
+    public void setQuerySpeed(int querySpeed) {
+        this.querySpeed = querySpeed;
+    }
 }

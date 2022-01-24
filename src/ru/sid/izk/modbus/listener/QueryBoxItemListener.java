@@ -26,6 +26,7 @@ public class QueryBoxItemListener implements ItemListener {
             try {
                 modbusReader.writeModeRegister(1, izkModbusGUI.getChannelsBox().getSelectedIndex());
                 timer1.start();
+                izkModbusGUI.getStatLabel().setText("Идет опрос");
             } catch (Exception e1) {
                 e1.printStackTrace();
                 timer1.stop();

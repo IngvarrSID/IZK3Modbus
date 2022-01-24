@@ -80,38 +80,81 @@ public class CSVAdapter {
         }
     }
 
-    public void fileWrite(){
-        String dgsAddress = String.valueOf(query.getSensorAddress());
-        String humidity = String.format("%.2f",query.getHumidity());
-        String density = String.format("%.1f",query.getDensity());
-        String temperature = String.format("%.1f",query.getTemperature());
-        String cs1 = String.format("%.1f",query.getCs1());
-        String cs2 = String.format("%.1f",query.getCs2());
-        String period = String.format("%.1f",query.getPeriod());
-        String error = String.format("%.1f",query.getError());
-        try {
-            File file = new File(fullPath);
-            if (file.exists()){
-                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),';','"');
-                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
-                writer.writeNext(data);
-                writer.close();
+    public void fileWrite() {
 
-            }else {
-                File dir = new File(path);
-                if (dir.mkdirs()) System.out.println("Путь создан");
-                else System.out.println("Путь не создан");
-                FileOutputStream fos = new FileOutputStream(fullPath);
-                Writer preWriter = new OutputStreamWriter(fos,Charset.forName("Windows-1251"));
-                CSVWriter writer = new CSVWriter(preWriter,';','"');
-                writer.writeNext(head);
-                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
-                writer.writeNext(data);
-                writer.close();
-                fos.close();
+        if (izkModbusGUI.getChannelsBox().getSelectedIndex() != 5) {
+            String dgsAddress = String.valueOf(query.getSensorAddress());
+            String humidity = String.format("%.2f", query.getHumidity());
+            String density = String.format("%.1f", query.getDensity());
+            String temperature = String.format("%.1f", query.getTemperature());
+            String cs1 = String.format("%.1f", query.getCs1());
+            String cs2 = String.format("%.1f", query.getCs2());
+            String period = String.format("%.1f", query.getPeriod());
+            String error = String.format("%.1f", query.getError());
+            try {
+                File file = new File(fullPath);
+                if (file.exists()) {
+                    CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), dgsAddress, humidity, temperature, density, period, cs1, cs2, error).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+
+                } else {
+                    File dir = new File(path);
+                    if (dir.mkdirs()) System.out.println("Путь создан");
+                    else System.out.println("Путь не создан");
+                    FileOutputStream fos = new FileOutputStream(fullPath);
+                    Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
+                    CSVWriter writer = new CSVWriter(preWriter, ';', '"');
+                    writer.writeNext(head);
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), dgsAddress, humidity, temperature, density, period, cs1, cs2, error).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+                    fos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e){
-            e.printStackTrace();
+        } else {
+            String humidity = String.format("%.2f", query.getHumidityLevel());
+            String density = String.format("%.2f", query.getDensityLevel());
+            String levelElMetro = String.format("%.3f", query.getElMetroLevel());
+            String distanceElMetro = String.format("%.3f", query.getElMetroDistance());
+            String temperatureElMetro = String.format("%.1f", query.getElMetroTemperature());
+            String levelH2oKorund = String.format("%.3f", query.getKorundWaterLevel());
+            String levelOilKorund = String.format("%.3f", query.getKorundFuelOil());
+            StringBuilder s = new StringBuilder();
+            for (float f:query.getTemperatures()) {
+                if (!s.toString().equals("")) s.append(" ");
+
+                s.append(String.format("%.1f", f));
+
+            }
+            String s1 = s.toString();
+            try {
+                File file = new File(fullPath);
+                if (file.exists()) {
+                    CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro, levelH2oKorund, levelOilKorund, s1).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+
+                } else {
+                    File dir = new File(path);
+                    if (dir.mkdirs()) System.out.println("Путь создан");
+                    else System.out.println("Путь не создан");
+                    FileOutputStream fos = new FileOutputStream(fullPath);
+                    Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
+                    CSVWriter writer = new CSVWriter(preWriter, ';', '"');
+                    writer.writeNext(head);
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro, levelH2oKorund, levelOilKorund, s1).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+                    fos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

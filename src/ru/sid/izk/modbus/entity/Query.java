@@ -587,6 +587,10 @@ public class Query{
         this.modbusReader = modbusReader;
     }
 
+    public int queryMode0() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+        return  modbusReader.readHoldingsRegisters(0, 1, 1)[0];
+    }
+
     public void queryLevel() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
         int[] registerValues = modbusReader.readRegisters(0, 34, 1);
         humidityLevel = hexToFloat(registerValues[0],registerValues[1]);

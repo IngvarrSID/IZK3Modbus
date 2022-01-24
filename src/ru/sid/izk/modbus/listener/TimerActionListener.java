@@ -73,7 +73,7 @@ public class TimerActionListener implements ActionListener {
             }
         } else {
             try{
-              //  Thread.sleep(3000);
+
                 query.queryLevel();
                 izkModbusGUI.getSensorAddressField().setText(String.format("Влажность: %.2f %%", query.getHumidityLevel()));
                 izkModbusGUI.getHumidityField().setText(String.format("Плотность: %.1f кг/м²", query.getDensityLevel()));
@@ -96,6 +96,12 @@ public class TimerActionListener implements ActionListener {
                 LocalDate date = LocalDate.now();
                 izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", date));
                 izkModbusGUI.getTimeField().setText(String.format("Текущее время: %s", time));
+
+                    CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
+                    csvAdapter.fileWrite();
+                    izkModbusGUI.refreshTable(csvAdapter);
+
+
 
             } catch (Exception ex){
                 ex.printStackTrace();
