@@ -137,7 +137,15 @@ public class Query{
     private float elMetroTemperature;
     private float korundWaterLevel;
     private float korundFuelOil;
-    private float[] temperatures = new float[10];
+    private final float[] temperatures = new float[10];
+
+    //Time
+    private int day;
+    private int month;
+    private int year;
+    private int hour;
+    private int minute;
+    private int second;
 
     public float getHumidityLevel() {
         return humidityLevel;
@@ -583,12 +591,46 @@ public class Query{
         return humidityRequired;
     }
 
+    public int getDay() {
+        return day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public int getSecond() {
+        return second;
+    }
+
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
     }
 
     public int queryMode0() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
         return  modbusReader.readHoldingsRegisters(0, 1, 1)[0];
+    }
+
+    public void queryTime() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+        int[] registerValues = modbusReader.readHoldingsRegisters(2,6,1);
+        day = registerValues[0];
+        month = registerValues[1];
+        year = registerValues[2];
+        hour = registerValues[3];
+        minute = registerValues[4];
+        second = registerValues[5];
     }
 
     public void queryLevel() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {

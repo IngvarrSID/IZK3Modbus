@@ -8,6 +8,7 @@ import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.listener.*;
+import ru.sid.izk.modbus.utils.Settings;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -140,12 +142,18 @@ public class IZKModbusGUI extends JFrame {
     private JButton readAllButton;
     private JLabel dataLabel;
     private JButton writeAllButton;
-    private JTextField Date;
-    private JLabel dayWriteTextField;
+    private JTextField dayWriteTextField;
     private JTextField mode0Field;
     private JButton testButton;
     private JTextField querySpeedField;
-    private int querySpeed = 1000;
+    private JTextField elMetroXField;
+    private JTextField korundXField;
+    private JButton refreshTimeButton;
+    private JTextField monthWriteTextField;
+    private JTextField yearWriteTextField;
+    private JTextField hourWriteTextField;
+    private JTextField minuteWriteTextField;
+    private JTextField secondWriteTextField;
     private Timer connectionTimeoutTimer;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -167,11 +175,13 @@ public class IZKModbusGUI extends JFrame {
         statLabel.setText("Нет информации");
         if (!terminal.isError()) {
             comLabel.setForeground(new Color(0, 120, 60));
-            comLabel.setText(String.format("Подключено к %s на скорости %s", terminal.getComName(), terminal.getBound()));
+            comLabel.setText(String.format("%s на скорости %s ИЗК-3 № %s", terminal.getComName(), terminal.getBound(), masterModbus.getId()));
         }
         else {
             comLabel.setForeground(Color.RED);
             comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
+            JOptionPane.showMessageDialog(this,
+                    "Порт занят или отсутствует!", "Ошибка порта", JOptionPane.ERROR_MESSAGE);
         }
         terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
 
@@ -192,9 +202,10 @@ public class IZKModbusGUI extends JFrame {
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
         //query
+        querySpeedField.addActionListener(new QuerySpeedActionListener(this,query,masterModbus));
         queryInit(query,masterModbus);
 
-        //Check mode0
+        //check mode0
         testButton.addActionListener(new TestButtonActionListener(this,query,modbusReader));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -218,6 +229,11 @@ public class IZKModbusGUI extends JFrame {
         readAllDataAdapter = new ReadAllDataAdapter(query,modbusReader);
         readAllButton.addActionListener(new ReadAllDataActionListener(readAllDataAdapter, this));
         writeAllButton.addActionListener(new WriteAllDataActionListener(readAllDataAdapter,this,modbusReader));
+
+        //level
+        levelInit();
+        elMetroXField.addActionListener(new LevelActionListener(this));
+        korundXField.addActionListener(new LevelActionListener(this));
     }
 
     private void initWindow() {
@@ -242,6 +258,12 @@ public class IZKModbusGUI extends JFrame {
         menuBar.add(createHelpMenu());
         setJMenuBar(menuBar);
         toggleFields(this,false);
+    }
+
+    private Settings readSettings(){
+        if(Settings.propertiesFileExists()) {
+            return new Settings();
+        }else return null;
     }
 
     public void initTable(MasterModbus masterModbus, Query query){
@@ -275,12 +297,26 @@ public class IZKModbusGUI extends JFrame {
         archiveTable.setFillsViewportHeight(true);
     }
 
+    //query
     public void queryInit(Query query,MasterModbus masterModbus){
-        //query
+
+        String querySpeed = "1000";
+        if (readSettings() !=null)
+            querySpeed = Objects.requireNonNull(readSettings()).getQuerySpeed();
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(querySpeed, new TimerActionListener(query, this,masterModbus));
-        querySpeedField.setText(String.valueOf(querySpeed));
-        querySpeedField.addActionListener(new QuerySpeedActionListener(this,query,masterModbus));
+        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query, this,masterModbus));
+        querySpeedField.setText(querySpeed);
+    }
+    //level
+    public void levelInit (){
+        String elMetroX = "0";
+        String korundX = "0";
+        if (readSettings() !=null){
+            elMetroX = Objects.requireNonNull(readSettings()).getElMetroX();
+            korundX = Objects.requireNonNull(readSettings()).getKorundX();
+        }
+        elMetroXField.setText(elMetroX);
+        korundXField.setText(korundX);
     }
 
     private void initIZKSettings(){
@@ -392,6 +428,9 @@ public class IZKModbusGUI extends JFrame {
         //query
         digitFilter(querySpeedField,5);
 
+        //level
+        floatFilter(elMetroXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
+        floatFilter(korundXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
     }
 
     public void relayActionListeners(ModbusReader modbusReader){
@@ -935,11 +974,39 @@ public class IZKModbusGUI extends JFrame {
         return querySpeedField;
     }
 
-    public int getQuerySpeed() {
-        return querySpeed;
+    public JTextField getElMetroXField() {
+        return elMetroXField;
     }
 
-    public void setQuerySpeed(int querySpeed) {
-        this.querySpeed = querySpeed;
+    public JTextField getKorundXField() {
+        return korundXField;
+    }
+
+    public JTextField getDayWriteTextField() {
+        return dayWriteTextField;
+    }
+
+    public JButton getRefreshTimeButton() {
+        return refreshTimeButton;
+    }
+
+    public JTextField getMonthWriteTextField() {
+        return monthWriteTextField;
+    }
+
+    public JTextField getYearWriteTextField() {
+        return yearWriteTextField;
+    }
+
+    public JTextField getHourWriteTextField() {
+        return hourWriteTextField;
+    }
+
+    public JTextField getMinuteWriteTextField() {
+        return minuteWriteTextField;
+    }
+
+    public JTextField getSecondWriteTextField() {
+        return secondWriteTextField;
     }
 }

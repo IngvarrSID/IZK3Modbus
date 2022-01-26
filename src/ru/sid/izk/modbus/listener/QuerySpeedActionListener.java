@@ -3,6 +3,7 @@ package ru.sid.izk.modbus.listener;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.utils.Settings;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,12 +25,15 @@ public class QuerySpeedActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        izkModbusGUI.setQuerySpeed(Integer.parseInt(izkModbusGUI.getQuerySpeedField().getText()));
+        String querySpeed = izkModbusGUI.getQuerySpeedField().getText();
+        final Settings settings = new Settings();
+        settings.setQuerySpeed(querySpeed);
+        settings.storeProperties("Change query speed");
         izkModbusGUI.getConnectionTimeoutTimer().stop();
         izkModbusGUI.getQueryBox().setSelected(false);
         izkModbusGUI.queryInit(query,masterModbus);
 
         JOptionPane.showMessageDialog(izkModbusGUI,
-                "Запись завершена", "", JOptionPane.INFORMATION_MESSAGE);
+                "Запись завершена", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
     }
 }

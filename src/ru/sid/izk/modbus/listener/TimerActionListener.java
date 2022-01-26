@@ -5,6 +5,7 @@ import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import ru.sid.izk.modbus.utils.FieldVisible;
+import ru.sid.izk.modbus.utils.Settings;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -73,15 +74,25 @@ public class TimerActionListener implements ActionListener {
             }
         } else {
             try{
-
+                String elMetroSaveLevel = "0";
+                String korundSaveLevel = "0";
+                if(Settings.propertiesFileExists()){
+                    final Settings settings = new Settings();
+                    elMetroSaveLevel = settings.getElMetroX();
+                    korundSaveLevel = settings.getKorundX();
+                }
                 query.queryLevel();
                 izkModbusGUI.getSensorAddressField().setText(String.format("Влажность: %.2f %%", query.getHumidityLevel()));
                 izkModbusGUI.getHumidityField().setText(String.format("Плотность: %.1f кг/м²", query.getDensityLevel()));
-                izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", query.getElMetroLevel()));
-                izkModbusGUI.getDensityField().setText(String.format("Расстояние ЭлМетро: %.3f мм²", query.getElMetroDistance()));
+                float elMetroLevelCalculate = 10 - Float.parseFloat(elMetroSaveLevel.replace(',','.'))-query.getElMetroDistance();
+             //   izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", query.getElMetroLevel()));
+                izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", elMetroLevelCalculate));
+                izkModbusGUI.getDensityField().setText(String.format("Расстояние ЭлМетро: %.3f мм", query.getElMetroDistance()));
                 izkModbusGUI.getPeriodField().setText(String.format("Температура ЭлМетро: %.1f °C", query.getElMetroTemperature()));
                 izkModbusGUI.getCs1Field().setText(String.format("Уровень воды Корунд: %.3f мм", query.getKorundWaterLevel()));
-                izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
+               // izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
+                float korundLevelCalculate = query.getKorundFuelOil() + Float.parseFloat(korundSaveLevel.replace(',','.'));
+                izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм",korundLevelCalculate ));
                 StringBuilder s = new StringBuilder();
                 for (float f:query.getTemperatures()) {
                     if (!s.toString().equals("")) s.append(", ");

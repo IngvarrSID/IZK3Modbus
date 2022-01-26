@@ -126,13 +126,16 @@ public class IZKTerminal extends JFrame {
             final Settings settings;
             try {
                 if (!Settings.propertiesFileExists()) {
-                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")),timeOutField.getText());
+                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")),timeOutField.getText(),"1000","0","0");
                 } else {
                     settings = new Settings();
                     settings.setComPort(comName);
                     settings.setBoundRate(bound);
                     settings.setId(IZKCOMAddressField.getText());
                     settings.setTimeOut(timeOutField.getText());
+                    settings.setQuerySpeed(settings.getQuerySpeed());
+                    settings.setElMetroX(settings.getElMetroX());
+                    settings.setKorundX(settings.getKorundX());
                 }
                 settings.storeProperties("terminal settings");
             } catch (Exception q) {

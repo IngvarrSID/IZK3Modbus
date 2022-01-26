@@ -26,6 +26,7 @@ public class CSVAdapter {
     private final String[] head;
     private final MasterModbus masterModbus;
     private final Query query;
+    final Settings settings;
 
 
     public CSVAdapter(IZKModbusGUI izkModbusGUI, MasterModbus masterModbus, Query query){
@@ -34,13 +35,13 @@ public class CSVAdapter {
         this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       final Settings settings=new Settings();
+       settings = new Settings();
        path = String.format("%s/%s/%s/%s/IZK%d",settings.getPath(),year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
        if (izkModbusGUI.getChannelsBox().getSelectedIndex() != 5) {
            head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
        } else {
-           head = "Время.Адрес ИЗК.Влажность, %.Плотность, кг/м².Уровень ЭлМетро, мм.Дистанция ЭлМетро, мм.Температура ЭлМетро, °C.Уровень воды корунд, мм.Уровень мазута корунд, мм.Температуры, °C".split("\\.");
+           head = "Время.Адрес ИЗК.Влажность, %.Плотность, кг/м².Уровень ЭлМетро, мм.Дистанция ЭлМетро, мм.Температура ЭлМетро, °C.Уровень воды корунд, мм.Уровень мазута корунд, мм.Т1, °C.Т2, °C.Т3, °C.Т4, °C.Т5, °C.Т6, °C.Т7, °C.Т8, °C.Т9, °C.Т10, °C.".split("\\.");
        }
     }
 
@@ -118,24 +119,25 @@ public class CSVAdapter {
         } else {
             String humidity = String.format("%.2f", query.getHumidityLevel());
             String density = String.format("%.2f", query.getDensityLevel());
-            String levelElMetro = String.format("%.3f", query.getElMetroLevel());
+            float levelElMetroCalculate = 10 - Float.parseFloat(settings.getElMetroX().replace(',','.'))-query.getElMetroDistance();
+            String levelElMetro = String.format("%.3f", levelElMetroCalculate);
+            //String levelElMetro = String.format("%.3f", query.getElMetroLevel());
             String distanceElMetro = String.format("%.3f", query.getElMetroDistance());
             String temperatureElMetro = String.format("%.1f", query.getElMetroTemperature());
             String levelH2oKorund = String.format("%.3f", query.getKorundWaterLevel());
-            String levelOilKorund = String.format("%.3f", query.getKorundFuelOil());
-            StringBuilder s = new StringBuilder();
-            for (float f:query.getTemperatures()) {
-                if (!s.toString().equals("")) s.append(" ");
-
-                s.append(String.format("%.1f", f));
-
+            float korundLevelCalculate = query.getKorundFuelOil() + Float.parseFloat(settings.getKorundX().replace(',','.'));
+            String levelOilKorund = String.format("%.3f", korundLevelCalculate);
+            //String levelOilKorund = String.format("%.3f", query.getKorundFuelOil());
+            String[] arrayStrings = new String[10];
+            for (int i = 0; i <arrayStrings.length ; i++) {
+                arrayStrings[i] = String.format("%.1f", query.getTemperatures()[i]);
             }
-            String s1 = s.toString();
             try {
                 File file = new File(fullPath);
                 if (file.exists()) {
                     CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
-                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro, levelH2oKorund, levelOilKorund, s1).split("\\.");
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9]).split("\\.");
                     writer.writeNext(data);
                     writer.close();
 
@@ -147,7 +149,8 @@ public class CSVAdapter {
                     Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
                     CSVWriter writer = new CSVWriter(preWriter, ';', '"');
                     writer.writeNext(head);
-                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro, levelH2oKorund, levelOilKorund, s1).split("\\.");
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9]).split("\\.");
                     writer.writeNext(data);
                     writer.close();
                     fos.close();

@@ -15,6 +15,9 @@ public class Settings {
     private String path;
     private static final String settingsPath = String.format("%s/Documents/Technosensor/ConfigSU5DV", System.getProperty("user.home"));
     private String timeOut;
+    private String querySpeed;
+    private String elMetroX;
+    private String korundX;
 
     public Settings() {
         try (FileInputStream in = new FileInputStream(settingsPath + "/settings.properties")) {
@@ -25,17 +28,23 @@ public class Settings {
             this.id = properties.getProperty("Id");
             this.path = properties.getProperty("Path");
             this.timeOut = properties.getProperty("Timeout");
+            this.querySpeed = properties.getProperty("QuerySpeed");
+            this.elMetroX = properties.getProperty("ElMetroX");
+            this.korundX = properties.getProperty("KorundX");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public Settings(final String comPort, final String boundRate, final String id, final String path, final String timeOut) {
+    public Settings(final String comPort, final String boundRate, final String id, final String path, final String timeOut, final String querySpeed, final String elMetroX, final String korundX) {
         this.comPort = comPort;
         this.boundRate = boundRate;
         this.id = id;
         this.path = path;
         this.timeOut = timeOut;
+        this.querySpeed = querySpeed;
+        this.elMetroX = elMetroX;
+        this.korundX = korundX;
     }
 
     public Settings(final String path) {
@@ -66,6 +75,17 @@ public class Settings {
         return timeOut;
     }
 
+    public String getQuerySpeed() {
+        return querySpeed;
+    }
+
+    public String getElMetroX() {
+        return elMetroX;
+    }
+
+    public String getKorundX() {
+        return korundX;
+    }
 
     public void setComPort(String comPort) {
         this.comPort = comPort;
@@ -87,6 +107,18 @@ public class Settings {
         this.timeOut = timeOut;
     }
 
+    public void setQuerySpeed(String querySpeed) {
+        this.querySpeed = querySpeed;
+    }
+
+    public void setElMetroX(String elMetroX) {
+        this.elMetroX = elMetroX;
+    }
+
+    public void setKorundX(String korundX) {
+        this.korundX = korundX;
+    }
+
     public void storeProperties(final String comments) {
 
         File dir = new File(settingsPath);
@@ -100,6 +132,9 @@ public class Settings {
             Optional.ofNullable(id).ifPresent(v -> properties.setProperty("Id", id));
             Optional.ofNullable(path).ifPresent(v -> properties.setProperty("Path", path));
             Optional.ofNullable(timeOut).ifPresent(v -> properties.setProperty("Timeout",timeOut));
+            Optional.ofNullable(querySpeed).ifPresent(v -> properties.setProperty("QuerySpeed",querySpeed));
+            Optional.ofNullable(elMetroX).ifPresent(v -> properties.setProperty("ElMetroX",elMetroX));
+            Optional.ofNullable(korundX).ifPresent(v -> properties.setProperty("KorundX",korundX));
             properties.store(out, comments);
         } catch (IOException e) {
             throw new IllegalStateException(e);

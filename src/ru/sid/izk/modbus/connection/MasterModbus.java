@@ -3,6 +3,8 @@ package ru.sid.izk.modbus.connection;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 
+import javax.swing.*;
+
 
 public class MasterModbus {
 
