@@ -14,12 +14,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TimerActionListener implements ActionListener {
 
     private final Query query;
     private final IZKModbusGUI izkModbusGUI;
     private final MasterModbus masterModbus;
+    private int count;
 
     public TimerActionListener(Query query, IZKModbusGUI izkModbusGUI, MasterModbus masterModbus) {
 
@@ -114,11 +117,35 @@ public class TimerActionListener implements ActionListener {
 
 
 
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(izkModbusGUI,
-                        "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-                izkModbusGUI.getQueryBox().setSelected(false);
+                if (!izkModbusGUI.isEnableCyclic()) {
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    izkModbusGUI.getQueryBox().setSelected(false);
+                } else {
+                    JOptionPane op = new JOptionPane("Нет связи. Попробуй еще " + ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                    JDialog dialog = op.createDialog("Ошибка связи");
+
+                    java.util.Timer timer = new Timer();
+
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            dialog.setVisible(false);
+                            dialog.dispose();
+                            count++;
+                            if (count < 50) {
+                                izkModbusGUI.getQueryBox().setSelected(true);
+                            } else count = 0;
+                        }
+                    }, 10000);
+
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setAlwaysOnTop(false);
+                    dialog.setModal(false);
+                    dialog.setVisible(true);
+                }
             }
 
 

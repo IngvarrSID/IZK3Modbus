@@ -42,7 +42,7 @@ public class TestButtonActionListener implements ActionListener {
                     dialog.setVisible(false);
                     dialog.dispose();
                     count++;
-                    if (count<5){
+                    if (count<10){
                         izkModbusGUI.getTestButton().doClick();
                     }
                     else count = 0;

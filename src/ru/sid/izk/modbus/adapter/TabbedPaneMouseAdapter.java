@@ -39,6 +39,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
             case INFO:
                 toggleFields(izkModbusGUI,false);
                 izkModbusGUI.getRefButton().doClick();
+                izkModbusGUI.initTable(masterModbus,query);
                 break;
             case IZK_SETTINGS:
                 toggleFields(izkModbusGUI,false);
@@ -55,13 +56,17 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
+                izkModbusGUI.initTable(masterModbus,query);
                 break;
             case REGULATOR:
                 toggleFields(izkModbusGUI,true);
                 izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 izkModbusGUI.getRefreshRegulatorButton().doClick();
+                izkModbusGUI.initTable(masterModbus,query);
                 break;
             case TIME:
+                izkModbusGUI.getChannelsBox().setSelectedIndex(0);
+                izkModbusGUI.getRefreshTimeButton().doClick();
                 break;
             case LEVEL:
                 toggleFields(izkModbusGUI,false);

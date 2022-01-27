@@ -154,7 +154,10 @@ public class IZKModbusGUI extends JFrame {
     private JTextField hourWriteTextField;
     private JTextField minuteWriteTextField;
     private JTextField secondWriteTextField;
+    private JButton synchronizeTimeButton;
     private Timer connectionTimeoutTimer;
+    private JMenuItem queryCyclical;
+    private boolean enableCyclic;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
     private final String[] modesRelays;
@@ -234,6 +237,10 @@ public class IZKModbusGUI extends JFrame {
         levelInit();
         elMetroXField.addActionListener(new LevelActionListener(this));
         korundXField.addActionListener(new LevelActionListener(this));
+
+        //time
+        timeInit(query);
+
     }
 
     private void initWindow() {
@@ -317,6 +324,13 @@ public class IZKModbusGUI extends JFrame {
         }
         elMetroXField.setText(elMetroX);
         korundXField.setText(korundX);
+    }
+
+    //time
+    private void timeInit(Query query){
+        refreshTimeButton.addActionListener(new RefreshTimeButtonActionListener(query,this,modbusReader));
+        synchronizeTimeButton.addActionListener(new SynchronizeTimeButtonActionListener(this,modbusReader));
+
     }
 
     private void initIZKSettings(){
@@ -431,6 +445,20 @@ public class IZKModbusGUI extends JFrame {
         //level
         floatFilter(elMetroXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
         floatFilter(korundXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
+
+        //time
+        digitFilter(dayWriteTextField,2);
+        digitFilter(monthWriteTextField,2);
+        digitFilter(yearWriteTextField,2);
+        digitFilter(hourWriteTextField,2);
+        digitFilter(minuteWriteTextField,2);
+        digitFilter(secondWriteTextField,2);
+        dayWriteTextField.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
+        monthWriteTextField.addActionListener(new OneRegisterWriteActionListener(3,this,modbusReader));
+        yearWriteTextField.addActionListener(new OneRegisterWriteActionListener(4,this,modbusReader));
+        hourWriteTextField.addActionListener(new OneRegisterWriteActionListener(5,this,modbusReader));
+        minuteWriteTextField.addActionListener(new OneRegisterWriteActionListener(6,this,modbusReader));
+        secondWriteTextField.addActionListener(new OneRegisterWriteActionListener(7,this,modbusReader));
     }
 
     public void relayActionListeners(ModbusReader modbusReader){
@@ -494,11 +522,15 @@ public class IZKModbusGUI extends JFrame {
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
         JMenuItem downloader = new JMenuItem("Загрузчик");
+        queryCyclical = new JCheckBoxMenuItem("Постоянный опрос");
         settings.add(path);
         settings.addSeparator();
         settings.add(downloader);
+        settings.addSeparator();
+        settings.add(queryCyclical);
         path.addActionListener(new PathInputActionListener(this));
         downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
+        queryCyclical.addActionListener(new CyclicalCheckBoxMenuActionListener(this));
         return settings;
     }
 
@@ -1008,5 +1040,17 @@ public class IZKModbusGUI extends JFrame {
 
     public JTextField getSecondWriteTextField() {
         return secondWriteTextField;
+    }
+
+    public JMenuItem getQueryCyclical() {
+        return queryCyclical;
+    }
+
+    public boolean isEnableCyclic() {
+        return enableCyclic;
+    }
+
+    public void setEnableCyclic(boolean enableCyclic) {
+        this.enableCyclic = enableCyclic;
     }
 }
