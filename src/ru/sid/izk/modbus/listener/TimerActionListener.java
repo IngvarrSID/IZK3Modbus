@@ -1,5 +1,8 @@
 package ru.sid.izk.modbus.listener;
 
+import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.archive.CSVAdapter;
 import ru.sid.izk.modbus.connection.MasterModbus;
 import ru.sid.izk.modbus.entity.Query;
@@ -110,6 +113,8 @@ public class TimerActionListener implements ActionListener {
                 LocalDate date = LocalDate.now();
                 izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", date));
                 izkModbusGUI.getTimeField().setText(String.format("Текущее время: %s", time));
+                float mass = query.getDensityLevel()*korundLevelCalculate*Float.parseFloat(izkModbusGUI.getRatioMassField().getText().replace(',','.'));
+                izkModbusGUI.getPidErrField().setText(String.format("Масса мазута: %.3f т",mass ));
 
                     CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
                     csvAdapter.fileWrite();
@@ -126,6 +131,13 @@ public class TimerActionListener implements ActionListener {
                 } else {
                     JOptionPane op = new JOptionPane("Нет связи. Попробуй еще " + ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     JDialog dialog = op.createDialog("Ошибка связи");
+                    try {
+                        masterModbus.getModbusMaster().diagnosticsClearCountersAndDiagnosticRegister(0);
+                    } catch (ModbusNumberException | ModbusProtocolException | ModbusIOException exc) {
+                        exc.printStackTrace();
+                    }
+
+                    izkModbusGUI.getQueryBox().setSelected(false);
 
                     java.util.Timer timer = new Timer();
 

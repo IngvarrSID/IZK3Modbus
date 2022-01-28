@@ -69,7 +69,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 izkModbusGUI.getRefreshTimeButton().doClick();
                 break;
             case LEVEL:
-                toggleFields(izkModbusGUI,false);
+                toggleFields(izkModbusGUI,true);
                 try {
                     izkModbusGUI.getChannelsBox().setSelectedIndex(5);
                     izkModbusGUI.initTable(masterModbus,query);

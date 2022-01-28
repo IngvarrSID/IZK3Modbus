@@ -155,6 +155,8 @@ public class IZKModbusGUI extends JFrame {
     private JTextField minuteWriteTextField;
     private JTextField secondWriteTextField;
     private JButton synchronizeTimeButton;
+    private JTable tarTable;
+    private JTextField ratioMassField;
     private Timer connectionTimeoutTimer;
     private JMenuItem queryCyclical;
     private boolean enableCyclic;
@@ -237,6 +239,7 @@ public class IZKModbusGUI extends JFrame {
         levelInit();
         elMetroXField.addActionListener(new LevelActionListener(this));
         korundXField.addActionListener(new LevelActionListener(this));
+        ratioMassField.setText("0,515");
 
         //time
         timeInit(query);
@@ -443,8 +446,8 @@ public class IZKModbusGUI extends JFrame {
         digitFilter(querySpeedField,5);
 
         //level
-        floatFilter(elMetroXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
-        floatFilter(korundXField,"^[0-9]{1,2}+[,]?[0-9]{0,3}$");
+        floatFilter(elMetroXField,"^-?[0-9]{0,2}+[,]?[0-9]{0,3}$");
+        floatFilter(korundXField,"^-?[0-9]{0,2}+[,]?[0-9]{0,3}$");
 
         //time
         digitFilter(dayWriteTextField,2);
@@ -1048,6 +1051,10 @@ public class IZKModbusGUI extends JFrame {
 
     public boolean isEnableCyclic() {
         return enableCyclic;
+    }
+
+    public JTextField getRatioMassField() {
+        return ratioMassField;
     }
 
     public void setEnableCyclic(boolean enableCyclic) {
