@@ -9,16 +9,18 @@ import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.listener.*;
 import ru.sid.izk.modbus.utils.Settings;
+import ru.sid.izk.modbus.utils.TarTableReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -157,16 +159,19 @@ public class IZKModbusGUI extends JFrame {
     private JButton synchronizeTimeButton;
     private JTable tarTable;
     private JTextField ratioMassField;
+    private JButton openTableButton;
+    private JButton saveTableButton;
     private Timer connectionTimeoutTimer;
     private JMenuItem queryCyclical;
     private boolean enableCyclic;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
     private final String[] modesRelays;
-
     private boolean readyToWriteRelay;
-
     private final ReadAllDataAdapter readAllDataAdapter;
+    private ArrayList<float[]> listTableFloats;
+    private ArrayList<String[]> listTableStrings;
+
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
@@ -237,8 +242,10 @@ public class IZKModbusGUI extends JFrame {
 
         //level
         levelInit();
+        tarTableInit();
         elMetroXField.addActionListener(new LevelActionListener(this));
         korundXField.addActionListener(new LevelActionListener(this));
+        openTableButton.addActionListener(new OpenTableButtonActionListener(this));
         ratioMassField.setText("0,515");
 
         //time
@@ -327,6 +334,26 @@ public class IZKModbusGUI extends JFrame {
         }
         elMetroXField.setText(elMetroX);
         korundXField.setText(korundX);
+    }
+   //tarTab
+    public void tarTableInit(){
+        try {
+            if (readSettings() != null && Objects.requireNonNull(readSettings()).getTarTab().equals("true")) {
+                File file = new File(Objects.requireNonNull(readSettings()).getAbsolutePath() + "/tarTab.su5");
+                FileInputStream in = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(in);
+                Object objects = ois.readObject();
+                if (objects instanceof ArrayList) {
+                    listTableStrings = (ArrayList<String[]>) objects;
+                }
+                ois.close();
+                TarTableReader.tableBuilder(listTableStrings,this);
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Ошибка чтения таблицы " + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     //time
@@ -1059,5 +1086,33 @@ public class IZKModbusGUI extends JFrame {
 
     public void setEnableCyclic(boolean enableCyclic) {
         this.enableCyclic = enableCyclic;
+    }
+
+    public JButton getOpenTableButton() {
+        return openTableButton;
+    }
+
+    public JTable getTarTable() {
+        return tarTable;
+    }
+
+    public ArrayList<float[]> getListTableFloats() {
+        return listTableFloats;
+    }
+
+    public void setListTableFloats(ArrayList<float[]> listTableFloats) {
+        this.listTableFloats = listTableFloats;
+    }
+
+    public ArrayList<String[]> getListTableStrings() {
+        return listTableStrings;
+    }
+
+    public void setListTableStrings(ArrayList<String[]> listTableStrings) {
+        this.listTableStrings = listTableStrings;
+    }
+
+    public JButton getSaveTableButton() {
+        return saveTableButton;
     }
 }

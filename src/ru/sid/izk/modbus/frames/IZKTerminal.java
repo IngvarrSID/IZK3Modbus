@@ -126,7 +126,7 @@ public class IZKTerminal extends JFrame {
             final Settings settings;
             try {
                 if (!Settings.propertiesFileExists()) {
-                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")),timeOutField.getText(),"1000","0","0");
+                    settings = new Settings(comName, bound, IZKCOMAddressField.getText(), String.format("%s/Documents/Technosensor/ConfigSU5DV/Archive", System.getProperty("user.home")),timeOutField.getText(),"1000","3,2","0","false");
                 } else {
                     settings = new Settings();
                     settings.setComPort(comName);
@@ -136,6 +136,7 @@ public class IZKTerminal extends JFrame {
                     settings.setQuerySpeed(settings.getQuerySpeed());
                     settings.setElMetroX(settings.getElMetroX());
                     settings.setKorundX(settings.getKorundX());
+                    settings.setTarTab(settings.getTarTab());
                 }
                 settings.storeProperties("terminal settings");
             } catch (Exception q) {

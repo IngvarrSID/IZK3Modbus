@@ -75,7 +75,7 @@ public class CSVAdapter {
                 currentChannel = "allChannel";
                 break;
             case 5:
-                currentChannel = "levels";
+                currentChannel = String.format("levels %s.%s.%s",day,month,year);
                 break;
             default:
                 currentChannel = "unknown";

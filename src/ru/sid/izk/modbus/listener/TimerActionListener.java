@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -113,6 +113,28 @@ public class TimerActionListener implements ActionListener {
                 LocalDate date = LocalDate.now();
                 izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", date));
                 izkModbusGUI.getTimeField().setText(String.format("Текущее время: %s", time));
+
+                if (izkModbusGUI.getListTableFloats() !=null) {
+                    ArrayList<float[]> list = izkModbusGUI.getListTableFloats();
+                    float volume = 0;
+                    for (int i = 0; i < list.size(); i++) {
+                        if (korundLevelCalculate < list.get(i)[0]) {
+                            float x2 = list.get(i)[0];
+                            float y2 = list.get(i)[1];
+                            float x1 = list.get(i - 1)[0];
+                            float y1 = list.get(i - 1)[1];
+                            float w1 = (x2 - korundLevelCalculate) / (x2 - x1);
+                            float w2 = (korundLevelCalculate - x1) / (x2 - x1);
+                            volume = y1 * w1 + y2 * w2;
+                        } else if (korundLevelCalculate == list.get(i)[0]) volume = list.get(i)[1];
+                    }
+
+                    float ratio = volume / (korundLevelCalculate * 1000);
+
+                    izkModbusGUI.getRatioMassField().setText(String.format("%.3f", ratio));
+
+                }
+
                 float mass = query.getDensityLevel()*korundLevelCalculate*Float.parseFloat(izkModbusGUI.getRatioMassField().getText().replace(',','.'));
                 izkModbusGUI.getPidErrField().setText(String.format("Масса мазута: %.3f т",mass ));
 

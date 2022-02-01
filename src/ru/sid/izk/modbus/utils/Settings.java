@@ -14,10 +14,12 @@ public class Settings {
     private String id;
     private String path;
     private static final String settingsPath = String.format("%s/Documents/Technosensor/ConfigSU5DV", System.getProperty("user.home"));
+    private final String absolutePath = settingsPath;
     private String timeOut;
     private String querySpeed;
     private String elMetroX;
     private String korundX;
+    private String tarTab;
 
     public Settings() {
         try (FileInputStream in = new FileInputStream(settingsPath + "/settings.properties")) {
@@ -31,12 +33,13 @@ public class Settings {
             this.querySpeed = properties.getProperty("QuerySpeed");
             this.elMetroX = properties.getProperty("ElMetroX");
             this.korundX = properties.getProperty("KorundX");
+            this.tarTab = properties.getProperty("TarTab");
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public Settings(final String comPort, final String boundRate, final String id, final String path, final String timeOut, final String querySpeed, final String elMetroX, final String korundX) {
+    public Settings(final String comPort, final String boundRate, final String id, final String path, final String timeOut, final String querySpeed, final String elMetroX, final String korundX, final String tarTab) {
         this.comPort = comPort;
         this.boundRate = boundRate;
         this.id = id;
@@ -45,6 +48,7 @@ public class Settings {
         this.querySpeed = querySpeed;
         this.elMetroX = elMetroX;
         this.korundX = korundX;
+        this.tarTab = tarTab;
     }
 
     public Settings(final String path) {
@@ -87,6 +91,14 @@ public class Settings {
         return korundX;
     }
 
+    public String getTarTab() {
+        return tarTab;
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
+    }
+
     public void setComPort(String comPort) {
         this.comPort = comPort;
     }
@@ -97,6 +109,10 @@ public class Settings {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setTarTab(String tarTab) {
+        this.tarTab = tarTab;
     }
 
     public void setPath(String path) {
@@ -135,6 +151,7 @@ public class Settings {
             Optional.ofNullable(querySpeed).ifPresent(v -> properties.setProperty("QuerySpeed",querySpeed));
             Optional.ofNullable(elMetroX).ifPresent(v -> properties.setProperty("ElMetroX",elMetroX));
             Optional.ofNullable(korundX).ifPresent(v -> properties.setProperty("KorundX",korundX));
+            Optional.ofNullable(tarTab).ifPresent(v -> properties.setProperty("TarTab",tarTab));
             properties.store(out, comments);
         } catch (IOException e) {
             throw new IllegalStateException(e);

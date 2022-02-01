@@ -872,7 +872,9 @@ public class Query{
     public static Float hexToFloat(int value1, int value2){
         String s;
         if (value1 !=0 && value2 !=0) {
-            if (value1 <4096) s = Integer.toHexString(value2) + "0" + Integer.toHexString(value1);
+            if(value1<16) s= Integer.toHexString(value2) + "000" +Integer.toHexString(value1);
+            else if(value1<256) s= Integer.toHexString(value2) + "00" +Integer.toHexString(value1);
+            else if (value1 <4096) s = Integer.toHexString(value2) + "0" + Integer.toHexString(value1);
             else s = Integer.toHexString(value2) + Integer.toHexString(value1);
         }
         else if (value1 == 0) s = Integer.toHexString(value2) + "0000";
