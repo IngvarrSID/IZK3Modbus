@@ -53,7 +53,7 @@ public final class TarTableReader {
            if(settings.getTarTab().equals("false")) {
                settings.setTarTab("true");
                settings.storeProperties("Table Refresh");
-               File file = new File(settings.getAbsolutePath() + "/tarTab.su5");
+               File file = new File(settings.getAbsolutePath() + "/tarTab.su5tab");
                FileOutputStream out= new FileOutputStream (file);
                ObjectOutputStream oos = new ObjectOutputStream(out);
                oos.writeObject(list);

@@ -1,11 +1,16 @@
 package ru.sid.izk.modbus.listener;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 
 public class SaveTableButtonActionListener implements ActionListener {
 
@@ -24,7 +29,18 @@ public class SaveTableButtonActionListener implements ActionListener {
         fileChooser.setSelectedFile(file);
         int result = fileChooser.showSaveDialog(izkModbusGUI);
         if (result == JFileChooser.APPROVE_OPTION) {
-
+        try {
+            FileOutputStream fos = new FileOutputStream(fileChooser.getSelectedFile().getPath());
+            Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
+            CSVWriter writer = new CSVWriter(preWriter, ';', '"');
+            for (String[] data:izkModbusGUI.getListTableStrings()) {
+                writer.writeNext(data);
+            }
+            writer.close();
+            fos.close();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
         }
     }
 }

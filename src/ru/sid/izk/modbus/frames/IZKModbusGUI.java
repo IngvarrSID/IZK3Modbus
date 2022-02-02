@@ -171,6 +171,7 @@ public class IZKModbusGUI extends JFrame {
     private final ReadAllDataAdapter readAllDataAdapter;
     private ArrayList<float[]> listTableFloats;
     private ArrayList<String[]> listTableStrings;
+    private Settings settings;
 
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
@@ -204,6 +205,8 @@ public class IZKModbusGUI extends JFrame {
         }
         channelsBox.setSelectedIndex(0);
         channelsBox.addActionListener(new ChannelsBoxActionListener(this, modbusReader));
+        //settings
+        settings = readSettings();
         //sensor
         refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
         minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
@@ -247,6 +250,7 @@ public class IZKModbusGUI extends JFrame {
         korundXField.addActionListener(new LevelActionListener(this));
         openTableButton.addActionListener(new OpenTableButtonActionListener(this));
         ratioMassField.setText("0,515");
+        saveTableButton.addActionListener(new SaveTableButtonActionListener(this));
 
         //time
         timeInit(query);
@@ -318,8 +322,8 @@ public class IZKModbusGUI extends JFrame {
     public void queryInit(Query query,MasterModbus masterModbus){
 
         String querySpeed = "1000";
-        if (readSettings() !=null)
-            querySpeed = Objects.requireNonNull(readSettings()).getQuerySpeed();
+        if (settings !=null)
+            querySpeed = settings.getQuerySpeed();
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
         connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query, this,masterModbus));
         querySpeedField.setText(querySpeed);
@@ -328,9 +332,9 @@ public class IZKModbusGUI extends JFrame {
     public void levelInit (){
         String elMetroX = "0";
         String korundX = "0";
-        if (readSettings() !=null){
-            elMetroX = Objects.requireNonNull(readSettings()).getElMetroX();
-            korundX = Objects.requireNonNull(readSettings()).getKorundX();
+        if (settings !=null){
+            elMetroX = settings.getElMetroX();
+            korundX = settings.getKorundX();
         }
         elMetroXField.setText(elMetroX);
         korundXField.setText(korundX);
@@ -338,8 +342,8 @@ public class IZKModbusGUI extends JFrame {
    //tarTab
     public void tarTableInit(){
         try {
-            if (readSettings() != null && Objects.requireNonNull(readSettings()).getTarTab().equals("true")) {
-                File file = new File(Objects.requireNonNull(readSettings()).getAbsolutePath() + "/tarTab.su5");
+            if (settings != null && settings.getTarTab().equals("true")) {
+                File file = new File(settings.getAbsolutePath() + "/tarTab.su5tab");
                 FileInputStream in = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(in);
                 Object objects = ois.readObject();
@@ -353,6 +357,8 @@ public class IZKModbusGUI extends JFrame {
             exception.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     "Ошибка чтения таблицы " + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            settings.setTarTab("false");
+            settings.storeProperties("Table not exist");
         }
     }
 
