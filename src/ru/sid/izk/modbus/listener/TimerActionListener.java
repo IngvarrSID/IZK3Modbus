@@ -132,6 +132,7 @@ public class TimerActionListener implements ActionListener {
                     float ratio = volume / (korundLevelCalculate * 1000);
 
                     izkModbusGUI.getRatioMassField().setText(String.format("%.3f", ratio));
+                    izkModbusGUI.getPidIntField().setText(String.format("Объем мазута: %.3f м3",volume));
 
                 }
 

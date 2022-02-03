@@ -677,19 +677,21 @@ public class Query{
             status = statusReader(reversStatus);
     }
      public void queryMain() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
-                int[] registerValues = modbusReader.readRegisters(0, 32, 1);
-                sensorAddress = registerValues[0];
-                time = timeReader(registerValues[4], registerValues[5], registerValues[6]);
-                humidity = hexToFloat(registerValues[7], registerValues[8]);
-                temperature = hexToFloat(registerValues[19],registerValues[20]);
-                density = hexToFloat(registerValues[9],registerValues[10]);
-                String reversStatus = Integer.toBinaryString(registerValues[22]);
-                status = statusReader(reversStatus);
-                period = hexToFloat(registerValues[24],registerValues[25]);
-                cs1 = hexToFloat(registerValues[26],registerValues[27]);
-                cs2 = hexToFloat(registerValues[28],registerValues[29]);
-                error = hexToFloat(registerValues[30],registerValues[31]);
-                data = dateReader(registerValues[1],registerValues[2],registerValues[3]);
+
+
+                            int[] registerValues = modbusReader.readRegisters(0, 32, 1);
+                            sensorAddress = registerValues[0];
+                            time = timeReader(registerValues[4], registerValues[5], registerValues[6]);
+                            humidity = hexToFloat(registerValues[7], registerValues[8]);
+                            temperature = hexToFloat(registerValues[19], registerValues[20]);
+                            density = hexToFloat(registerValues[9], registerValues[10]);
+                            String reversStatus = Integer.toBinaryString(registerValues[22]);
+                            status = statusReader(reversStatus);
+                            period = hexToFloat(registerValues[24], registerValues[25]);
+                            cs1 = hexToFloat(registerValues[26], registerValues[27]);
+                            cs2 = hexToFloat(registerValues[28], registerValues[29]);
+                            error = hexToFloat(registerValues[30], registerValues[31]);
+                            data = dateReader(registerValues[1], registerValues[2], registerValues[3]);
 
     }
 

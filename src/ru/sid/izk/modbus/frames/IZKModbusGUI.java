@@ -325,7 +325,9 @@ public class IZKModbusGUI extends JFrame {
         if (settings !=null)
             querySpeed = settings.getQuerySpeed();
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query, this,masterModbus));
+
+        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query,this ,masterModbus));
+
         querySpeedField.setText(querySpeed);
     }
     //level

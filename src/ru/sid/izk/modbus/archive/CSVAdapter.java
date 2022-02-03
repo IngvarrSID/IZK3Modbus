@@ -42,7 +42,7 @@ public class CSVAdapter {
            head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
        } else {
            head = ("Время.Адрес ИЗК.Влажность, %.Плотность, кг/м².Уровень ЭлМетро, мм.Дистанция ЭлМетро, мм.Температура ЭлМетро, °C." +
-                   "Уровень воды корунд, мм.Уровень мазута корунд, мм.Т1, °C.Т2, °C.Т3, °C.Т4, °C.Т5, °C.Т6, °C.Т7, °C.Т8, °C.Т9, °C.Т10, °C.Масса мазута, т").split("\\.");
+                   "Уровень воды корунд, мм.Уровень мазута корунд, мм.Т1, °C.Т2, °C.Т3, °C.Т4, °C.Т5, °C.Т6, °C.Т7, °C.Т8, °C.Т9, °C.Т10, °C.Масса, т.Объем, м3").split("\\.");
        }
     }
 
@@ -135,12 +135,13 @@ public class CSVAdapter {
             }
             float mass = query.getDensityLevel()*korundLevelCalculate*Float.parseFloat(izkModbusGUI.getRatioMassField().getText().replace(',','.'));
             String massString = String.format("%.3f", mass);
+            String volumeString = izkModbusGUI.getPidIntField().getText().split(" ")[2];
             try {
                 File file = new File(fullPath);
                 if (file.exists()) {
                     CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
-                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
-                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString).split("\\.");
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString,volumeString).split("\\.");
                     writer.writeNext(data);
                     writer.close();
 
@@ -152,8 +153,8 @@ public class CSVAdapter {
                     Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
                     CSVWriter writer = new CSVWriter(preWriter, ';', '"');
                     writer.writeNext(head);
-                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
-                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString).split("\\.");
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString,volumeString).split("\\.");
                     writer.writeNext(data);
                     writer.close();
                     fos.close();

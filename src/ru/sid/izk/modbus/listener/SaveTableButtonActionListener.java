@@ -38,8 +38,12 @@ public class SaveTableButtonActionListener implements ActionListener {
             }
             writer.close();
             fos.close();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    "Таблица выгружена", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception ex) {
         ex.printStackTrace();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    "Ошибка выгрузки таблицы " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
     }
         }
     }

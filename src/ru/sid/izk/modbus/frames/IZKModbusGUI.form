@@ -2309,8 +2309,8 @@
       <scrollpane id="35845">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="1000" height="150"/>
-            <maximum-size width="1000" height="150"/>
+            <preferred-size width="1300" height="150"/>
+            <maximum-size width="1300" height="150"/>
           </grid>
         </constraints>
         <properties/>
@@ -2327,7 +2327,7 @@
       </scrollpane>
       <component id="f7add" class="javax.swing.JLabel">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="18" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="3" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Полученные данные:"/>
