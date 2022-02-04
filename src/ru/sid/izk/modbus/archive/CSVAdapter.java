@@ -7,6 +7,7 @@ import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import ru.sid.izk.modbus.utils.Settings;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
@@ -116,6 +117,8 @@ public class CSVAdapter {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка записи архива " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             String humidity = String.format("%.2f", query.getHumidityLevel());
@@ -161,6 +164,8 @@ public class CSVAdapter {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка записи архива " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
