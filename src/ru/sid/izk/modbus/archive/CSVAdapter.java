@@ -7,6 +7,7 @@ import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 import ru.sid.izk.modbus.utils.Settings;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class CSVAdapter {
     private final String[] head;
     private final MasterModbus masterModbus;
     private final Query query;
+    final Settings settings;
 
 
     public CSVAdapter(IZKModbusGUI izkModbusGUI, MasterModbus masterModbus, Query query){
@@ -34,10 +36,15 @@ public class CSVAdapter {
         this.query = query;
        whatsTheTime();
        whatsTheChannel();
-       final Settings settings=new Settings();
+       settings = new Settings();
        path = String.format("%s/%s/%s/%s/IZK%d",settings.getPath(),year,month,day,masterModbus.getId());
        fullPath = String.format("%s/%s.csv",path,currentChannel);
-       head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.погрешность".split("\\.");
+       if (izkModbusGUI.getChannelsBox().getSelectedIndex() != 5) {
+           head = "Время.Адрес ИЗК.Адрес ДЖС.Влажность, %.Температура, °C.Плотность, кг/м².Период.CS1, пФ.CS2, пФ.Погрешность".split("\\.");
+       } else {
+           head = ("Время.Адрес ИЗК.Влажность, %.Плотность, кг/м².Уровень ЭлМетро, мм.Дистанция ЭлМетро, мм.Температура ЭлМетро, °C." +
+                   "Уровень воды корунд, мм.Уровень мазута корунд, мм.Т1, °C.Т2, °C.Т3, °C.Т4, °C.Т5, °C.Т6, °C.Т7, °C.Т8, °C.Т9, °C.Т10, °C.Масса, т.Объем, м3").split("\\.");
+       }
     }
 
     private void whatsTheTime(){
@@ -65,43 +72,101 @@ public class CSVAdapter {
             case 3:
                 currentChannel = "channel4";
                 break;
+            case 4:
+                currentChannel = "allChannel";
+                break;
+            case 5:
+                currentChannel = String.format("levels %s.%s.%s",day,month,year);
+                break;
             default:
                 currentChannel = "unknown";
         }
     }
 
-    public void fileWrite(){
-        String dgsAddress = String.valueOf(query.getSensorAddress());
-        String humidity = String.format("%.2f",query.getHumidity());
-        String density = String.format("%.1f",query.getDensity());
-        String temperature = String.format("%.1f",query.getTemperature());
-        String cs1 = String.format("%.1f",query.getCs1());
-        String cs2 = String.format("%.1f",query.getCs2());
-        String period = String.format("%.1f",query.getPeriod());
-        String error = String.format("%.1f",query.getError());
-        try {
-            File file = new File(fullPath);
-            if (file.exists()){
-                CSVWriter writer = new CSVWriter(new FileWriter(fullPath,true),';','"');
-                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
-                writer.writeNext(data);
-                writer.close();
+    public void fileWrite() {
 
-            }else {
-                File dir = new File(path);
-                if (dir.mkdirs()) System.out.println("Путь создан");
-                else System.out.println("Путь не создан");
-                FileOutputStream fos = new FileOutputStream(fullPath);
-                Writer preWriter = new OutputStreamWriter(fos,Charset.forName("Windows-1251"));
-                CSVWriter writer = new CSVWriter(preWriter,';','"');
-                writer.writeNext(head);
-                String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s",time,masterModbus.getId(),dgsAddress,humidity,temperature,density,period,cs1,cs2,error).split("\\.");
-                writer.writeNext(data);
-                writer.close();
-                fos.close();
+        if (izkModbusGUI.getChannelsBox().getSelectedIndex() != 5) {
+            String dgsAddress = String.valueOf(query.getSensorAddress());
+            String humidity = String.format("%.2f", query.getHumidity());
+            String density = String.format("%.1f", query.getDensity());
+            String temperature = String.format("%.1f", query.getTemperature());
+            String cs1 = String.format("%.1f", query.getCs1());
+            String cs2 = String.format("%.1f", query.getCs2());
+            String period = String.format("%.1f", query.getPeriod());
+            String error = String.format("%.1f", query.getError());
+            try {
+                File file = new File(fullPath);
+                if (file.exists()) {
+                    CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), dgsAddress, humidity, temperature, density, period, cs1, cs2, error).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+
+                } else {
+                    File dir = new File(path);
+                    if (dir.mkdirs()) System.out.println("Путь создан");
+                    else System.out.println("Путь не создан");
+                    FileOutputStream fos = new FileOutputStream(fullPath);
+                    Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
+                    CSVWriter writer = new CSVWriter(preWriter, ';', '"');
+                    writer.writeNext(head);
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), dgsAddress, humidity, temperature, density, period, cs1, cs2, error).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+                    fos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка записи архива " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception e){
-            e.printStackTrace();
+        } else {
+            String humidity = String.format("%.2f", query.getHumidityLevel());
+            String density = String.format("%.2f", query.getDensityLevel());
+            float levelElMetroCalculate = 10 - Float.parseFloat(settings.getElMetroX().replace(',','.'))-query.getElMetroDistance();
+            String levelElMetro = String.format("%.3f", levelElMetroCalculate);
+            //String levelElMetro = String.format("%.3f", query.getElMetroLevel());
+            String distanceElMetro = String.format("%.3f", query.getElMetroDistance());
+            String temperatureElMetro = String.format("%.1f", query.getElMetroTemperature());
+            String levelH2oKorund = String.format("%.3f", query.getKorundWaterLevel());
+            float korundLevelCalculate = query.getKorundFuelOil() + Float.parseFloat(settings.getKorundX().replace(',','.'));
+            String levelOilKorund = String.format("%.3f", korundLevelCalculate);
+            //String levelOilKorund = String.format("%.3f", query.getKorundFuelOil());
+            String[] arrayStrings = new String[10];
+            for (int i = 0; i <arrayStrings.length ; i++) {
+                arrayStrings[i] = String.format("%.1f", query.getTemperatures()[i]);
+            }
+            float mass = query.getDensityLevel()*korundLevelCalculate*Float.parseFloat(izkModbusGUI.getRatioMassField().getText().replace(',','.'));
+            String massString = String.format("%.3f", mass);
+            String volumeString = izkModbusGUI.getPidIntField().getText().split(" ")[2];
+            try {
+                File file = new File(fullPath);
+                if (file.exists()) {
+                    CSVWriter writer = new CSVWriter(new FileWriter(fullPath, true), ';', '"');
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString,volumeString).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+
+                } else {
+                    File dir = new File(path);
+                    if (dir.mkdirs()) System.out.println("Путь создан");
+                    else System.out.println("Путь не создан");
+                    FileOutputStream fos = new FileOutputStream(fullPath);
+                    Writer preWriter = new OutputStreamWriter(fos, Charset.forName("Windows-1251"));
+                    CSVWriter writer = new CSVWriter(preWriter, ';', '"');
+                    writer.writeNext(head);
+                    String[] data = String.format("%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s.%s", time, masterModbus.getId(), humidity, density, levelElMetro, distanceElMetro, temperatureElMetro,
+                            levelH2oKorund, levelOilKorund, arrayStrings[0],arrayStrings[1],arrayStrings[2],arrayStrings[3],arrayStrings[4],arrayStrings[5],arrayStrings[6],arrayStrings[7],arrayStrings[8],arrayStrings[9],massString,volumeString).split("\\.");
+                    writer.writeNext(data);
+                    writer.close();
+                    fos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка записи архива " + e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

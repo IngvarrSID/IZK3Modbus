@@ -58,6 +58,10 @@ public class ChannelsBoxActionListener implements ActionListener {
                     clearFields(izkModbusGUI);
                     izkModbusGUI.getRefreshSensorButton().doClick();
                     break;
+                case 5:
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Выбран режим выдачи данных с уровнемеров ", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                    break;
             }
         } catch (Exception ex) {
             ex.printStackTrace();

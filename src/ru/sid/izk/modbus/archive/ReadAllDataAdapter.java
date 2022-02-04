@@ -205,7 +205,7 @@ public class ReadAllDataAdapter {
 
     }
 
-    public void readRegulatorData() {
+    public void readRegulatorData() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
 
 
         query.queryPidSettings();

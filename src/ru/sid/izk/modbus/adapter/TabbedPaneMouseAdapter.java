@@ -1,5 +1,7 @@
 package ru.sid.izk.modbus.adapter;
 
+import ru.sid.izk.modbus.connection.MasterModbus;
+import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
@@ -14,10 +16,16 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
     private static final int IZK_SETTINGS = 1;
     private static final int SENSOR = 2;
     private static final int REGULATOR =3;
+    private static final int TIME =4;
+    private static final int LEVEL =5;
     private final IZKModbusGUI izkModbusGUI;
+    private final Query query;
+    private final MasterModbus masterModbus;
 
-    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI) {
+    public TabbedPaneMouseAdapter(IZKModbusGUI izkModbusGUI, Query query, MasterModbus masterModbus) {
         this.izkModbusGUI = izkModbusGUI;
+        this.query = query;
+        this.masterModbus = masterModbus;
     }
 
     @Override
@@ -31,6 +39,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
             case INFO:
                 toggleFields(izkModbusGUI,false);
                 izkModbusGUI.getRefButton().doClick();
+                izkModbusGUI.initTable(masterModbus,query);
                 break;
             case IZK_SETTINGS:
                 toggleFields(izkModbusGUI,false);
@@ -47,15 +56,33 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                     JOptionPane.showMessageDialog(izkModbusGUI,
                             "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
+                izkModbusGUI.initTable(masterModbus,query);
                 break;
             case REGULATOR:
                 toggleFields(izkModbusGUI,true);
                 izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 izkModbusGUI.getRefreshRegulatorButton().doClick();
+                izkModbusGUI.initTable(masterModbus,query);
+                break;
+            case TIME:
+                izkModbusGUI.getChannelsBox().setSelectedIndex(0);
+                izkModbusGUI.getRefreshTimeButton().doClick();
+                break;
+            case LEVEL:
+                toggleFields(izkModbusGUI,true);
+                try {
+                    izkModbusGUI.getChannelsBox().setSelectedIndex(5);
+                    izkModbusGUI.initTable(masterModbus,query);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
                 break;
             default:
                 System.out.println("No action for idx value " + idx);
                 break;
         }
+
     }
 }

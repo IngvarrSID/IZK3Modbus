@@ -8,14 +8,21 @@ import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.listener.*;
+import ru.sid.izk.modbus.utils.Settings;
+import ru.sid.izk.modbus.utils.TarTableReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -137,38 +144,69 @@ public class IZKModbusGUI extends JFrame {
     private JButton readAllButton;
     private JLabel dataLabel;
     private JButton writeAllButton;
-    private final Timer connectionTimeoutTimer;
+    private JTextField dayWriteTextField;
+    private JTextField mode0Field;
+    private JButton testButton;
+    private JTextField querySpeedField;
+    private JTextField elMetroXField;
+    private JTextField korundXField;
+    private JButton refreshTimeButton;
+    private JTextField monthWriteTextField;
+    private JTextField yearWriteTextField;
+    private JTextField hourWriteTextField;
+    private JTextField minuteWriteTextField;
+    private JTextField secondWriteTextField;
+    private JButton synchronizeTimeButton;
+    private JTable tarTable;
+    private JTextField ratioMassField;
+    private JButton openTableButton;
+    private JButton saveTableButton;
+    private Timer connectionTimeoutTimer;
+    private JMenuItem queryCyclical;
+    private boolean enableCyclic;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
     private final String[] modesRelays;
-
     private boolean readyToWriteRelay;
-
     private final ReadAllDataAdapter readAllDataAdapter;
+    private ArrayList<float[]> listTableFloats;
+    private ArrayList<String[]> listTableStrings;
+    private Settings settings;
+
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
+    private final MasterModbus maserModbus;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
-
-        initWindow();
-        statLabel.setText("Нет информации");
-        if (!terminal.isError())
-            comLabel.setText(String.format("Подключено к %s на скорости %s", terminal.getComName(), terminal.getBound()));
-        else
-            comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
-        terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
+        this.maserModbus = masterModbus;
         modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
         final Query query = new Query(modbusReader);
+        initWindow();
+        statLabel.setText("Нет информации");
+        if (!terminal.isError()) {
+            comLabel.setForeground(new Color(0, 120, 60));
+            comLabel.setText(String.format("%s на скорости %s ИЗК-3 № %s", terminal.getComName(), terminal.getBound(), masterModbus.getId()));
+        }
+        else {
+            comLabel.setForeground(Color.RED);
+            comLabel.setText(String.format("Ошибка подключения к %s", terminal.getComName()));
+            JOptionPane.showMessageDialog(this,
+                    "Порт занят или отсутствует!", "Ошибка порта", JOptionPane.ERROR_MESSAGE);
+        }
+        terminalButton.addActionListener(new TerminalButtonActionListener(this, masterModbus));
+
         //menu
-        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this));
+        tabbedPane1.addMouseListener(new TabbedPaneMouseAdapter(this, query,masterModbus));
         //channels
-        final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4"};
+        final String[] channels = {"Канал 1", "Канал 2", "Канал 3", "Канал 4", "Все каналы", "Уровнемеры"};
         for (String s : channels) {
             channelsBox.addItem(s);
         }
         channelsBox.setSelectedIndex(0);
         channelsBox.addActionListener(new ChannelsBoxActionListener(this, modbusReader));
+        //settings
+        settings = readSettings();
         //sensor
         refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
         minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
@@ -176,8 +214,12 @@ public class IZKModbusGUI extends JFrame {
         //info
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
-        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
-        connectionTimeoutTimer = new Timer(500, new TimerActionListener(query, this,masterModbus));
+        //query
+        querySpeedField.addActionListener(new QuerySpeedActionListener(this,query,masterModbus));
+        queryInit(query,masterModbus);
+
+        //check mode0
+        testButton.addActionListener(new TestButtonActionListener(this,query,modbusReader));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
@@ -200,6 +242,19 @@ public class IZKModbusGUI extends JFrame {
         readAllDataAdapter = new ReadAllDataAdapter(query,modbusReader);
         readAllButton.addActionListener(new ReadAllDataActionListener(readAllDataAdapter, this));
         writeAllButton.addActionListener(new WriteAllDataActionListener(readAllDataAdapter,this,modbusReader));
+
+        //level
+        levelInit();
+        tarTableInit();
+        elMetroXField.addActionListener(new LevelActionListener(this));
+        korundXField.addActionListener(new LevelActionListener(this));
+        openTableButton.addActionListener(new OpenTableButtonActionListener(this));
+        ratioMassField.setText("0,515");
+        saveTableButton.addActionListener(new SaveTableButtonActionListener(this));
+
+        //time
+        timeInit(query);
+
     }
 
     private void initWindow() {
@@ -221,14 +276,22 @@ public class IZKModbusGUI extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
         menuBar.add(createSettingsMenu());
+        menuBar.add(createHelpMenu());
         setJMenuBar(menuBar);
         toggleFields(this,false);
     }
 
-    private void initTable(MasterModbus masterModbus, Query query){
+    private Settings readSettings(){
+        if(Settings.propertiesFileExists()) {
+            return new Settings();
+        }else return null;
+    }
+
+    public void initTable(MasterModbus masterModbus, Query query){
+        archiveTable.setModel(new DefaultTableModel());
+        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
         CSVAdapter csvAdapter = new CSVAdapter(this,masterModbus,query);
         List<String[]> allRows = csvAdapter.fileRead();
-        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
         for (String s:allRows.get(0)) {
             model.addColumn(s);
         }
@@ -253,6 +316,59 @@ public class IZKModbusGUI extends JFrame {
             }
         }
         archiveTable.setFillsViewportHeight(true);
+    }
+
+    //query
+    public void queryInit(Query query,MasterModbus masterModbus){
+
+        String querySpeed = "1000";
+        if (settings !=null)
+            querySpeed = settings.getQuerySpeed();
+        queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
+
+        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query,this ,masterModbus));
+
+        querySpeedField.setText(querySpeed);
+    }
+    //level
+    public void levelInit (){
+        String elMetroX = "0";
+        String korundX = "0";
+        if (settings !=null){
+            elMetroX = settings.getElMetroX();
+            korundX = settings.getKorundX();
+        }
+        elMetroXField.setText(elMetroX);
+        korundXField.setText(korundX);
+    }
+   //tarTab
+    public void tarTableInit(){
+        try {
+            if (settings != null && settings.getTarTab().equals("true")) {
+                File file = new File(settings.getAbsolutePath() + "/tarTab.su5tab");
+                FileInputStream in = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(in);
+                Object objects = ois.readObject();
+                if (objects instanceof ArrayList) {
+                    listTableStrings = (ArrayList<String[]>) objects;
+                }
+                ois.close();
+                TarTableReader.tableBuilder(listTableStrings,this);
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Ошибка чтения таблицы " + exception.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            settings.setTarTab("false");
+            settings.storeProperties("Table not exist");
+        }
+    }
+
+    //time
+    private void timeInit(Query query){
+        refreshTimeButton.addActionListener(new RefreshTimeButtonActionListener(query,this,modbusReader));
+        synchronizeTimeButton.addActionListener(new SynchronizeTimeButtonActionListener(this,modbusReader));
+
     }
 
     private void initIZKSettings(){
@@ -361,6 +477,26 @@ public class IZKModbusGUI extends JFrame {
         oneStepRegulator.addActionListener(new OneRegisterWriteActionListener(43,this,modbusReader));
         fullStepRegulator.addActionListener(new OneRegisterWriteActionListener(44,this,modbusReader));
 
+        //query
+        digitFilter(querySpeedField,5);
+
+        //level
+        floatFilter(elMetroXField,"^-?[0-9]{0,2}+[,]?[0-9]{0,3}$");
+        floatFilter(korundXField,"^-?[0-9]{0,2}+[,]?[0-9]{0,3}$");
+
+        //time
+        digitFilter(dayWriteTextField,2);
+        digitFilter(monthWriteTextField,2);
+        digitFilter(yearWriteTextField,2);
+        digitFilter(hourWriteTextField,2);
+        digitFilter(minuteWriteTextField,2);
+        digitFilter(secondWriteTextField,2);
+        dayWriteTextField.addActionListener(new OneRegisterWriteActionListener(2,this,modbusReader));
+        monthWriteTextField.addActionListener(new OneRegisterWriteActionListener(3,this,modbusReader));
+        yearWriteTextField.addActionListener(new OneRegisterWriteActionListener(4,this,modbusReader));
+        hourWriteTextField.addActionListener(new OneRegisterWriteActionListener(5,this,modbusReader));
+        minuteWriteTextField.addActionListener(new OneRegisterWriteActionListener(6,this,modbusReader));
+        secondWriteTextField.addActionListener(new OneRegisterWriteActionListener(7,this,modbusReader));
     }
 
     public void relayActionListeners(ModbusReader modbusReader){
@@ -423,9 +559,25 @@ public class IZKModbusGUI extends JFrame {
     private JMenu createSettingsMenu(){
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
+        JMenuItem downloader = new JMenuItem("Загрузчик");
+        queryCyclical = new JCheckBoxMenuItem("Постоянный опрос");
         settings.add(path);
+        settings.addSeparator();
+        settings.add(downloader);
+        settings.addSeparator();
+        settings.add(queryCyclical);
         path.addActionListener(new PathInputActionListener(this));
+        downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
+        queryCyclical.addActionListener(new CyclicalCheckBoxMenuActionListener(this));
         return settings;
+    }
+
+    private JMenu createHelpMenu(){
+        JMenu help = new JMenu("Помощь");
+        JMenuItem about = new JMenuItem("О программе");
+        help.add(about);
+        about.addActionListener(new AboutActionListener(this));
+        return help;
     }
 
     public Timer getConnectionTimeoutTimer() {
@@ -878,5 +1030,97 @@ public class IZKModbusGUI extends JFrame {
 
     public ReadAllDataAdapter getReadAllDataAdapter() {
         return readAllDataAdapter;
+    }
+
+    public JTextField getMode0Field() {
+        return mode0Field;
+    }
+
+    public JButton getTestButton() {
+        return testButton;
+    }
+
+    public JTextField getQuerySpeedField() {
+        return querySpeedField;
+    }
+
+    public JTextField getElMetroXField() {
+        return elMetroXField;
+    }
+
+    public JTextField getKorundXField() {
+        return korundXField;
+    }
+
+    public JTextField getDayWriteTextField() {
+        return dayWriteTextField;
+    }
+
+    public JButton getRefreshTimeButton() {
+        return refreshTimeButton;
+    }
+
+    public JTextField getMonthWriteTextField() {
+        return monthWriteTextField;
+    }
+
+    public JTextField getYearWriteTextField() {
+        return yearWriteTextField;
+    }
+
+    public JTextField getHourWriteTextField() {
+        return hourWriteTextField;
+    }
+
+    public JTextField getMinuteWriteTextField() {
+        return minuteWriteTextField;
+    }
+
+    public JTextField getSecondWriteTextField() {
+        return secondWriteTextField;
+    }
+
+    public JMenuItem getQueryCyclical() {
+        return queryCyclical;
+    }
+
+    public boolean isEnableCyclic() {
+        return enableCyclic;
+    }
+
+    public JTextField getRatioMassField() {
+        return ratioMassField;
+    }
+
+    public void setEnableCyclic(boolean enableCyclic) {
+        this.enableCyclic = enableCyclic;
+    }
+
+    public JButton getOpenTableButton() {
+        return openTableButton;
+    }
+
+    public JTable getTarTable() {
+        return tarTable;
+    }
+
+    public ArrayList<float[]> getListTableFloats() {
+        return listTableFloats;
+    }
+
+    public void setListTableFloats(ArrayList<float[]> listTableFloats) {
+        this.listTableFloats = listTableFloats;
+    }
+
+    public ArrayList<String[]> getListTableStrings() {
+        return listTableStrings;
+    }
+
+    public void setListTableStrings(ArrayList<String[]> listTableStrings) {
+        this.listTableStrings = listTableStrings;
+    }
+
+    public JButton getSaveTableButton() {
+        return saveTableButton;
     }
 }

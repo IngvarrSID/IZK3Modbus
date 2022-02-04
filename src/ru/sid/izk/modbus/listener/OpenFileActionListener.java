@@ -61,7 +61,9 @@ public class OpenFileActionListener implements ActionListener {
                 }
             } catch (Exception ex){
                 ex.printStackTrace();
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Ошибка открытия файла " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
             }
         }
     }
-}

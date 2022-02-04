@@ -1,21 +1,20 @@
 package ru.sid.izk.modbus.connection;
 
-import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
-import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
-import com.intelligt.modbus.jlibmodbus.serial.SerialPortFactoryJSSC;
-import com.intelligt.modbus.jlibmodbus.serial.SerialUtils;
+import com.intelligt.modbus.jlibmodbus.serial.*;
 
 public class Terminal {
 
     private final SerialParameters sp;
     private final String comName;
     private final String bound;
+    private final String timeOut;
     private boolean error;
 
 
-    public Terminal(String comName, String bound) {
+    public Terminal(String comName, String bound, String timeOut) {
         this.comName = comName;
         this.bound = bound;
+        this.timeOut = timeOut;
         this.sp = new SerialParameters();
         sp.setDevice(comName);
         switch (bound){
@@ -46,6 +45,9 @@ public class Terminal {
         sp.setStopBits(1);
         SerialUtils.setSerialPortFactory(new SerialPortFactoryJSSC());
 
+
+
+
     }
 
     public SerialParameters getSp() {
@@ -58,6 +60,10 @@ public class Terminal {
 
     public String getBound() {
         return bound;
+    }
+
+    public String getTimeOut() {
+        return timeOut;
     }
 
     public boolean isError() {
