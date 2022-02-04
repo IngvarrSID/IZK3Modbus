@@ -27,6 +27,8 @@ public class Application {
                 e.printStackTrace();
             }
         });
+
+        
     }
 
     private static void initUiManager() {

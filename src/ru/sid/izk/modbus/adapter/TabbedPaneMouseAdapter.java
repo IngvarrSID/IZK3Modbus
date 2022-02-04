@@ -49,13 +49,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 break;
             case SENSOR:
                 toggleFields(izkModbusGUI,false);
-                try {
-                    izkModbusGUI.getChannelsBox().setSelectedIndex(0);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
+                izkModbusGUI.getChannelsBox().setSelectedIndex(0);
                 izkModbusGUI.initTable(masterModbus,query);
                 break;
             case REGULATOR:
@@ -70,14 +64,8 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                 break;
             case LEVEL:
                 toggleFields(izkModbusGUI,true);
-                try {
                     izkModbusGUI.getChannelsBox().setSelectedIndex(5);
                     izkModbusGUI.initTable(masterModbus,query);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Ошибка инициализации канала: " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
                 break;
             default:
                 System.out.println("No action for idx value " + idx);

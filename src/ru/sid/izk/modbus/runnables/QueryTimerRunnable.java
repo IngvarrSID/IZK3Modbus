@@ -1,4 +1,4 @@
-package ru.sid.izk.modbus.listener;
+package ru.sid.izk.modbus.runnables;
 
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
@@ -11,8 +11,6 @@ import ru.sid.izk.modbus.utils.FieldVisible;
 import ru.sid.izk.modbus.utils.Settings;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -20,22 +18,25 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TimerActionListener implements ActionListener {
+public class QueryTimerRunnable implements Runnable{
 
-    private final Query query;
     private final IZKModbusGUI izkModbusGUI;
+    private final Query query;
     private final MasterModbus masterModbus;
     private int count;
 
-    public TimerActionListener(Query query, IZKModbusGUI izkModbusGUI, MasterModbus masterModbus) {
-
-        this.query = query;
+    public QueryTimerRunnable(IZKModbusGUI izkModbusGUI, Query query, MasterModbus masterModbus) {
         this.izkModbusGUI = izkModbusGUI;
+        this.query = query;
         this.masterModbus = masterModbus;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void run() {
+        processAction();
+    }
+
+    private void processAction(){
         if (izkModbusGUI.getChannelsBox().getSelectedIndex() !=5) {
             try {
                 query.queryStatus();
@@ -74,9 +75,9 @@ public class TimerActionListener implements ActionListener {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
+                izkModbusGUI.getQueryBox().setSelected(false);
                 JOptionPane.showMessageDialog(izkModbusGUI,
                         "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-                izkModbusGUI.getQueryBox().setSelected(false);
             }
         } else {
             try{
@@ -91,19 +92,19 @@ public class TimerActionListener implements ActionListener {
                 izkModbusGUI.getSensorAddressField().setText(String.format("Влажность: %.2f %%", query.getHumidityLevel()));
                 izkModbusGUI.getHumidityField().setText(String.format("Плотность: %.1f кг/м²", query.getDensityLevel()));
                 float elMetroLevelCalculate = 10 - Float.parseFloat(elMetroSaveLevel.replace(',','.'))-query.getElMetroDistance();
-             //   izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", query.getElMetroLevel()));
+                //   izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", query.getElMetroLevel()));
                 izkModbusGUI.getTemperatureField().setText(String.format("Уровень ЭлМетро: %.3f мм", elMetroLevelCalculate));
                 izkModbusGUI.getDensityField().setText(String.format("Расстояние ЭлМетро: %.3f мм", query.getElMetroDistance()));
                 izkModbusGUI.getPeriodField().setText(String.format("Температура ЭлМетро: %.1f °C", query.getElMetroTemperature()));
                 izkModbusGUI.getCs1Field().setText(String.format("Уровень воды Корунд: %.3f мм", query.getKorundWaterLevel()));
-               // izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
+                // izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
                 float korundLevelCalculate = query.getKorundFuelOil() + Float.parseFloat(korundSaveLevel.replace(',','.'));
                 izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм",korundLevelCalculate ));
                 StringBuilder s = new StringBuilder();
                 for (float f:query.getTemperatures()) {
                     if (!s.toString().equals("")) s.append(", ");
 
-                        s.append(String.format("%.1f", f));
+                    s.append(String.format("%.1f", f));
 
                 }
                 String s1 = s.toString();
@@ -117,6 +118,7 @@ public class TimerActionListener implements ActionListener {
                 if (izkModbusGUI.getListTableFloats() !=null) {
                     ArrayList<float[]> list = izkModbusGUI.getListTableFloats();
                     float volume = 0;
+                    //кусочно-линейная аппроксимация
                     for (int i = 0; i < list.size(); i++) {
                         if (korundLevelCalculate < list.get(i)[0]) {
                             float x2 = list.get(i)[0];
@@ -139,9 +141,9 @@ public class TimerActionListener implements ActionListener {
                 float mass = query.getDensityLevel()*korundLevelCalculate*Float.parseFloat(izkModbusGUI.getRatioMassField().getText().replace(',','.'));
                 izkModbusGUI.getPidErrField().setText(String.format("Масса мазута: %.3f т",mass ));
 
-                    CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
-                    csvAdapter.fileWrite();
-                    izkModbusGUI.refreshTable(csvAdapter);
+                CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
+                csvAdapter.fileWrite();
+                izkModbusGUI.refreshTable(csvAdapter);
 
 
 

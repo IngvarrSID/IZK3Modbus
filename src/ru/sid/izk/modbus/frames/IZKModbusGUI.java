@@ -22,7 +22,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -171,7 +172,8 @@ public class IZKModbusGUI extends JFrame {
     private final ReadAllDataAdapter readAllDataAdapter;
     private ArrayList<float[]> listTableFloats;
     private ArrayList<String[]> listTableStrings;
-    private Settings settings;
+    private final Settings settings;
+    private final ExecutorService executor;
 
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
@@ -219,7 +221,7 @@ public class IZKModbusGUI extends JFrame {
         queryInit(query,masterModbus);
 
         //check mode0
-        testButton.addActionListener(new TestButtonActionListener(this,query,modbusReader));
+        testButton.addActionListener(new TestButtonActionListener(this,query));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
@@ -254,6 +256,9 @@ public class IZKModbusGUI extends JFrame {
 
         //time
         timeInit(query);
+
+        //runnable
+        executor = Executors.newFixedThreadPool(10);
 
     }
 
@@ -326,7 +331,7 @@ public class IZKModbusGUI extends JFrame {
             querySpeed = settings.getQuerySpeed();
         queryBox.addItemListener(new QueryBoxItemListener(this, modbusReader));
 
-        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new TimerActionListener(query,this ,masterModbus));
+        connectionTimeoutTimer = new Timer(Integer.parseInt(querySpeed), new QueryTimerActionListener(query,this ,masterModbus));
 
         querySpeedField.setText(querySpeed);
     }
@@ -1122,5 +1127,9 @@ public class IZKModbusGUI extends JFrame {
 
     public JButton getSaveTableButton() {
         return saveTableButton;
+    }
+
+    public ExecutorService getExecutor() {
+        return executor;
     }
 }
