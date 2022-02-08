@@ -98,7 +98,8 @@ public class QueryTimerRunnable implements Runnable{
                 izkModbusGUI.getPeriodField().setText(String.format("Температура ЭлМетро: %.1f °C", query.getElMetroTemperature()));
                 izkModbusGUI.getCs1Field().setText(String.format("Уровень воды Корунд: %.3f мм", query.getKorundWaterLevel()));
                 // izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
-                float korundLevelCalculate = query.getKorundFuelOil() + Float.parseFloat(korundSaveLevel.replace(',','.'));
+
+                float korundLevelCalculate = (float) ((query.getKorundFuelOil()*0.926) + Float.parseFloat(korundSaveLevel.replace(',','.')));
                 izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм",korundLevelCalculate ));
                 StringBuilder s = new StringBuilder();
                 for (float f:query.getTemperatures()) {

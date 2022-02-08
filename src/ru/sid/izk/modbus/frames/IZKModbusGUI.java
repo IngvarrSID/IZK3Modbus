@@ -451,7 +451,7 @@ public class IZKModbusGUI extends JFrame {
         tsd2FieldWrite.addActionListener(new TwoRegisterWriteActionListener(29, this, modbusReader));
         floatFilter(tcFieldWrite, "^[0-9]?+[,]?[0-9]{0,3}$");
         tcFieldWrite.addActionListener(new TwoRegisterWriteActionListener(31, this, modbusReader));
-        floatFilter(d20FieldWrite, "^[0-9]{0,3}+[,]?[0-9]?$");
+        floatFilter(d20FieldWrite, "^[0-9]{0,4}+[,]?[0-9]?$");
         d20FieldWrite.addActionListener(new TwoRegisterWriteActionListener(23, this, modbusReader));
         floatFilter(kdFieldWrite, "^[0-9]?+[,]?[0-9]{0,3}$");
         kdFieldWrite.addActionListener(new TwoRegisterWriteActionListener(25, this, modbusReader));
