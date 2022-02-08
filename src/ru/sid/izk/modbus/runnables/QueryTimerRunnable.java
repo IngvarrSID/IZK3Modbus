@@ -99,7 +99,7 @@ public class QueryTimerRunnable implements Runnable{
                 izkModbusGUI.getCs1Field().setText(String.format("Уровень воды Корунд: %.3f мм", query.getKorundWaterLevel()));
                 // izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм", query.getKorundFuelOil()));
 
-                float korundLevelCalculate = (float) ((query.getKorundFuelOil()*0.926) + Float.parseFloat(korundSaveLevel.replace(',','.')));
+                float korundLevelCalculate = (float) ((query.getKorundFuelOil()*0.913) + Float.parseFloat(korundSaveLevel.replace(',','.')));
                 izkModbusGUI.getCs2Field().setText(String.format("Уровень мазута Корунд: %.3f мм",korundLevelCalculate ));
                 StringBuilder s = new StringBuilder();
                 for (float f:query.getTemperatures()) {
@@ -155,13 +155,8 @@ public class QueryTimerRunnable implements Runnable{
                             "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                     izkModbusGUI.getQueryBox().setSelected(false);
                 } else {
-                    JOptionPane op = new JOptionPane("Нет связи. Попробуй еще " + ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane op = new JOptionPane("Нет связи. Окно закроется автоматически " + ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     JDialog dialog = op.createDialog("Ошибка связи");
-                    try {
-                        masterModbus.getModbusMaster().diagnosticsClearCountersAndDiagnosticRegister(0);
-                    } catch (ModbusNumberException | ModbusProtocolException | ModbusIOException exc) {
-                        exc.printStackTrace();
-                    }
 
                     izkModbusGUI.getQueryBox().setSelected(false);
 

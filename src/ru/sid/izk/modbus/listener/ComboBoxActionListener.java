@@ -2,6 +2,7 @@ package ru.sid.izk.modbus.listener;
 
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.runnables.ComboBoxRelayRunnable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,21 +25,7 @@ public class ComboBoxActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (izkModbusGUI.isReadyToWriteRelay()) {
-            try {
-                if(isNumber){
-                modbusReader.writeModeRegister(offset, ((JComboBox<?>) e.getSource()).getSelectedIndex()+1);
-                } else {
-                    modbusReader.writeModeRegister(offset, ((JComboBox<?>) e.getSource()).getSelectedIndex());
-                }
-                JOptionPane.showMessageDialog(izkModbusGUI,
-                        "Запись завершена", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(izkModbusGUI,
-                        "Ошибка записи! " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        Runnable tusk = new ComboBoxRelayRunnable(izkModbusGUI,modbusReader,isNumber,offset,(JComboBox<?>) e.getSource());
+        izkModbusGUI.getExecutor().execute(tusk);
     }
 }

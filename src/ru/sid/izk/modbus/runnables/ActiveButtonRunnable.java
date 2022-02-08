@@ -22,6 +22,7 @@ public class ActiveButtonRunnable implements Runnable{
     }
 
     public void processAction(){
+        izkModbusGUI.getActivButton().setEnabled(false);
         final JTextField passwordField = izkModbusGUI.getPasswordField();
         if (passwordField.getText().length() == 8) {
             char[] chars = passwordField.getText().toCharArray();
@@ -37,14 +38,17 @@ public class ActiveButtonRunnable implements Runnable{
                 JOptionPane.showMessageDialog(izkModbusGUI,
                         "Запись завершена", "", JOptionPane.INFORMATION_MESSAGE);
                 izkModbusGUI.getRefButton().doClick();
+                izkModbusGUI.getActivButton().setEnabled(true);
             } catch (Exception e1) {
                 e1.printStackTrace();
                 JOptionPane.showMessageDialog(izkModbusGUI,
                         "Ошибка записи! " + e1.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 passwordField.setText("Ошибка записи");
+                izkModbusGUI.getActivButton().setEnabled(true);
             }
         } else {
             passwordField.setText("Не верный код активации!");
+            izkModbusGUI.getActivButton().setEnabled(true);
         }
     }
 }

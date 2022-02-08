@@ -129,7 +129,7 @@ public class CSVAdapter {
             String distanceElMetro = String.format("%.3f", query.getElMetroDistance());
             String temperatureElMetro = String.format("%.1f", query.getElMetroTemperature());
             String levelH2oKorund = String.format("%.3f", query.getKorundWaterLevel());
-            float korundLevelCalculate = (float) (query.getKorundFuelOil()*0.926) + Float.parseFloat(settings.getKorundX().replace(',','.')); // расчет уровня мазута
+            float korundLevelCalculate = (float) (query.getKorundFuelOil()*0.913) + Float.parseFloat(settings.getKorundX().replace(',','.')); // расчет уровня мазута
             String levelOilKorund = String.format("%.3f", korundLevelCalculate);
             //String levelOilKorund = String.format("%.3f", query.getKorundFuelOil());
             String[] arrayStrings = new String[10];
