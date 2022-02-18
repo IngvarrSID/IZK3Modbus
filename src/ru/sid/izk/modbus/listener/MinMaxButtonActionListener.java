@@ -2,28 +2,30 @@ package ru.sid.izk.modbus.listener;
 
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
-import ru.sid.izk.modbus.runnables.OneRegisterWriteRunnable;
+import ru.sid.izk.modbus.runnables.MinMaxButtonRunnable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class OneRegisterWriteActionListener implements ActionListener {
+public class MinMaxButtonActionListener implements ActionListener {
 
-    private final int offset;
     private final IZKModbusGUI izkModbusGUI;
     private final ModbusReader modbusReader;
+    private final int i;
 
-    public OneRegisterWriteActionListener(int offset, IZKModbusGUI izkModbusGUI, ModbusReader modbusReader) {
-        this.offset = offset;
+    public MinMaxButtonActionListener(IZKModbusGUI izkModbusGUI, ModbusReader modbusReader, int i) {
+
         this.izkModbusGUI = izkModbusGUI;
         this.modbusReader = modbusReader;
+        this.i = i;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JTextField field = ((JTextField) e.getSource());
-        izkModbusGUI.getExecutor().execute(new OneRegisterWriteRunnable(offset,izkModbusGUI,modbusReader,field));
 
+        JButton currentButton = (JButton) e.getSource();
+        izkModbusGUI.getExecutor().execute(new MinMaxButtonRunnable(izkModbusGUI,modbusReader,i,currentButton));
     }
+
 }

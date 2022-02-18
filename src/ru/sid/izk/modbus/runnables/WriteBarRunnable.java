@@ -1,4 +1,4 @@
-package ru.sid.izk.modbus.listener;
+package ru.sid.izk.modbus.runnables;
 
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
@@ -6,27 +6,39 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.archive.ReadAllDataAdapter;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.listener.OpenFileActionListener;
+import ru.sid.izk.modbus.listener.TimerWriteBarActionListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class TimerWriteBar implements ActionListener {
+public class WriteBarRunnable implements Runnable{
+
     private final IZKModbusGUI izkModbusGUI;
     private final ReadAllDataAdapter readAllDataAdapter;
     private final ModbusReader modbusReader;
+    private final Timer timer;
     private int state;
 
-    public TimerWriteBar(IZKModbusGUI izkModbusGUI, ReadAllDataAdapter readAllDataAdapter, ModbusReader modbusReader, int state) {
+    public WriteBarRunnable(IZKModbusGUI izkModbusGUI, ReadAllDataAdapter readAllDataAdapter, ModbusReader modbusReader, int state, Timer timer) {
         this.izkModbusGUI = izkModbusGUI;
         this.readAllDataAdapter = readAllDataAdapter;
         this.modbusReader = modbusReader;
         this.state = state;
+        this.timer = timer;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void run() {
+        izkModbusGUI.getWriteAllButton().setEnabled(false);
+        processAction();
+        izkModbusGUI.getWriteAllButton().setEnabled(true);
+
+    }
+
+    private void processAction(){
+
         izkModbusGUI.getProgressBar().setValue(state);
         try {
             switch (state) {
@@ -53,7 +65,7 @@ public class TimerWriteBar implements ActionListener {
             }
 
             if (izkModbusGUI.getProgressBar().getValue() == 5) {
-                ((Timer) e.getSource()).stop();
+                timer.stop();
                 JOptionPane.showMessageDialog(izkModbusGUI, "Запись всех настроек завершена!", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
                 izkModbusGUI.getProgressBar().setVisible(false);
                 izkModbusGUI.getDataLabel().setForeground(new Color(0, 120, 60));
@@ -62,7 +74,7 @@ public class TimerWriteBar implements ActionListener {
                 modbusReader.writeModeRegister(0, izkModbusGUI.getChannelsBox().getSelectedIndex() + 5);
             } else state++;
         } catch (Exception ex) {
-            ((Timer) e.getSource()).stop();
+            timer.stop();
             ex.printStackTrace();
             JOptionPane.showMessageDialog(izkModbusGUI, "Ошибка чтения! " + ex.getMessage(), "Ошибка!", JOptionPane.ERROR_MESSAGE);
             izkModbusGUI.getProgressBar().setVisible(false);
@@ -70,7 +82,6 @@ public class TimerWriteBar implements ActionListener {
             izkModbusGUI.getDataLabel().setForeground(Color.RED);
             izkModbusGUI.getDataLabel().setText("Ошибка записи");
         }
-
     }
 
     public void arraySplitWrite(int[] registers) throws ModbusProtocolException, ModbusNumberException, ModbusIOException {

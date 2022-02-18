@@ -37,6 +37,8 @@ public class QueryTimerRunnable implements Runnable{
     }
 
     private void processAction(){
+
+
         if (izkModbusGUI.getChannelsBox().getSelectedIndex() !=5) {
             try {
                 query.queryStatus();
@@ -145,6 +147,7 @@ public class QueryTimerRunnable implements Runnable{
                 CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
                 csvAdapter.fileWrite();
                 izkModbusGUI.refreshTable(csvAdapter);
+                izkModbusGUI.getConnectionTimeoutTimer().start();
 
 
 

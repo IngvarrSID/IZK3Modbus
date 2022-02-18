@@ -146,6 +146,7 @@ public class ReadAllDataAdapter {
     private int max4;
     private int emerMax4;
     private int noDensity4;
+    private int state = 1;
 
     private final Query query;
     private final ModbusReader modbusReader;
@@ -627,5 +628,13 @@ public class ReadAllDataAdapter {
 
     public String getDataCompiled() {
         return dataCompiled;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

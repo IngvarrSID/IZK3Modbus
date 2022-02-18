@@ -20,6 +20,7 @@ public class TestButtonRunnable implements Runnable{
 
     @Override
     public void run() {
+     //   izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
         processAction();
     }
 
@@ -28,6 +29,7 @@ public class TestButtonRunnable implements Runnable{
             izkModbusGUI.getTestButton().setEnabled(false);
             izkModbusGUI.getMode0Field().setText(String.format("%d",query.queryMode0()));
             izkModbusGUI.getTestButton().setEnabled(true);
+       //     izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
 
         } catch (Exception ex){
             ex.printStackTrace();
@@ -45,6 +47,7 @@ public class TestButtonRunnable implements Runnable{
                     dialog.dispose();
                     count++;
                     izkModbusGUI.getTestButton().setEnabled(true);
+               //     izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
                     if (count<10){
 
                         izkModbusGUI.getTestButton().doClick();

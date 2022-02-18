@@ -37,6 +37,7 @@ public class QueryTimerActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         izkModbusGUI.getExecutor().execute(new QueryTimerRunnable(izkModbusGUI,query,masterModbus));
     }
 }

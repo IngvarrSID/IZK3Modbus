@@ -16,6 +16,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
@@ -162,6 +165,7 @@ public class IZKModbusGUI extends JFrame {
     private JTextField ratioMassField;
     private JButton openTableButton;
     private JButton saveTableButton;
+    private JLabel loadGifLabel;
     private Timer connectionTimeoutTimer;
     private JMenuItem queryCyclical;
     private boolean enableCyclic;
@@ -173,12 +177,13 @@ public class IZKModbusGUI extends JFrame {
     private ArrayList<float[]> listTableFloats;
     private ArrayList<String[]> listTableStrings;
     private final Settings settings;
-    private final ExecutorService executor;
+    private final ThreadPoolExecutor executor;
 
 
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
     private final MasterModbus maserModbus;
+    private int threadTestCount = 0;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
         this.maserModbus = masterModbus;
@@ -211,8 +216,8 @@ public class IZKModbusGUI extends JFrame {
         settings = readSettings();
         //sensor
         refreshSensorButton.addActionListener(new RefreshSensorButtonActionListener(query, this));
-        minButton.addActionListener(new MinButtonActionListener(this, modbusReader));
-        maxButton.addActionListener(new MaxButtonActionListener(this, modbusReader));
+        minButton.addActionListener(new MinMaxButtonActionListener(this, modbusReader,0));
+        maxButton.addActionListener(new MinMaxButtonActionListener(this, modbusReader,1));
         //info
         refButton.addActionListener(new RefButtonActionListener(query, this, modbusReader));
         activButton.addActionListener(new ActivButtonActionListener(this, modbusReader));
@@ -258,7 +263,10 @@ public class IZKModbusGUI extends JFrame {
         timeInit(query);
 
         //runnable
-        executor = Executors.newFixedThreadPool(10);
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+
+        //LoadGif
+        initLoadLabel();
 
     }
 
@@ -286,6 +294,17 @@ public class IZKModbusGUI extends JFrame {
         toggleFields(this,false);
     }
 
+    private void initLoadLabel(){
+        Image image = Toolkit.getDefaultToolkit().createImage("circle2.gif");
+        ImageIcon imageIcon = new ImageIcon(image);
+        imageIcon.setImageObserver(loadGifLabel);
+        loadGifLabel.setIcon(imageIcon);
+        loadGifLabel.setVisible(false);
+
+        Timer timer = new Timer(100, new LoadLabelActionListener(this));
+        timer.start();
+    }
+
     private Settings readSettings(){
         if(Settings.propertiesFileExists()) {
             return new Settings();
@@ -308,24 +327,29 @@ public class IZKModbusGUI extends JFrame {
         archiveTable.setFillsViewportHeight(true);
     }
 
-    public void refreshTable(CSVAdapter csvAdapter){
+    synchronized public void refreshTable(CSVAdapter csvAdapter){
         List<String[]> allRows = csvAdapter.fileRead();
-        DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
-        int rowCount = model.getRowCount();
-        for (int i = rowCount-1; i >= 0 ; i--) {
-            model.removeRow(i);
-        }
-        if (allRows.size()>1) {
-            for (int i = 1; i < allRows.size(); i++) {
-                model.addRow(allRows.get(i));
+        SwingUtilities.invokeLater(() -> {
+            DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
+            int rowCount = model.getRowCount();
+            System.out.println("до заполнения");
+            for (int i = rowCount-1; i >= 0 ; i--) {
+                model.removeRow(i);
             }
-        }
-        archiveTable.setFillsViewportHeight(true);
+            if (allRows.size()>1) {
+                for (int i = 1; i < allRows.size(); i++) {
+                    model.addRow(allRows.get(i));
+                }
+            }
+            System.out.println("после заполнения");
+            archiveTable.setFillsViewportHeight(true);
+        });
+
     }
 
     //query
     public void queryInit(Query query,MasterModbus masterModbus){
-
+        Settings settings = readSettings();
         String querySpeed = "1000";
         if (settings !=null)
             querySpeed = settings.getQuerySpeed();
@@ -372,7 +396,7 @@ public class IZKModbusGUI extends JFrame {
     //time
     private void timeInit(Query query){
         refreshTimeButton.addActionListener(new RefreshTimeButtonActionListener(query,this,modbusReader));
-        synchronizeTimeButton.addActionListener(new SynchronizeTimeButtonActionListener(this,modbusReader));
+        synchronizeTimeButton.addActionListener(new SynchronizeTimeButtonActionListener(this,modbusReader,query));
 
     }
 
@@ -1129,7 +1153,27 @@ public class IZKModbusGUI extends JFrame {
         return saveTableButton;
     }
 
-    public ExecutorService getExecutor() {
+    public ThreadPoolExecutor getExecutor() {
         return executor;
+    }
+
+    public int getThreadTestCount() {
+        return threadTestCount;
+    }
+
+    public void setThreadTestCount(int threadTestCount) {
+        this.threadTestCount = threadTestCount;
+    }
+
+    public JLabel getLoadGifLabel() {
+        return loadGifLabel;
+    }
+
+    public JButton getSynchronizeTimeButton() {
+        return synchronizeTimeButton;
+    }
+
+    public JButton getWriteAllButton() {
+        return writeAllButton;
     }
 }

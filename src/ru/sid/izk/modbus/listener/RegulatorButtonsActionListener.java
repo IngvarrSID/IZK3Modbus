@@ -3,6 +3,7 @@ package ru.sid.izk.modbus.listener;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.runnables.RegulatorButtonsRunnable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,15 +23,9 @@ public class RegulatorButtonsActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        try {
-            boolean coil = modbusReader.coilsReader(offset, 1)[0];
-            ((JButton)e.getSource()).setText(coil? "OFF" : "ON");
-            modbusReader.writeCoil(offset,!coil);
-            izkModbusGUI.getQueryBox().setSelected(true);
-        } catch (Exception ex){
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(izkModbusGUI,
-                    "Ошибка инициализации:" + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-        }
+
+        final JButton currentButton =  (JButton)e.getSource();
+        izkModbusGUI.getExecutor().execute(new RegulatorButtonsRunnable(izkModbusGUI,offset,modbusReader,currentButton));
+
     }
 }

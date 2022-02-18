@@ -147,6 +147,23 @@ public class Query{
     private int minute;
     private int second;
 
+    //StatusEx
+    private int typeSensor;
+    private int firmwareSensor;
+    private int activationStatus;
+
+    public int getTypeSensor() {
+        return typeSensor;
+    }
+
+    public int getFirmwareSensor() {
+        return firmwareSensor;
+    }
+
+    public int getActivationStatus() {
+        return activationStatus;
+    }
+
     public float getHumidityLevel() {
         return humidityLevel;
     }
@@ -886,12 +903,20 @@ public class Query{
         return f;
     }
 
-    private static String statusReader (String reversStatus){
+    private String statusReader (String reversStatus){
         StringBuilder status = new StringBuilder();
         for (int j = 0; j < 16; j++) {
             if (reversStatus.length() > j) status.insert(0, reversStatus.charAt(j));
             else status.append("0");
         }
+
+        String bits = status.substring(8,9) + status.substring(7,8);
+        typeSensor = Integer.parseInt(bits,2);
+        bits = status.substring(12,13) + status.substring(11,12) + status.substring(10,11) + status.substring(9,10);
+        firmwareSensor = Integer.parseInt(bits,2);
+        bits = status.substring(15) + status.substring(14,15) + status.substring(13,14);
+        activationStatus = Integer.parseInt(bits,2);
+
         boolean dataExist = status.charAt(0) == '1';
         boolean measuring = status.charAt(1) == '1';
         boolean noData = status.charAt(2) == '1';

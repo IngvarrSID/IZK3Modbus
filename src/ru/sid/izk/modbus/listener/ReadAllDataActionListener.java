@@ -24,7 +24,7 @@ public class ReadAllDataActionListener implements ActionListener {
         izkModbusGUI.getProgressBar().setValue(0);
         izkModbusGUI.getProgressBar().setVisible(true);
         izkModbusGUI.getProgressBar().setMaximum(6);
-        Timer timer = new Timer(200, new TimerReadBar(izkModbusGUI, readAllDataAdapter,1));
+        Timer timer = new Timer(1000, new TimerReadBarActionListener(izkModbusGUI, readAllDataAdapter));
         timer.start();
 
     }
