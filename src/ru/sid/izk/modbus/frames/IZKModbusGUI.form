@@ -2414,25 +2414,6 @@
             </constraints>
             <properties/>
           </component>
-          <component id="bd8b" class="javax.swing.JTextField" binding="mode0Field">
-            <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="50" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-              <horizontalAlignment value="10"/>
-            </properties>
-          </component>
-          <component id="6866d" class="javax.swing.JButton" binding="testButton">
-            <constraints>
-              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="TEST"/>
-            </properties>
-          </component>
           <component id="7bb69" class="javax.swing.JTextField" binding="querySpeedField">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">

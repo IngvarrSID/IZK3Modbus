@@ -32,6 +32,8 @@ public class ReadBarRunnable implements Runnable{
             switch (state) {
                 case 1:
                     readAllDataAdapter.readSettingsData();
+                    izkModbusGUI.getDataLabel().setForeground(Color.BLACK);
+                    izkModbusGUI.getDataLabel().setText("Считывание..");
                     break;
                 case 2:
                     readAllDataAdapter.readRegulatorData();

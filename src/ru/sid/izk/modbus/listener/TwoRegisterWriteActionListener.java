@@ -2,6 +2,7 @@ package ru.sid.izk.modbus.listener;
 
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.runnables.TwoRegisterWriteRunnable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,20 +25,8 @@ public class TwoRegisterWriteActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        final String field = ((JTextField) e.getSource()).getText();
-        String sF = hexStringFromField(field);
-        int[] registers = {Integer.valueOf(sF.substring(4, 8), 16), Integer.valueOf(sF.substring(0, 4), 16)};
-        for (int i : registers) {
-            System.out.println(i);
-        }
-        try {
-            modbusReader.writeRegister(offset, registers);
-            JOptionPane.showMessageDialog(izkModbusGUI,
-                    "Запись завершена успешно.", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(izkModbusGUI,
-                    "Ошибка записи! " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-        }
+        final JTextField field = ((JTextField) e.getSource());
+        izkModbusGUI.getExecutor().execute(new TwoRegisterWriteRunnable(offset,izkModbusGUI,modbusReader,field));
+
     }
 }

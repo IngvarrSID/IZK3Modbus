@@ -4,6 +4,7 @@ import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
 
 import javax.swing.*;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,22 +21,23 @@ public class TestButtonRunnable implements Runnable{
 
     @Override
     public void run() {
-     //   izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
+        izkModbusGUI.getPing().setEnabled(false);
         processAction();
     }
 
     private void processAction(){
         try {
-            izkModbusGUI.getTestButton().setEnabled(false);
-            izkModbusGUI.getMode0Field().setText(String.format("%d",query.queryMode0()));
-            izkModbusGUI.getTestButton().setEnabled(true);
-       //     izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
+            Date date1 = new Date();
+            int mode0 = query.queryMode0();
+            Date date2 = new Date();
+            Long responseTime = date2.getTime() - date1.getTime();
+            JOptionPane.showMessageDialog(izkModbusGUI,
+                    String.format("<html><center>Попытка пинга %d.<br>Блок ИЗК-3 ответил за %d мс.<br>Режим записи: %d.</html></center>",count+1,responseTime,mode0), "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+            izkModbusGUI.getPing().setEnabled(true);
 
         } catch (Exception ex){
             ex.printStackTrace();
-       /* JOptionPane.showMessageDialog(izkModbusGUI,
-                "Нет связи. Попробуй еще " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);*/
-            JOptionPane op = new JOptionPane("Нет связи. Попробуй еще " + ex.getMessage(),JOptionPane.ERROR_MESSAGE);
+            JOptionPane op = new JOptionPane("Нет связи. Окно закроется автоматически для следующей попытки пинга " + ex.getMessage(),JOptionPane.ERROR_MESSAGE);
             JDialog dialog = op.createDialog("Ошибка связи");
 
             java.util.Timer timer = new Timer();
@@ -46,13 +48,14 @@ public class TestButtonRunnable implements Runnable{
                     dialog.setVisible(false);
                     dialog.dispose();
                     count++;
-                    izkModbusGUI.getTestButton().setEnabled(true);
-               //     izkModbusGUI.getLoadGifLabel().setVisible(!izkModbusGUI.getLoadGifLabel().isVisible());
                     if (count<10){
-
-                        izkModbusGUI.getTestButton().doClick();
+                        izkModbusGUI.getPing().setEnabled(true);
+                        izkModbusGUI.getPing().doClick();
                     }
-                    else count = 0;
+                    else {
+                        izkModbusGUI.getPing().setEnabled(true);
+                        count = 0;
+                    }
                 }
             },10000);
 

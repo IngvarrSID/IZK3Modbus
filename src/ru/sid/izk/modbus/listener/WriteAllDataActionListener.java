@@ -32,7 +32,7 @@ public class WriteAllDataActionListener implements ActionListener {
                 izkModbusGUI.getProgressBar().setValue(0);
                 izkModbusGUI.getProgressBar().setVisible(true);
                 izkModbusGUI.getProgressBar().setMaximum(5);
-                Timer timer = new Timer(200, new TimerWriteBarActionListener(izkModbusGUI, readAllDataAdapter, modbusReader, 1));
+                Timer timer = new Timer(1000, new TimerWriteBarActionListener(izkModbusGUI, readAllDataAdapter, modbusReader));
                 timer.start();
             }
         } else {

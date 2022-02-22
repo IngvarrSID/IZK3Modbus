@@ -149,8 +149,6 @@ public class IZKModbusGUI extends JFrame {
     private JLabel dataLabel;
     private JButton writeAllButton;
     private JTextField dayWriteTextField;
-    private JTextField mode0Field;
-    private JButton testButton;
     private JTextField querySpeedField;
     private JTextField elMetroXField;
     private JTextField korundXField;
@@ -168,6 +166,7 @@ public class IZKModbusGUI extends JFrame {
     private JLabel loadGifLabel;
     private Timer connectionTimeoutTimer;
     private JMenuItem queryCyclical;
+    private JMenuItem ping;
     private boolean enableCyclic;
     private final String[] numbersRelays;
     private final String[] settingsRelays;
@@ -183,12 +182,12 @@ public class IZKModbusGUI extends JFrame {
     //TODO get rid of this argument in ActionListeners, use getter instead.
     private final ModbusReader modbusReader;
     private final MasterModbus maserModbus;
-    private int threadTestCount = 0;
+    private final Query query;
 
     public IZKModbusGUI(Terminal terminal, MasterModbus masterModbus) {
         this.maserModbus = masterModbus;
         modbusReader = new ModbusReader(masterModbus.getModbusMaster(), masterModbus.getId());
-        final Query query = new Query(modbusReader);
+        query = new Query(modbusReader);
         initWindow();
         statLabel.setText("Нет информации");
         if (!terminal.isError()) {
@@ -226,7 +225,6 @@ public class IZKModbusGUI extends JFrame {
         queryInit(query,masterModbus);
 
         //check mode0
-        testButton.addActionListener(new TestButtonActionListener(this,query));
         //settings
         numbersRelays = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
         settingsRelays = new String[]{"Не используется", "Минимимум по любому каналу", "Максимум по любому каналу", "Аварийный максимум по любому каналу", "Предельное давление по любому каналу", "Нет потока по любому каналу", "Минимум по первому каналу",
@@ -588,16 +586,20 @@ public class IZKModbusGUI extends JFrame {
     private JMenu createSettingsMenu(){
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
-        JMenuItem downloader = new JMenuItem("Загрузчик");
+        JMenuItem downloader = new JMenuItem("Загрузчик ATMega");
         queryCyclical = new JCheckBoxMenuItem("Постоянный опрос");
+        ping = new JMenuItem("Пинг блока");
         settings.add(path);
         settings.addSeparator();
         settings.add(downloader);
         settings.addSeparator();
         settings.add(queryCyclical);
+        settings.addSeparator();
+        settings.add(ping);
         path.addActionListener(new PathInputActionListener(this));
         downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
         queryCyclical.addActionListener(new CyclicalCheckBoxMenuActionListener(this));
+        ping.addActionListener(new TestButtonActionListener(this,query));
         return settings;
     }
 
@@ -1061,14 +1063,6 @@ public class IZKModbusGUI extends JFrame {
         return readAllDataAdapter;
     }
 
-    public JTextField getMode0Field() {
-        return mode0Field;
-    }
-
-    public JButton getTestButton() {
-        return testButton;
-    }
-
     public JTextField getQuerySpeedField() {
         return querySpeedField;
     }
@@ -1157,14 +1151,6 @@ public class IZKModbusGUI extends JFrame {
         return executor;
     }
 
-    public int getThreadTestCount() {
-        return threadTestCount;
-    }
-
-    public void setThreadTestCount(int threadTestCount) {
-        this.threadTestCount = threadTestCount;
-    }
-
     public JLabel getLoadGifLabel() {
         return loadGifLabel;
     }
@@ -1175,5 +1161,13 @@ public class IZKModbusGUI extends JFrame {
 
     public JButton getWriteAllButton() {
         return writeAllButton;
+    }
+
+    public JButton getSearchButton() {
+        return searchButton;
+    }
+
+    public JMenuItem getPing() {
+        return ping;
     }
 }

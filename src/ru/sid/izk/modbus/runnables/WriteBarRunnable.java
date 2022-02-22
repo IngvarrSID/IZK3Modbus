@@ -33,8 +33,6 @@ public class WriteBarRunnable implements Runnable{
     public void run() {
         izkModbusGUI.getWriteAllButton().setEnabled(false);
         processAction();
-        izkModbusGUI.getWriteAllButton().setEnabled(true);
-
     }
 
     private void processAction(){

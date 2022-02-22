@@ -24,6 +24,7 @@ public class SearchButtonRunnable implements Runnable{
 
     @Override
     public void run() {
+        izkModbusGUI.getSearchButton().setEnabled(false);
         processAction();
     }
 
@@ -47,6 +48,7 @@ public class SearchButtonRunnable implements Runnable{
             searchTimer.start();
 
         } catch (Exception ex){
+            izkModbusGUI.getSearchButton().setEnabled(true);
             ex.printStackTrace();
             JOptionPane.showMessageDialog(izkModbusGUI,
                     "Ошибка инициализации " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -66,6 +68,7 @@ public class SearchButtonRunnable implements Runnable{
                     izkModbusGUI.getProgressBar().setValue(0);
                     izkModbusGUI.getProgressBar().setVisible(false);
                     query.querySearch();
+                    izkModbusGUI.getSearchButton().setEnabled(true);
 
                     switch (query.getSensorCount()){
                         case 0:
@@ -112,6 +115,7 @@ public class SearchButtonRunnable implements Runnable{
 
                 }
             }catch (Exception ex){
+                izkModbusGUI.getSearchButton().setEnabled(true);
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(izkModbusGUI,
                         "Ошибка чтения " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
