@@ -18,6 +18,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
     private static final int REGULATOR =3;
     private static final int TIME =4;
     private static final int LEVEL =5;
+    private static final int DENSITY_TABLE = 6;
     private final IZKModbusGUI izkModbusGUI;
     private final Query query;
     private final MasterModbus masterModbus;
@@ -67,6 +68,13 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                     izkModbusGUI.getChannelsBox().setSelectedIndex(5);
                     izkModbusGUI.initTable(masterModbus,query);
                 break;
+            case DENSITY_TABLE:
+                try {
+                    izkModbusGUI.initDensityTable();
+                } catch (Exception ex){
+                    JOptionPane.showMessageDialog(izkModbusGUI,
+                            "Ошибка чтения таблицы " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
             default:
                 System.out.println("No action for idx value " + idx);
                 break;

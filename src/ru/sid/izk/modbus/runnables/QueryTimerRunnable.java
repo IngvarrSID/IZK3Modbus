@@ -56,6 +56,7 @@ public class QueryTimerRunnable implements Runnable{
                         izkModbusGUI.getCs2Field().setText(String.format("CS2: %.1f Пф", query.getCs2()));
                         izkModbusGUI.getErrorField().setText(String.format("Инстр. погрешность: %.1f у.е.", query.getError()));
                         izkModbusGUI.getDataField().setText(String.format("Текущая дата: %s", query.getData()));
+                        izkModbusGUI.getDensityExField().setText(String.format("Плотность табличная: %.1f кг/м²", query.getDensityEx()));
 
                         CSVAdapter csvAdapter = new CSVAdapter(izkModbusGUI, masterModbus, query);
                         csvAdapter.fileWrite();

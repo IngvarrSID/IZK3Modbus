@@ -6,6 +6,8 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.utils.FieldVisible;
 
+import java.util.ArrayList;
+
 import static ru.sid.izk.modbus.utils.BitsReversUtils.bitsReader;
 
 public class Query{
@@ -23,6 +25,7 @@ public class Query{
     private float cs2;
     private float error;
     private String data;
+    private float densityEx;
     //PID
     private float pidErr;
     private float pidInt;
@@ -79,6 +82,9 @@ public class Query{
     private int max;
     private int emerMax;
     private int noDensity;
+
+    private char[] sensorMode;
+    private boolean densityTableBit;
 
     //IZKSettings
     private int addressIZK;
@@ -151,6 +157,9 @@ public class Query{
     private int typeSensor;
     private int firmwareSensor;
     private int activationStatus;
+
+    //DensityTable
+    private ArrayList<String[]> list = new ArrayList<>();
 
     public int getTypeSensor() {
         return typeSensor;
@@ -632,12 +641,44 @@ public class Query{
         return second;
     }
 
+    public ArrayList<String[]> getList() {
+        return list;
+    }
+
+    public boolean isDensityTableBit() {
+        return densityTableBit;
+    }
+
+    public char[] getSensorMode() {
+        return sensorMode;
+    }
+
+    public float getDensityEx() {
+        return densityEx;
+    }
+
     public Query(ModbusReader modbusReader){
         this.modbusReader = modbusReader;
     }
 
     public int queryMode0() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
         return  modbusReader.readHoldingsRegisters(0, 1, 1)[0];
+    }
+
+    public void queryDensityTable() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
+
+        modbusReader.writeModeRegister(0,13);
+
+        int[] registerValues =  modbusReader.readHoldingsRegisters(2,32,32);
+
+
+        for (int i = 0; i < registerValues.length-3; i =i+4) {
+            String[] array = new String[2];
+            array[0] = String.format("%.1f",hexToFloat(registerValues[i],registerValues[i+1]));
+            array[1] = String.format("%.1f",hexToFloat(registerValues[i+2],registerValues[i+3]));
+            list.add(array);
+        }
+
     }
 
     public void queryTime() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
@@ -709,6 +750,8 @@ public class Query{
                             cs2 = hexToFloat(registerValues[28], registerValues[29]);
                             error = hexToFloat(registerValues[30], registerValues[31]);
                             data = dateReader(registerValues[1], registerValues[2], registerValues[3]);
+
+                            densityEx = hexToFloat(registerValues[11],registerValues[12]);
 
     }
 
@@ -815,6 +858,11 @@ public class Query{
             max = registerValues[32];
             emerMax = registerValues[33];
             noDensity = registerValues[35];
+
+
+            String reversBits = Integer.toBinaryString(registerValues[2]);
+            sensorMode = bitsReader(reversBits).toCharArray();
+            densityTableBit = sensorMode[3] == '1';
     }
     public void queryInfo () throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
             int[] registerValues = modbusReader.readRegisters(0, 32, 1);

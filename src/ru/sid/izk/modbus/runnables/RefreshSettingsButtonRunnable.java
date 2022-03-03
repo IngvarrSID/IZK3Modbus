@@ -73,6 +73,7 @@ public class RefreshSettingsButtonRunnable implements Runnable{
             if (query.getChannels()[3]) izkModbusGUI.getFourChannelButton().setText("<html><center>Опрос канала 4<br>разрешен</html></center>");
             else izkModbusGUI.getFourChannelButton().setText("нет опроса канала 4");
 
+            Thread.sleep(1000);
             if (!izkModbusGUI.isReadyToWriteRelay()) izkModbusGUI.setReadyToWriteRelay(true);
             izkModbusGUI.getRefreshSettingsButton().setEnabled(true);
 

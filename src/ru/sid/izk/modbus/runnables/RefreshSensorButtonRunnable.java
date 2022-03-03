@@ -53,6 +53,9 @@ public class RefreshSensorButtonRunnable implements Runnable{
             izkModbusGUI.getEmerMaxFieldWrite().setText(String.valueOf(query.getEmerMax()));
             izkModbusGUI.getNoDensityFieldWrite().setText(String.valueOf(query.getNoDensity()));
             izkModbusGUI.getRefreshSensorButton().setEnabled(true);
+
+            if (query.isDensityTableBit()) izkModbusGUI.getDensityButton().setText("ВКЛ");
+            else izkModbusGUI.getDensityButton().setText("ВЫКЛ");
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(izkModbusGUI,
