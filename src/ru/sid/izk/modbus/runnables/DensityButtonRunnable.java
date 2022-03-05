@@ -22,10 +22,13 @@ public class DensityButtonRunnable implements Runnable{
 
     @Override
     public void run() {
+        izkModbusGUI.getDensityButton().setEnabled(false);
         processAction();
+        izkModbusGUI.getDensityButton().setEnabled(true);
     }
 
     public void processAction(){
+
         String buttonName = izkModbusGUI.getDensityButton().getText();
 
             char[] sensorMode = query.getSensorMode();

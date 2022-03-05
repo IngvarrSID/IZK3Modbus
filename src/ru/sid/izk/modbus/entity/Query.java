@@ -667,16 +667,20 @@ public class Query{
 
     public void queryDensityTable() throws ModbusProtocolException, ModbusNumberException, ModbusIOException {
 
+        list = new ArrayList<>();
+
         modbusReader.writeModeRegister(0,13);
 
         int[] registerValues =  modbusReader.readHoldingsRegisters(2,32,32);
 
-
+        int j = 1;
         for (int i = 0; i < registerValues.length-3; i =i+4) {
-            String[] array = new String[2];
-            array[0] = String.format("%.1f",hexToFloat(registerValues[i],registerValues[i+1]));
-            array[1] = String.format("%.1f",hexToFloat(registerValues[i+2],registerValues[i+3]));
+            String[] array = new String[3];
+            array[0] = String.valueOf(j);
+            array[1] = String.format("%.1f",hexToFloat(registerValues[i],registerValues[i+1]));
+            array[2] = String.format("%.1f",hexToFloat(registerValues[i+2],registerValues[i+3]));
             list.add(array);
+            j++;
         }
 
     }

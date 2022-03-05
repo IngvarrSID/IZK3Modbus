@@ -69,12 +69,8 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
                     izkModbusGUI.initTable(masterModbus,query);
                 break;
             case DENSITY_TABLE:
-                try {
-                    izkModbusGUI.initDensityTable();
-                } catch (Exception ex){
-                    JOptionPane.showMessageDialog(izkModbusGUI,
-                            "Ошибка чтения таблицы " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(izkModbusGUI,
+                        "Для загрузки таблицы из блока нажмите \"Прочитать таблицу\"", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
             default:
                 System.out.println("No action for idx value " + idx);
                 break;

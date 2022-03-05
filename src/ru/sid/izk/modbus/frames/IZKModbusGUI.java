@@ -8,7 +8,6 @@ import ru.sid.izk.modbus.connection.ModbusReader;
 import ru.sid.izk.modbus.connection.Terminal;
 import ru.sid.izk.modbus.entity.Query;
 import ru.sid.izk.modbus.listener.*;
-import ru.sid.izk.modbus.runnables.DensityTableReaderRunnable;
 import ru.sid.izk.modbus.utils.Settings;
 import ru.sid.izk.modbus.utils.TarTableReader;
 
@@ -17,20 +16,15 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static ru.sid.izk.modbus.utils.DensityTableUnits.densityTableBuilder;
 import static ru.sid.izk.modbus.utils.FilterUtils.digitFilter;
 import static ru.sid.izk.modbus.utils.FilterUtils.floatFilter;
 import static ru.sid.izk.modbus.utils.FieldVisible.toggleFields;
@@ -170,6 +164,8 @@ public class IZKModbusGUI extends JFrame {
     private JTable densityTable;
     private JButton densityButton;
     private JTextField densityExField;
+    private JButton loadDensityTableButton;
+    private JButton writeDensityTableButton;
     private Timer connectionTimeoutTimer;
     private JMenuItem queryCyclical;
     private JMenuItem ping;
@@ -273,6 +269,10 @@ public class IZKModbusGUI extends JFrame {
         //LoadGif
         initLoadLabel();
 
+        //DensityTable
+        loadDensityTableButton.addActionListener(new LoadDensityTableActionListener(this,modbusReader));
+        writeDensityTableButton.addActionListener(new ReadDensityButtonActionListener(this,query));
+
 
 
     }
@@ -339,7 +339,6 @@ public class IZKModbusGUI extends JFrame {
         SwingUtilities.invokeLater(() -> {
             DefaultTableModel model = (DefaultTableModel) archiveTable.getModel();
             int rowCount = model.getRowCount();
-            System.out.println("до заполнения");
             for (int i = rowCount-1; i >= 0 ; i--) {
                 model.removeRow(i);
             }
@@ -348,18 +347,11 @@ public class IZKModbusGUI extends JFrame {
                     model.addRow(allRows.get(i));
                 }
             }
-            System.out.println("после заполнения");
             archiveTable.setFillsViewportHeight(true);
         });
 
     }
 
-    public void initDensityTable() throws Exception {
-
-        ArrayList<String[]> list = (new DensityTableReaderRunnable(this,query)).call();
-
-        densityTableBuilder(list,this);
-    }
 
     //query
     public void queryInit(Query query,MasterModbus masterModbus){
@@ -1197,5 +1189,13 @@ public class IZKModbusGUI extends JFrame {
 
     public JTextField getDensityExField() {
         return densityExField;
+    }
+
+    public JButton getLoadDensityTableButton() {
+        return loadDensityTableButton;
+    }
+
+    public JButton getWriteDensityTableButton() {
+        return writeDensityTableButton;
     }
 }
