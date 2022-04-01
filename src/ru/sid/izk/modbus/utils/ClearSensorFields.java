@@ -31,5 +31,6 @@ public final class ClearSensorFields {
         izkModbusGUI.getMaxFieldWrite().setText("");
         izkModbusGUI.getEmerMaxFieldWrite().setText("");
         izkModbusGUI.getNoDensityFieldWrite().setText("");
+        izkModbusGUI.getDensityExField().setText("");
     }
 }

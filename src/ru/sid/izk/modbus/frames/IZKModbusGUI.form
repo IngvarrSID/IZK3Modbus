@@ -2236,7 +2236,7 @@
           </component>
           <component id="e6e86" class="javax.swing.JTextField" binding="periodField">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
+              <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
                 <maximum-size width="300" height="30"/>
               </grid>
@@ -2247,19 +2247,6 @@
             </properties>
           </component>
           <component id="f3932" class="javax.swing.JTextField" binding="cs1Field">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
-                <preferred-size width="300" height="30"/>
-                <maximum-size width="300" height="30"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-              <font name="Tahoma" size="18"/>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="a07d1" class="javax.swing.JTextField" binding="cs2Field">
             <constraints>
               <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
@@ -2272,7 +2259,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="b3679" class="javax.swing.JTextField" binding="errorField">
+          <component id="a07d1" class="javax.swing.JTextField" binding="cs2Field">
             <constraints>
               <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
@@ -2285,9 +2272,22 @@
               <text value=""/>
             </properties>
           </component>
+          <component id="b3679" class="javax.swing.JTextField" binding="errorField">
+            <constraints>
+              <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
+                <preferred-size width="300" height="30"/>
+                <maximum-size width="300" height="30"/>
+              </grid>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <font name="Tahoma" size="18"/>
+              <text value=""/>
+            </properties>
+          </component>
           <component id="43ae" class="javax.swing.JTextField" binding="timeField">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false">
+              <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
                 <maximum-size width="300" height="30"/>
               </grid>
@@ -2300,7 +2300,7 @@
           </component>
           <component id="b4595" class="javax.swing.JTextField" binding="dataField">
             <constraints>
-              <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
+              <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
                 <maximum-size width="300" height="30"/>
               </grid>
@@ -2311,19 +2311,6 @@
             </properties>
           </component>
           <component id="f2e1f" class="javax.swing.JTextField" binding="pidErrField">
-            <constraints>
-              <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
-                <preferred-size width="300" height="30"/>
-                <maximum-size width="300" height="30"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-              <enabled value="true"/>
-              <font name="Tahoma" size="18"/>
-            </properties>
-          </component>
-          <component id="2177" class="javax.swing.JTextField" binding="pidIntField">
             <constraints>
               <grid row="12" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
@@ -2336,7 +2323,7 @@
               <font name="Tahoma" size="18"/>
             </properties>
           </component>
-          <component id="a9fab" class="javax.swing.JTextField" binding="pidDifField">
+          <component id="2177" class="javax.swing.JTextField" binding="pidIntField">
             <constraints>
               <grid row="13" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
@@ -2349,9 +2336,22 @@
               <font name="Tahoma" size="18"/>
             </properties>
           </component>
+          <component id="a9fab" class="javax.swing.JTextField" binding="pidDifField">
+            <constraints>
+              <grid row="14" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="2" use-parent-layout="false">
+                <preferred-size width="300" height="30"/>
+                <maximum-size width="300" height="30"/>
+              </grid>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <enabled value="true"/>
+              <font name="Tahoma" size="18"/>
+            </properties>
+          </component>
           <component id="35dbb" class="javax.swing.JProgressBar" binding="progressRegulatorBar">
             <constraints>
-              <grid row="14" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="15" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="-1" height="25"/>
                 <maximum-size width="-1" height="25"/>
               </grid>
@@ -2363,7 +2363,7 @@
           </component>
           <component id="c61df" class="javax.swing.JLabel" binding="regulatorStatusField">
             <constraints>
-              <grid row="15" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="16" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="true"/>
@@ -2397,7 +2397,7 @@
           </component>
           <component id="a91d" class="javax.swing.JTextField" binding="densityExField">
             <constraints>
-              <grid row="16" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="2" use-parent-layout="false">
+              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="2" use-parent-layout="false">
                 <preferred-size width="300" height="30"/>
                 <maximum-size width="300" height="30"/>
               </grid>

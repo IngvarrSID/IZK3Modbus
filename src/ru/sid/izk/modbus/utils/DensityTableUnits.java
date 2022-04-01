@@ -2,8 +2,12 @@ package ru.sid.izk.modbus.utils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ru.sid.izk.modbus.frames.IZKModbusGUI;
+import ru.sid.izk.modbus.listener.DensityTableChangeListener;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -13,8 +17,9 @@ public final class DensityTableUnits {
 
     public static void densityTableBuilder(List<String[]> list, IZKModbusGUI izkModbusGUI) {
 
-        izkModbusGUI.getDensityTable().setModel(new DefaultTableModel());
-        DefaultTableModel model = (DefaultTableModel) izkModbusGUI.getDensityTable().getModel();
+        JTable table = izkModbusGUI.getDensityTable();
+        table.setModel(new DefaultTableModel());
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         int rowCount = model.getRowCount();
         for (int i = rowCount-1; i >= 0 ; i--) {
             model.removeRow(i);
@@ -27,7 +32,14 @@ public final class DensityTableUnits {
                 model.addRow(strings);
             }
         }
-        izkModbusGUI.getTarTable().setFillsViewportHeight(true);
+        TableColumn column0 = table.getColumnModel().getColumn( 0 );
+        column0.setMinWidth(20);
+        column0.setMaxWidth(40);
+
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer)table.getDefaultRenderer(String.class);
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.setFillsViewportHeight(true);
+        model.addTableModelListener(new DensityTableChangeListener(izkModbusGUI.getModbusReader(),izkModbusGUI,model));
 
     }
 

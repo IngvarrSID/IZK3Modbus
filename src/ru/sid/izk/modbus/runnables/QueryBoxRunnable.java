@@ -81,6 +81,7 @@ public class QueryBoxRunnable implements Runnable{
             izkModbusGUI.getPidDifField().setText("");
             izkModbusGUI.getProgressRegulatorBar().setValue(0);
             izkModbusGUI.getRegulatorStatusField().setText("");
+            izkModbusGUI.getDensityExField().setText("");
         }
     }
 
