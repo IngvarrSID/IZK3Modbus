@@ -71,6 +71,7 @@ public class TabbedPaneMouseAdapter extends MouseAdapter {
             case DENSITY_TABLE:
                 JOptionPane.showMessageDialog(izkModbusGUI,
                         "Для загрузки таблицы из блока нажмите \"Прочитать таблицу\"", "Подтверждение", JOptionPane.INFORMATION_MESSAGE);
+                break;
             default:
                 System.out.println("No action for idx value " + idx);
                 break;
