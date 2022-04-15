@@ -1,5 +1,8 @@
 package ru.sid.izk.modbus.frames;
 
+import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import ru.sid.izk.modbus.adapter.TabbedPaneMouseAdapter;
 import ru.sid.izk.modbus.archive.CSVAdapter;
 import ru.sid.izk.modbus.archive.ReadAllDataAdapter;
@@ -16,6 +19,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -595,19 +600,36 @@ public class IZKModbusGUI extends JFrame {
         JMenu settings = new JMenu("Настройки");
         JMenuItem path = new JMenuItem("Путь к архиву");
         JMenuItem downloader = new JMenuItem("Загрузчик ATMega");
+        JMenuItem firmwareStmLoader = new JMenuItem("Загрузчик STM");
         queryCyclical = new JCheckBoxMenuItem("Постоянный опрос");
         ping = new JMenuItem("Пинг блока");
+        JMenuItem rebootStm = new JMenuItem("Перезагрузка");
         settings.add(path);
         settings.addSeparator();
         settings.add(downloader);
         settings.addSeparator();
+        settings.add(firmwareStmLoader);
+        settings.addSeparator();
         settings.add(queryCyclical);
         settings.addSeparator();
         settings.add(ping);
+        settings.addSeparator();
+        settings.add(rebootStm);
         path.addActionListener(new PathInputActionListener(this));
         downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
+        firmwareStmLoader.addActionListener(new StmStartLoaderActionListener(modbusReader,this));
         queryCyclical.addActionListener(new CyclicalCheckBoxMenuActionListener(this));
         ping.addActionListener(new TestButtonActionListener(this,query));
+        rebootStm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    modbusReader.writeCoil(41,true);
+                } catch (ModbusNumberException | ModbusProtocolException | ModbusIOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
         return settings;
     }
 
