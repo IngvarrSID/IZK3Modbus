@@ -64,13 +64,13 @@ public class RefreshSettingsButtonRunnable implements Runnable{
             izkModbusGUI.getModeRelayBox8().setSelectedIndex(query.getModeRelay8());
             if (query.getModeRelay9()<izkModbusGUI.getModesRelays().length)izkModbusGUI.getModeRelayBox9().setSelectedIndex(query.getModeRelay9());
             if (query.getModeRelay10()<izkModbusGUI.getModesRelays().length)izkModbusGUI.getModeRelayBox10().setSelectedIndex(query.getModeRelay10());
-            if (query.getChannels()[0]) izkModbusGUI.getOneChannelButton().setText("<html><center>Опрос канала 1<br>разрешен</html></center>");
+            if (query.getChannels()[0]) izkModbusGUI.getOneChannelButton().setText("<html><center>Опрос канала 1<br>разрешен</center></html>");
             else izkModbusGUI.getOneChannelButton().setText("нет опроса канала 1");
-            if (query.getChannels()[1]) izkModbusGUI.getTwoChannelButton().setText("<html><center>Опрос канала 2<br>разрешен</html></center>");
+            if (query.getChannels()[1]) izkModbusGUI.getTwoChannelButton().setText("<html><center>Опрос канала 2<br>разрешен</center></html>");
             else izkModbusGUI.getTwoChannelButton().setText("нет опроса канала 2");
-            if (query.getChannels()[2]) izkModbusGUI.getThreeChannelButton().setText("<html><center>Опрос канала 3<br>разрешен</html></center>");
+            if (query.getChannels()[2]) izkModbusGUI.getThreeChannelButton().setText("<html><center>Опрос канала 3<br>разрешен</center></html>");
             else izkModbusGUI.getThreeChannelButton().setText("нет опроса канала 3");
-            if (query.getChannels()[3]) izkModbusGUI.getFourChannelButton().setText("<html><center>Опрос канала 4<br>разрешен</html></center>");
+            if (query.getChannels()[3]) izkModbusGUI.getFourChannelButton().setText("<html><center>Опрос канала 4<br>разрешен</center></html>");
             else izkModbusGUI.getFourChannelButton().setText("нет опроса канала 4");
 
             Thread.sleep(1000);
