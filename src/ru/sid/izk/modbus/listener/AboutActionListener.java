@@ -16,6 +16,6 @@ public class AboutActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane.showMessageDialog(izkModbusGUI,
-                "<html><center>Конфигуратор СУ-5Д Влагомер<br>версия программы 1alfa<br>ООО \"Техносенсор\"<br> 2022 г. </center></html>", "О программе", JOptionPane.INFORMATION_MESSAGE);
+                "<html><center>Конфигуратор СУ-5Д Влагомер<br>версия программы 1.2alfa<br>ООО \"Техносенсор\"<br> 2022 г. </center></html>", "О программе", JOptionPane.INFORMATION_MESSAGE);
     }
 }

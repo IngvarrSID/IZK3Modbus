@@ -34,7 +34,6 @@ public class StmLoadNewFirmwareRunnable implements Runnable{
         int result = fileChooser.showOpenDialog(izkModbusGUI);
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
-                modbusReader.writeModeRegister(0,34);
 
                 byte[] allBytes = Files.readAllBytes(Paths.get(fileChooser.getSelectedFile().getPath()));
 
@@ -67,7 +66,7 @@ public class StmLoadNewFirmwareRunnable implements Runnable{
                     data[0] =  ((i*32) & 0xFFFF);
                     data[1] =  (((i*32) >> 16) & 0xFFFF);
 
-
+                    modbusReader.writeModeRegister(0,34);
                     modbusReader.writeMultipleRegisters(2,data);
                     modbusReader.writeModeRegister(4,32);
                     modbusReader.writeMultipleRegisters(5,registers);
@@ -80,6 +79,7 @@ public class StmLoadNewFirmwareRunnable implements Runnable{
                     int[] data = new int[2];
                     data[0] =  (k/2 & 0xFFFF);
                     data[1] =  ((k/2 >> 16) & 0xFFFF);
+                    modbusReader.writeModeRegister(0,34);
                     modbusReader.writeMultipleRegisters(2,data);
                     modbusReader.writeModeRegister(4, remainder / 2);
 
@@ -102,6 +102,7 @@ public class StmLoadNewFirmwareRunnable implements Runnable{
 
                     data[0] =  (k/2 & 0xFFFF);
                     data[1] =  ((k/2 >> 16) & 0xFFFF);
+                    modbusReader.writeModeRegister(0,34);
                     modbusReader.writeMultipleRegisters(2,data);
                     modbusReader.writeModeRegister(4, remainder / 2);
 
@@ -133,6 +134,10 @@ public class StmLoadNewFirmwareRunnable implements Runnable{
                         "Ошибка загрузки прошивки в блок " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
 
             }
+
+            izkModbusGUI.getMaserModbus().setBoundRate19200();
+            izkModbusGUI.dispose();
+            new IZKModbusGUI(izkModbusGUI.getMaserModbus().getTerminal(), izkModbusGUI.getMaserModbus());
         }
     }
 }

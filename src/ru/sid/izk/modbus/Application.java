@@ -19,6 +19,7 @@ public class Application {
                     final Settings settings = new Settings();
                     Terminal terminal = new Terminal(settings.getComPort(), settings.getBoundRate(),settings.getTimeOut());
                     MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(settings.getId()));
+                    masterModbus.createNewConnect();
                     new IZKModbusGUI(terminal, masterModbus);
                 } else {
                     new IZKTerminal();

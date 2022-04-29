@@ -2,6 +2,7 @@ package ru.sid.izk.modbus.connection;
 
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
+import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 
 import javax.swing.*;
 
@@ -15,6 +16,9 @@ public class MasterModbus {
     public MasterModbus(Terminal terminal, int id) {
         this.id = id;
         this.terminal = terminal;
+    }
+
+    public void createNewConnect(){
         try {
             modbusMaster = ModbusMasterFactory.createModbusMasterASCII(terminal.getSp());
             modbusMaster.setResponseTimeout(Integer.parseInt(terminal.getTimeOut()));
@@ -25,13 +29,30 @@ public class MasterModbus {
         }
     }
 
+    public void setBoundRate115200(){
 
-    public ModbusMaster getModbusMaster() {
-        return modbusMaster;
+        try {
+            disconnect();
+            terminal.getSp().setBaudRate(SerialPort.BaudRate.BAUD_RATE_115200);
+            createNewConnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            terminal.setError(true);
+        }
     }
 
-    public int getId() {
-        return id;
+    public void setBoundRate19200(){
+
+        try {
+            disconnect();
+            terminal.getSp().setBaudRate(SerialPort.BaudRate.BAUD_RATE_19200);
+            createNewConnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            terminal.setError(true);
+        }
     }
 
     public void disconnect() {
@@ -44,5 +65,13 @@ public class MasterModbus {
 
     public Terminal getTerminal() {
         return terminal;
+    }
+
+    public ModbusMaster getModbusMaster() {
+        return modbusMaster;
+    }
+
+    public int getId() {
+        return id;
     }
 }

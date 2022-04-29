@@ -32,8 +32,8 @@ public class RefButtonRunnable implements Runnable{
         if (queryBox.isSelected()) queryBox.setSelected(false);
         try {
             izkModbusGUI.getRefButton().setEnabled(false);
-            modbusReader.writeModeRegister(1, 16);
             modbusReader.writeModeRegister(0, 25);
+            modbusReader.writeModeRegister(1, 16);
         } catch (Exception ex) {
             ex.printStackTrace();
             izkModbusGUI.getRefButton().setEnabled(true);

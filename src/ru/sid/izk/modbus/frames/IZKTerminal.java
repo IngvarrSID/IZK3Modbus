@@ -144,6 +144,7 @@ public class IZKTerminal extends JFrame {
             }
             Terminal terminal = new Terminal(comName, bound, timeOutField.getText());
             MasterModbus masterModbus = new MasterModbus(terminal, Integer.parseInt(IZKCOMAddressField.getText()));
+            masterModbus.createNewConnect();
             dispose();
             new IZKModbusGUI(terminal, masterModbus);
         }

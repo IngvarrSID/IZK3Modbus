@@ -43,8 +43,8 @@ public class ChannelsButtonRunnable implements Runnable{
             }
             modbusReader.writeModeRegister(3,Integer.parseInt(bitsReader(bits.toString()),2));
             String text = currentButton.getText();
-            if (text.equals(String.format("<html><center>Опрос канала %d<br>разрешен</html></center>",channelNumber))) currentButton.setText(String.format("нет опроса канала %d",channelNumber));
-            else currentButton.setText(String.format("<html><center>Опрос канала %d<br>разрешен</html></center>",channelNumber));
+            if (text.equals(String.format("<html><center>Опрос канала %d<br>разрешен</center></html>",channelNumber))) currentButton.setText(String.format("нет опроса канала %d",channelNumber));
+            else currentButton.setText(String.format("<html><center>Опрос канала %d<br>разрешен</center></html>",channelNumber));
             currentButton.setEnabled(true);
         } catch (Exception ex){
             ex.printStackTrace();

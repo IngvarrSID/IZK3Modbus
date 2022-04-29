@@ -23,7 +23,7 @@ public class DownloaderActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Вы переходите в режим загрузчика!<br>" +
+            int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Вы переходите в режим загрузчика<br>"+ "для блока ИЗК-3 на базе контроллера ATMega!<br>"+
                     "Продолжить?</html>", "Предупреждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 izkModbusGUI.getModbusReader().writeModeRegister(0,65535);

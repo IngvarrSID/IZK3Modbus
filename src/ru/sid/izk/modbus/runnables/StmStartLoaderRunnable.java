@@ -22,20 +22,29 @@ public class StmStartLoaderRunnable implements Runnable{
         processAction();
     }
 
-    private void processAction(){
+    private void processAction() {
 
-        try {
-            izkModbusGUI.getQueryBox().setSelected(false);
-            modbusReader.writeCoil(37, true);
+        IZKModbusGUI newGUI = izkModbusGUI;
+                try {
+                    int result = JOptionPane.showConfirmDialog(izkModbusGUI, "<html>Переключить скорость связи<br>" + "с блоком ИЗК-3 на 115200</html>", "Предупреждение", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    if (result == JOptionPane.YES_OPTION) {
+                    modbusReader.writeCoil(44, true);
+                    izkModbusGUI.getMaserModbus().setBoundRate115200();
+                    izkModbusGUI.dispose();
+                    newGUI = new IZKModbusGUI(izkModbusGUI.getMaserModbus().getTerminal(), izkModbusGUI.getMaserModbus());
+                        newGUI.getComLabel().setText(String.format("%s на скорости 115200 ИЗК-3 № %s", newGUI.getMaserModbus().getTerminal().getComName(), newGUI.getMaserModbus().getId()));
+                }
+                    newGUI.getQueryBox().setSelected(false);
+                newGUI.getModbusReader().writeCoil(37, true);
 
-            Timer eraseTimer = new Timer(500, new EraseTimerActionListener(izkModbusGUI, modbusReader));
-            eraseTimer.start();
-            izkModbusGUI.getDataLabel().setText("Идет стирание");
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(izkModbusGUI,
-                    "Ошибка связи " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                Timer eraseTimer = new Timer(500, new EraseTimerActionListener(newGUI, newGUI.getModbusReader()));
+                eraseTimer.start();
+                    newGUI.getDataLabel().setText("Идет стирание");
+            } catch(Exception ex)
+            {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(newGUI,
+                        "Ошибка связи " + ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-}

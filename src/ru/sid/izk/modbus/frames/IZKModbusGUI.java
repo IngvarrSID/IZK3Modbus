@@ -19,8 +19,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -603,7 +601,7 @@ public class IZKModbusGUI extends JFrame {
         JMenuItem firmwareStmLoader = new JMenuItem("Загрузчик STM");
         queryCyclical = new JCheckBoxMenuItem("Постоянный опрос");
         ping = new JMenuItem("Пинг блока");
-        JMenuItem rebootStm = new JMenuItem("Перезагрузка");
+       // JMenuItem rebootStm = new JMenuItem("Перезагрузка");
         settings.add(path);
         settings.addSeparator();
         settings.add(downloader);
@@ -614,13 +612,13 @@ public class IZKModbusGUI extends JFrame {
         settings.addSeparator();
         settings.add(ping);
         settings.addSeparator();
-        settings.add(rebootStm);
+    //    settings.add(rebootStm);
         path.addActionListener(new PathInputActionListener(this));
         downloader.addActionListener(new DownloaderActionListener(this,maserModbus));
         firmwareStmLoader.addActionListener(new StmStartLoaderActionListener(modbusReader,this));
         queryCyclical.addActionListener(new CyclicalCheckBoxMenuActionListener(this));
         ping.addActionListener(new TestButtonActionListener(this,query));
-        rebootStm.addActionListener(new ActionListener() {
+  /*      rebootStm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -629,7 +627,7 @@ public class IZKModbusGUI extends JFrame {
                     ex.printStackTrace();
                 }
             }
-        });
+        });*/
         return settings;
     }
 
@@ -1219,5 +1217,13 @@ public class IZKModbusGUI extends JFrame {
 
     public JButton getWriteDensityTableButton() {
         return writeDensityTableButton;
+    }
+
+    public MasterModbus getMaserModbus() {
+        return maserModbus;
+    }
+
+    public JLabel getComLabel() {
+        return comLabel;
     }
 }
